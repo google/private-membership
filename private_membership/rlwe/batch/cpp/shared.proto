@@ -1,0 +1,123 @@
+// Copyright 2021 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package private_membership.batch;
+
+import "serialization.proto";
+
+// All messages in this file are shared between the client and server
+// libraries.
+
+// This message holds all necessary parameters for the cryptographic protocol.
+message Parameters {
+  // This message holds all relevant information about sharding the database.
+  message ShardParameters {
+    // Number of shards.
+    int32 number_of_shards = 1;
+
+    // Number of buckets appearing in each shard.
+    int32 number_of_buckets_per_shard = 2;
+
+    // Number of required queries per shard. If this is 0, no fixed number of
+    // queries are required per shard. Otherwise, we expect exactly this number
+    // of queries per shard.
+    int32 required_queries_per_shard = 3;
+
+    // Number of required fake queries.
+    int32 required_fake_queries = 4;
+  }
+
+  // This message holds all relevant information for the cryptosystem.
+  message CryptoParameters {
+    // Modulus used to create requests. Modulus will be split up into 64 bit
+    // chunks. Lowest bits will appear first.
+    repeated uint64 request_modulus = 1;
+
+    // Modulus used to finalize responses. Modulus will be split up into 64 bit
+    // chunks. Lowest bits will appear first.
+    repeated uint64 response_modulus = 2;
+
+    // Base-2 log of the degree of the polynomial.
+    int32 log_degree = 3;
+
+    // Base-2 log of the plaintext modulus.
+    int32 log_t = 4;
+
+    // Variance of Gaussian error in bits.
+    int32 variance = 5;
+
+    // Number of levels of recursion.
+    int32 levels_of_recursion = 6;
+
+    // Base-2 log of the compression factor to use.
+    int32 log_compression_factor = 7;
+
+    // Base-2 log of decomposition modulus for the relinearization public key.
+    int32 log_decomposition_modulus = 8;
+  }
+
+  // Parameters for sharding.
+  ShardParameters shard_parameters = 1;
+
+  // Parameters for the cryptosystem.
+  CryptoParameters crypto_parameters = 2;
+}
+
+// This message holds all information about the public key.
+message PublicKey {
+  repeated rlwe.SerializedGaloisKey galois_key = 1;
+}
+
+// Public metadata about plaintext queries. This will not contain any sensitive
+// information that should not be seen by the server.
+message QueryMetadata {
+  // Unique identifier for plaintext query. This ID should be independent of any
+  // sensitive information. For example, this should be a randomly generated ID.
+  int32 query_id = 1;
+
+  // The identifier of the relevant shard that the query should be applied
+  // against.
+  int32 shard_id = 2;
+}
+
+// List of encrypted queries. The number of queries encrypted is equivalent to
+// length of the encrypted_query_metadata list.
+//
+// Each element of encrypted_queries may encode the bucket_id of multiple
+// queries and/or partial information about bucket_id for multiple queries.
+//
+// Note the queries will be encoded in encrypted_queries in the order that they
+// appear in the encrypted_query_metadata list.
+message EncryptedQueries {
+  // Metadata of queries that are encrypted.
+  repeated QueryMetadata query_metadata = 1;
+
+  // Encoding of encrypted queries. Queries are encoded in the order they appear
+  // in the above encrypted_query_metadata list.
+  repeated rlwe.SerializedNttPolynomial encrypted_queries = 2;
+
+  // Prng used for encryption and decryption.
+  bytes prng_seed = 3;
+}
+
+// Encrypted query results after applying queries to the database.
+message EncryptedQueryResult {
+  // Public metadata about the encrypted query.
+  QueryMetadata query_metadata = 1;
+
+  // All fields below constitute the encrypted result.
+  repeated rlwe.SerializedSymmetricRlweCiphertext ciphertexts = 2;
+}
