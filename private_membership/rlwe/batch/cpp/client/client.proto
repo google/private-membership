@@ -1,0 +1,101 @@
+// Copyright 2021 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package private_membership.batch;
+
+import "private_membership/rlwe/batch/cpp/shared.proto";
+import "serialization.proto";
+
+// Contains all information about the private key.
+message PrivateKey {
+  // Key used to encrypt requests.
+  rlwe.SerializedNttPolynomial request_key = 1;
+
+  // Key used to decrypt responses.
+  rlwe.SerializedNttPolynomial response_key = 2;
+}
+
+// Contains all information about plaintext queries.
+message PlaintextQuery {
+  // Metadata about the plaintext query.
+  QueryMetadata query_metadata = 1;
+
+  // Bucket ID that will be queried.
+  int32 bucket_id = 2;
+}
+
+message DecryptedQueryResult {
+  // Metadata about the plaintext query.
+  QueryMetadata query_metadata = 1;
+
+  // Plaintext result.
+  bytes result = 2;
+}
+
+// Request for generating keys with the given parameters.
+message GenerateKeysRequest {
+  Parameters parameters = 1;
+}
+
+// Response containing the generated public and private key pair.
+message GenerateKeysResponse {
+  // Contains all information about private keys.
+  PrivateKey private_key = 1;
+
+  // Contains all information about public keys.
+  PublicKey public_key = 2;
+}
+
+// Request for encrypting queries.
+message EncryptQueriesRequest {
+  // Parameters used to generate encryptions.
+  Parameters parameters = 1;
+
+  // Private key for encrypting queries.
+  PrivateKey private_key = 2;
+
+  // Public key for encrypting queries.
+  PublicKey public_key = 3;
+
+  // List of plaintext queries to be encrypted.
+  repeated PlaintextQuery plaintext_queries = 4;
+}
+
+// Response for encrypting queries.
+message EncryptQueriesResponse {
+  EncryptedQueries encrypted_queries = 1;
+}
+
+// Request for decrypting query results.
+message DecryptQueriesRequest {
+  // Parameters used to generate encryptions.
+  Parameters parameters = 1;
+
+  // Private key for encrypting queries.
+  PrivateKey private_key = 2;
+
+  // Public key for encrypting queries.
+  PublicKey public_key = 3;
+
+  // List of encrypted queries that need to be decrypted.
+  repeated EncryptedQueryResult encrypted_queries = 4;
+}
+
+// Response after decrypting query results.
+message DecryptQueriesResponse {
+  // List of decrypted query results.
+  repeated DecryptedQueryResult result = 1;
+}
