@@ -18,6 +18,8 @@ package private_membership.batch;
 
 import "serialization.proto";
 
+option java_package = "com.google.privatemembership.batch";
+
 // All messages in this file are shared between the client and server
 // libraries.
 

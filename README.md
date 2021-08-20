@@ -11,7 +11,7 @@ At a high level, PSM provides the following privacy guarantees:
 *   The server does not learn whether the client's query results in a
     membership or non-membership determination.
 *   The querying client does not learn any information about the set of
-    identifiers that are stored by the server beyond whether the querying
+    identifiers that are stored by tge server beyond whether the querying
     client's identifier is a member or not of the server-held set of identifiers.
     In other words, the querying client learns the bare minimum amount of
     information which is only the answer of the membership query.
