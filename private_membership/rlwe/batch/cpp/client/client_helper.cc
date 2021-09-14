@@ -15,11 +15,14 @@
 #include "private_membership/rlwe/batch/cpp/client/client_helper.h"
 
 #include <cmath>
-#include <cstdlib>
+#include <string>
+#include <vector>
 
 #include "absl/status/status.h"
+#include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
-#include "private_membership/rlwe/batch/cpp/shared.pb.h"
+#include "private_membership/rlwe/batch/proto/client.pb.h"
+#include "private_membership/rlwe/batch/proto/shared.pb.h"
 
 namespace private_membership {
 namespace batch {

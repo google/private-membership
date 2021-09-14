@@ -12,25 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CLIENT_CLIENT_H_
-#define PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CLIENT_CLIENT_H_
+#ifndef PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_PADDING_H_
+#define PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_PADDING_H_
+
+#include <string>
 
 #include "absl/status/statusor.h"
-#include "private_membership/rlwe/batch/proto/client.pb.h"
+#include "absl/strings/string_view.h"
 
 namespace private_membership {
 namespace batch {
 
-absl::StatusOr<GenerateKeysResponse> GenerateKeys(
-    const GenerateKeysRequest& request);
+// Prepend length of input using the first 4 bytes in little-endian.
+std::string PrependLength(absl::string_view input);
 
-absl::StatusOr<EncryptQueriesResponse> EncryptQueries(
-    const EncryptQueriesRequest& request);
-
-absl::StatusOr<DecryptQueriesResponse> DecryptQueries(
-    const DecryptQueriesRequest& request);
+// Unpad string that has its real length prepended using the above function and
+// is potentially padded with arbitrary characters afterwards.
+absl::StatusOr<std::string> Unpad(absl::string_view input);
 
 }  // namespace batch
 }  // namespace private_membership
 
-#endif  // PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CLIENT_CLIENT_H_
+#endif  // PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_PADDING_H_
