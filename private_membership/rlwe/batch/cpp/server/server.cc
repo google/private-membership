@@ -471,20 +471,14 @@ ApplyFirstLevel(const Context& context,
     absl::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>& ciphertext =
         result[result_index];
     if (!ciphertext.has_value()) {
-      absl::StatusOr<rlwe::SymmetricRlweCiphertext<ModularInt>> absorbed =
-          deserialized_query.ciphertexts[query_index] *
-          bucket.contents[column_index];
-      if (!absorbed.ok()) {
-        return absorbed.status();
-      }
-      ciphertext = *std::move(absorbed);
-    } else {
-      absl::Status status = ciphertext->FusedAbsorbAddInPlaceLazily(
-          deserialized_query.ciphertexts[query_index],
-          bucket.contents[column_index]);
-      if (!status.ok()) {
-        return status;
-      }
+      ciphertext = rlwe::SymmetricRlweCiphertext<ModularInt>(
+          context.GetModulusParams(), context.GetErrorParams());
+    }
+    absl::Status status = ciphertext->FusedAbsorbAddInPlaceLazily(
+        deserialized_query.ciphertexts[query_index],
+        bucket.contents[column_index]);
+    if (!status.ok()) {
+      return status;
     }
   }
 
