@@ -1,0 +1,164 @@
+// Copyright 2021 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package private_membership.batch;
+
+import "private_membership/rlwe/batch/proto/shared.proto";
+import "shell_encryption/serialization.proto";
+
+option java_package = "com.google.privatemembership.batch.server";
+
+// Represents the database or a subset of the database in raw form. Databases
+// are split into shards and each shard has buckets.
+message RawDatabaseShard {
+  // Index of shard.
+  int32 shard_index = 1;
+
+  // Raw buckets in this shard.
+  repeated Bucket buckets = 2;
+
+  // Represents the contents of the bucket.
+  message Bucket {
+    // Identifier of the bucket.
+    int32 bucket_id = 1;
+
+    // Contents of the buckets in bytes.
+    bytes bucket_contents = 2;
+  }
+}
+
+// Represents the database or a subset of the database in encoded form that is
+// ready for processing. Databases are split into shards and each shard has
+// buckets.
+message EncodedDatabaseShard {
+  // Index of shard.
+  int32 shard_index = 1;
+
+  // Encoded buckets in this shard.
+  repeated Bucket buckets = 2;
+
+  // Represents the contents of the bucket.
+  message Bucket {
+    // Identifier of the bucket.
+    int32 bucket_id = 1;
+
+    // Contents of the buckets in encoded in polynomials.
+    repeated rlwe.SerializedNttPolynomial chunks = 2;
+  }
+}
+
+// Request for encoding the database or a subset of the database.
+message EncodeDatabaseRequest {
+  // Parameters used to encode database.
+  Parameters parameters = 1;
+
+  // Raw database shards to be encoded.
+  repeated RawDatabaseShard shards = 2;
+}
+
+// Response after encoding the database or a subset of the database.
+message EncodeDatabaseResponse {
+  // Encoded database shards.
+  repeated EncodedDatabaseShard shards = 1;
+}
+
+// Request protos for applying queries to the database. The input
+// queries may be for different shards. Furthermore, the shards may be for
+// different shards and may represent either an entire shard or subsets of
+// shards.
+//
+// If a query is given for shard_id 1, but no shards have shard_id 1, then the
+// query will not be applied to any part of the database. No query result will
+// be returned.
+//
+// The request provides flexibility of receiving either encoded or raw
+// databases. It is more efficient to pass raw databases as long as they will
+// not be used in any other request.
+message ApplyQueriesRequest {
+  // Parameters used for system.
+  Parameters parameters = 1;
+
+  // Public key used to apply queries.
+  PublicKey public_key = 2;
+
+  // Database for which queries will be applied.
+  oneof database {
+    RawDatabase raw_database = 6;
+    EncodedDatabase encoded_database = 7;
+  }
+
+  // Queries to be applied.
+  repeated EncryptedQueries queries = 4;
+
+  // Finalize results before returning. This should only set if no other
+  // homomorphic operations will be performed afterwards.
+  bool finalize_results = 5;
+
+  message RawDatabase {
+    // Raw database shards for which the queries will be applied.
+    repeated RawDatabaseShard shards = 1;
+  }
+
+  message EncodedDatabase {
+    // Encoded databases shards for which the queries will be applied.
+    repeated EncodedDatabaseShard shards = 1;
+  }
+}
+
+// The response will return the result of applying each query for shard_id to
+// all shards that are given in the request with the same shard_id.
+message ApplyQueriesResponse {
+  // Results of applied queries to input database shards.
+  repeated EncryptedQueryResult query_results = 1;
+}
+
+// Given lists of summations, sum all addends in each list.
+message SumCiphertextsRequest {
+  // Parameters used for system.
+  Parameters parameters = 1;
+
+  // List of lists of ciphertexts. Each sublist should be added together.
+  repeated Summation summations = 2;
+
+  // Represents list of addends.
+  message Summation {
+    repeated rlwe.SerializedSymmetricRlweCiphertext ciphertexts = 1;
+  }
+}
+
+// The summation of all addends in each list of the request.
+message SumCiphertextsResponse {
+  // List of sums after adding.
+  repeated rlwe.SerializedSymmetricRlweCiphertext ciphertexts = 1;
+}
+
+// Finalize results before being sent back to the querier. During finalization,
+// results are compressed using modulus switching to optimize bandwidth. This is
+// safe to do since there will be no more homomorphic operations after
+// finalizing.
+message FinalizeResultsRequest {
+  // Parameters used for system.
+  Parameters parameters = 1;
+
+  // List of results to be finalized.
+  repeated EncryptedQueryResult encrypted_results = 2;
+}
+
+// Response contains results that are ready to be returned to the querier.
+message FinalizeResultsResponse {
+  // List of results after finalizing.
+  repeated EncryptedQueryResult finalized_results = 1;
+}

@@ -14,24 +14,34 @@
 
 #include "private_membership/rlwe/batch/cpp/client/client.h"
 
+#include <cstdint>
 #include <iterator>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "private_membership/rlwe/batch/cpp/client/client.pb.h"
+#include "absl/strings/string_view.h"
+#include "private_membership/rlwe/batch/proto/client.pb.h"
 #include "private_membership/rlwe/batch/cpp/client/client_helper.h"
-#include "private_membership/rlwe/batch/cpp/shared.h"
-#include "private_membership/rlwe/batch/cpp/shared.pb.h"
-#include "context.h"
-#include "galois_key.h"
-#include "integral_types.h"
-#include "oblivious_expand.h"
-#include "polynomial.h"
-#include "prng/prng.h"
-#include "serialization.pb.h"
-#include "symmetric_encryption.h"
-#include "symmetric_encryption_with_prng.h"
-#include "transcription.h"
+#include "private_membership/rlwe/batch/cpp/constants.h"
+#include "private_membership/rlwe/batch/cpp/context.h"
+#include "private_membership/rlwe/batch/cpp/padding.h"
+#include "private_membership/rlwe/batch/cpp/prng.h"
+#include "private_membership/rlwe/batch/proto/shared.pb.h"
+#include "shell_encryption/context.h"
+#include "shell_encryption/galois_key.h"
+#include "shell_encryption/integral_types.h"
+#include "shell_encryption/montgomery.h"
+#include "shell_encryption/oblivious_expand.h"
+#include "shell_encryption/polynomial.h"
+#include "shell_encryption/prng/prng.h"
+#include "shell_encryption/serialization.pb.h"
+#include "shell_encryption/symmetric_encryption.h"
+#include "shell_encryption/symmetric_encryption_with_prng.h"
+#include "shell_encryption/transcription.h"
 
 namespace private_membership {
 namespace batch {
@@ -47,15 +57,6 @@ absl::StatusOr<rlwe::SymmetricRlweKey<ModularInt>> GeneratePrivateKey(
   return rlwe::SymmetricRlweKey<ModularInt>::Sample(
       context.GetLogN(), context.GetVariance(), context.GetLogT(),
       context.GetModulusParams(), context.GetNttParams(), prng->get());
-}
-
-absl::StatusOr<rlwe::SerializedNttPolynomial> GenerateSerializedPrivateKey(
-    const Context& context) {
-  auto key = GeneratePrivateKey(context);
-  if (!key.ok()) {
-    return key.status();
-  }
-  return key->Serialize();
 }
 
 absl::StatusOr<rlwe::SymmetricRlweKey<ModularInt>> DeserializePrivateKey(
@@ -202,12 +203,18 @@ absl::StatusOr<GenerateKeysResponse> GenerateKeys(
   *response.mutable_private_key()->mutable_request_key() =
       *std::move(serialized_request_key);
 
-  auto response_key = GenerateSerializedPrivateKey(**response_context);
+  auto response_key =
+      request_key->SwitchModulus((*response_context)->GetModulusParams(),
+                                 (*response_context)->GetNttParams());
   if (!response_key.ok()) {
     return response_key.status();
   }
+  auto serialized_response_key = response_key->Serialize();
+  if (!serialized_response_key.ok()) {
+    return serialized_response_key.status();
+  }
   *response.mutable_private_key()->mutable_response_key() =
-      *std::move(response_key);
+      *std::move(serialized_response_key);
 
   const int log_compression_factor =
       request.parameters().crypto_parameters().log_compression_factor();

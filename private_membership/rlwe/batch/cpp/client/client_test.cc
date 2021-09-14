@@ -14,34 +14,50 @@
 
 #include "private_membership/rlwe/batch/cpp/client/client.h"
 
+#include <algorithm>
+#include <array>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include <google/protobuf/repeated_field.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include "absl/status/status.h"
+#include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "private_membership/rlwe/batch/cpp/client/client.pb.h"
+#include "private_membership/rlwe/batch/proto/client.pb.h"
 #include "private_membership/rlwe/batch/cpp/client/client_helper.h"
-#include "private_membership/rlwe/batch/cpp/shared.h"
-#include "private_membership/rlwe/batch/cpp/shared.pb.h"
-#include "galois_key.h"
-#include "oblivious_expand.h"
-#include "polynomial.h"
-#include "serialization.pb.h"
-#include "symmetric_encryption.h"
-#include "symmetric_encryption_with_prng.h"
-#include "transcription.h"
+#include "private_membership/rlwe/batch/cpp/constants.h"
+#include "private_membership/rlwe/batch/cpp/context.h"
+#include "private_membership/rlwe/batch/cpp/encoding.h"
+#include "private_membership/rlwe/batch/cpp/padding.h"
+#include "private_membership/rlwe/batch/cpp/prng.h"
+#include "private_membership/rlwe/batch/proto/shared.pb.h"
+#include "private_membership/rlwe/batch/cpp/test_helper.h"
+#include "shell_encryption/context.h"
+#include "shell_encryption/galois_key.h"
+#include "shell_encryption/int256.h"
+#include "shell_encryption/montgomery.h"
+#include "shell_encryption/oblivious_expand.h"
+#include "shell_encryption/polynomial.h"
+#include "shell_encryption/serialization.pb.h"
+#include "shell_encryption/symmetric_encryption.h"
+#include "shell_encryption/symmetric_encryption_with_prng.h"
+#include "shell_encryption/transcription.h"
 
 namespace private_membership {
 namespace batch {
 namespace {
 
-constexpr int kNumberOfShards = 16;
-constexpr int kNumberOfBucketsPerShard = 200;
-constexpr int kLevelsOfRecursion = 2;
 // With 2 levels of recursion, the number of slots per level is
 // ceil(200^{1/2}) = 15.
 constexpr int kSlotsPerLevel = 15;
 
 constexpr std::array<int, 3> kTestQueryIds = {0, 1, 2};
-constexpr std::array<int, 3> kTestShardIds = {8, 3, 11};
+constexpr std::array<int, 3> kTestShardIds = {1, 3, 2};
 constexpr std::array<int, 3> kTestBucketIds = {173, 14, 82};
 constexpr std::array<absl::string_view, 3> kTestBuckets = {"abc", "defghijk",
                                                            "lmnop"};
@@ -60,20 +76,6 @@ constexpr std::array<int, 6> kExpectedQueryIndices = {8,
 // Each of the 3 queries requires 15 slots per level of recursion.
 constexpr int kExpectedNumberOfSlots = 3 * kSlotsPerLevel * kLevelsOfRecursion;
 
-absl::StatusOr<rlwe::SymmetricRlweKey<ModularInt>> DeserializePrivateKey(
-    const rlwe::SerializedNttPolynomial& serialized_key,
-    const Context& context) {
-  return rlwe::SymmetricRlweKey<ModularInt>::Deserialize(
-      context.GetVariance(), context.GetLogT(), serialized_key,
-      context.GetModulusParams(), context.GetNttParams());
-}
-
-absl::StatusOr<rlwe::GaloisKey<ModularInt>> DeserializePublicKey(
-    const rlwe::SerializedGaloisKey& serialized_key, const Context& context) {
-  return rlwe::GaloisKey<ModularInt>::Deserialize(
-      serialized_key, context.GetModulusParams(), context.GetNttParams());
-}
-
 // Avoid EqualsProto that is not available with lite protos.
 MATCHER_P(IsQueryMetadata, other, "") {
   return testing::ExplainMatchResult(
@@ -82,32 +84,6 @@ MATCHER_P(IsQueryMetadata, other, "") {
                      testing::Property("shard_id", &QueryMetadata::shard_id,
                                        other.shard_id())),
       arg, result_listener);
-}
-
-Parameters CreateTestParameters() {
-  Parameters parameters;
-
-  Parameters::ShardParameters* shard_parameters =
-      parameters.mutable_shard_parameters();
-  shard_parameters->set_number_of_shards(kNumberOfShards);
-  shard_parameters->set_number_of_buckets_per_shard(kNumberOfBucketsPerShard);
-
-  // Example test parameters for the underlying RLWE cryptosystem. The security
-  // of these parameters may be calculating using the code found at:
-  // https://bitbucket.org/malb/lwe-estimator/src/master/
-  Parameters::CryptoParameters* crypto_parameters =
-      parameters.mutable_crypto_parameters();
-  crypto_parameters->add_request_modulus(18446744073708380161ULL);
-  crypto_parameters->add_request_modulus(137438953471ULL);
-  crypto_parameters->add_response_modulus(2056193ULL);
-  crypto_parameters->set_log_degree(12);
-  crypto_parameters->set_log_t(1);
-  crypto_parameters->set_variance(8);
-  crypto_parameters->set_levels_of_recursion(kLevelsOfRecursion);
-  crypto_parameters->set_log_compression_factor(4);
-  crypto_parameters->set_log_decomposition_modulus(10);
-
-  return parameters;
 }
 
 GenerateKeysRequest CreateTestGenerateKeysRequest() {
@@ -185,49 +161,31 @@ absl::StatusOr<DecryptQueriesRequest> CreateTestDecryptQueriesRequest() {
     EncryptedQueryResult* encrypted_result = request.add_encrypted_queries();
     *encrypted_result->mutable_query_metadata() =
         test_plaintext_queries[i].query_metadata();
-    int bytes_per_ciphertext =
-        ((*response_context)->GetN() * (*response_context)->GetLogT()) / 8;
-    std::string length_prepended_bucket = PrependLength(kTestBuckets[i]);
-    std::vector<uint8_t> padded_plaintext(bytes_per_ciphertext, '\0');
-    std::copy(length_prepended_bucket.begin(), length_prepended_bucket.end(),
-              padded_plaintext.begin());
-    absl::StatusOr<std::vector<ModularInt::Int>> transcribed =
-        rlwe::TranscribeBits<uint8_t, ModularInt::Int>(
-            padded_plaintext, padded_plaintext.size() * 8, 8,
-            (*response_context)->GetLogT());
-    if (!transcribed.ok()) {
-      return transcribed.status();
+    absl::StatusOr<std::vector<rlwe::Polynomial<ModularInt>>> ntt_polynomials =
+        EncodeBytes(**response_context, kTestBuckets[i]);
+    if (!ntt_polynomials.ok()) {
+      return ntt_polynomials.status();
     }
-    std::vector<ModularInt> transcribed_coeffs;
-    transcribed_coeffs.reserve(transcribed->size());
-    for (const ModularInt::Int& coeff : *transcribed) {
-      absl::StatusOr<ModularInt> coeff_modular_int =
-          ModularInt::ImportInt(coeff, (*response_context)->GetModulusParams());
-      if (!coeff_modular_int.ok()) {
-        return coeff_modular_int.status();
+
+    for (const rlwe::Polynomial<ModularInt>& ntt_polynomial :
+         *ntt_polynomials) {
+      auto prng = CreatePrng();
+      if (!prng.ok()) {
+        return prng.status();
       }
-      transcribed_coeffs.push_back(*std::move(coeff_modular_int));
+      absl::StatusOr<rlwe::SymmetricRlweCiphertext<ModularInt>> encryption =
+          rlwe::Encrypt(*private_key, ntt_polynomial,
+                        (*response_context)->GetErrorParams(), prng->get());
+      if (!encryption.ok()) {
+        return encryption.status();
+      }
+      absl::StatusOr<rlwe::SerializedSymmetricRlweCiphertext>
+          serialized_encryption = encryption->Serialize();
+      if (!serialized_encryption.ok()) {
+        return serialized_encryption.status();
+      }
+      *encrypted_result->add_ciphertexts() = *std::move(serialized_encryption);
     }
-    rlwe::Polynomial<ModularInt> ntt_polynomial =
-        rlwe::Polynomial<ModularInt>::ConvertToNtt(
-            transcribed_coeffs, (*response_context)->GetNttParams(),
-            (*response_context)->GetModulusParams());
-    auto prng = CreatePrng();
-    if (!prng.ok()) {
-      return prng.status();
-    }
-    absl::StatusOr<rlwe::SymmetricRlweCiphertext<ModularInt>> encryption =
-        rlwe::Encrypt(*private_key, ntt_polynomial,
-                      (*response_context)->GetErrorParams(), prng->get());
-    if (!encryption.ok()) {
-      return encryption.status();
-    }
-    absl::StatusOr<rlwe::SerializedSymmetricRlweCiphertext>
-        serialized_encryption = encryption->Serialize();
-    if (!serialized_encryption.ok()) {
-      return serialized_encryption.status();
-    }
-    *encrypted_result->add_ciphertexts() = *std::move(serialized_encryption);
   }
 
   return request;
@@ -253,8 +211,8 @@ TEST(ClientTest, GeneratesKeys) {
                                     **response_context)
                   .ok());
   for (int i = 0; i < response->public_key().galois_key_size(); ++i) {
-    EXPECT_TRUE(DeserializePublicKey(response->public_key().galois_key(i),
-                                     **request_context)
+    EXPECT_TRUE(DeserializePublicGaloisKey(response->public_key().galois_key(i),
+                                           **request_context)
                     .ok());
   }
 }
@@ -290,6 +248,45 @@ TEST(ClientTest, RandomKeys) {
       EXPECT_NE(responses[i].private_key().response_key().coeffs(),
                 responses[j].private_key().response_key().coeffs());
     }
+  }
+}
+
+TEST(ClientTest, CheckPrivateKeyRelation) {
+  GenerateKeysRequest request = CreateTestGenerateKeysRequest();
+
+  absl::StatusOr<GenerateKeysResponse> response = GenerateKeys(request);
+  ASSERT_TRUE(response.ok());
+
+  auto request_context = CreateRlweRequestContext(request.parameters());
+  ASSERT_TRUE(request_context.ok());
+  ASSERT_NE(request_context->get(), nullptr);
+  auto response_context = CreateRlweResponseContext(request.parameters());
+  ASSERT_TRUE(response_context.ok());
+  ASSERT_NE(response_context->get(), nullptr);
+
+  auto request_key = DeserializePrivateKey(
+      response->private_key().request_key(), **request_context);
+  ASSERT_TRUE(request_key.ok());
+  auto response_key = DeserializePrivateKey(
+      response->private_key().response_key(), **response_context);
+  ASSERT_TRUE(response_key.ok());
+
+  std::vector<Int> values = {0, 1, 2, 1, 0, 2};
+  for (int i = 0; i < values.size(); ++i) {
+    absl::StatusOr<rlwe::SymmetricRlweCiphertext<ModularInt>> ciphertext =
+        EncryptSingleInt(**request_context, *request_key, values[i]);
+    ASSERT_TRUE(ciphertext.ok()) << ciphertext.status();
+    absl::StatusOr<rlwe::SymmetricRlweCiphertext<ModularInt>>
+        switched_ciphertext = ciphertext->SwitchModulus(
+            (*request_context)->GetNttParams(),
+            (*response_context)->GetModulusParams(),
+            (*response_context)->GetNttParams(),
+            (*response_context)->GetErrorParams(), (*response_context)->GetT());
+    ASSERT_TRUE(switched_ciphertext.ok()) << switched_ciphertext.status();
+    absl::StatusOr<Int> decrypted = DecryptSingleInt(
+        **response_context, *response_key, *switched_ciphertext);
+    ASSERT_TRUE(decrypted.ok()) << decrypted.status();
+    EXPECT_EQ(*decrypted, values[i]) << " at index i";
   }
 }
 
@@ -488,9 +485,6 @@ TEST(ClientTest, DecryptQueries) {
   ASSERT_TRUE(request.ok());
 
   absl::StatusOr<DecryptQueriesResponse> response = DecryptQueries(*request);
-  if (!response.ok()) {
-    std::cout << response.status() << std::endl;
-  }
   ASSERT_TRUE(response.ok());
 
   auto test_plaintext_queries = CreateTestPlaintextQueries();

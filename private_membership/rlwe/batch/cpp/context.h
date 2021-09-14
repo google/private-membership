@@ -12,25 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CLIENT_CLIENT_H_
-#define PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CLIENT_CLIENT_H_
+#ifndef PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CONTEXT_H_
+#define PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CONTEXT_H_
+
+#include <memory>
 
 #include "absl/status/statusor.h"
-#include "private_membership/rlwe/batch/proto/client.pb.h"
+#include "private_membership/rlwe/batch/cpp/constants.h"
+#include "private_membership/rlwe/batch/proto/shared.pb.h"
+#include "shell_encryption/context.h"
 
 namespace private_membership {
 namespace batch {
 
-absl::StatusOr<GenerateKeysResponse> GenerateKeys(
-    const GenerateKeysRequest& request);
+// Creates context for generating and processing requests.
+absl::StatusOr<std::unique_ptr<const Context>> CreateRlweRequestContext(
+    const Parameters& parameters);
 
-absl::StatusOr<EncryptQueriesResponse> EncryptQueries(
-    const EncryptQueriesRequest& request);
-
-absl::StatusOr<DecryptQueriesResponse> DecryptQueries(
-    const DecryptQueriesRequest& request);
+// Creates context for generating and processing responses.
+absl::StatusOr<std::unique_ptr<const Context>> CreateRlweResponseContext(
+    const Parameters& parameters);
 
 }  // namespace batch
 }  // namespace private_membership
 
-#endif  // PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CLIENT_CLIENT_H_
+#endif  // PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CONTEXT_H_

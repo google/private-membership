@@ -12,25 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CLIENT_CLIENT_H_
-#define PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CLIENT_CLIENT_H_
+#ifndef PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CONSTANTS_H_
+#define PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CONSTANTS_H_
 
-#include "absl/status/statusor.h"
-#include "private_membership/rlwe/batch/proto/client.pb.h"
+#include "shell_encryption/context.h"
+#include "shell_encryption/integral_types.h"
+#include "shell_encryption/montgomery.h"
 
 namespace private_membership {
 namespace batch {
 
-absl::StatusOr<GenerateKeysResponse> GenerateKeys(
-    const GenerateKeysRequest& request);
-
-absl::StatusOr<EncryptQueriesResponse> EncryptQueries(
-    const EncryptQueriesRequest& request);
-
-absl::StatusOr<DecryptQueriesResponse> DecryptQueries(
-    const DecryptQueriesRequest& request);
+using Int = rlwe::Uint128;
+using ModularInt = rlwe::MontgomeryInt<Int>;
+using Context = rlwe::RlweContext<ModularInt>;
 
 }  // namespace batch
 }  // namespace private_membership
 
-#endif  // PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CLIENT_CLIENT_H_
+#endif  // PRIVATE_MEMBERSHIP_RLWE_BATCH_CPP_CONSTANTS_H_
