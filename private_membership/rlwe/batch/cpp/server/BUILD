@@ -51,6 +51,7 @@ cc_test(
         "@com_github_google_shell//shell_encryption:polynomial",
         "@com_github_google_shell//shell_encryption:serialization_cc_proto",
         "@com_github_google_shell//shell_encryption:symmetric_encryption",
+        "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
         "@com_google_absl//absl/memory",
         "@com_google_absl//absl/status",

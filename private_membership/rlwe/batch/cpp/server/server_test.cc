@@ -23,6 +23,7 @@
 #include <google/protobuf/repeated_field.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
@@ -32,10 +33,10 @@
 #include "private_membership/rlwe/batch/cpp/constants.h"
 #include "private_membership/rlwe/batch/cpp/context.h"
 #include "private_membership/rlwe/batch/cpp/encoding.h"
+#include "private_membership/rlwe/batch/cpp/test_helper.h"
 #include "private_membership/rlwe/batch/proto/client.pb.h"
 #include "private_membership/rlwe/batch/proto/server.pb.h"
 #include "private_membership/rlwe/batch/proto/shared.pb.h"
-#include "private_membership/rlwe/batch/cpp/test_helper.h"
 #include "shell_encryption/context.h"
 #include "shell_encryption/polynomial.h"
 #include "shell_encryption/serialization.pb.h"
@@ -304,7 +305,73 @@ TEST_F(ServerTest, EncodingEmptyShard) {
 }
 
 class ApplyQueriesTest : public ServerTest,
-                         public testing::WithParamInterface<bool> {};
+                         public testing::WithParamInterface<bool> {
+ protected:
+  void RunTest(const std::vector<PlaintextQuery>& queries,
+               bool finalize_results) {
+    RunTest(queries, CreateTestDatabase(), finalize_results);
+  }
+
+  void RunTest(const std::vector<PlaintextQuery>& queries,
+               const std::vector<RawShard>& database, bool finalize_results) {
+    absl::flat_hash_map<int, std::string> expected_results;
+    for (const PlaintextQuery& query : queries) {
+      int query_id = query.query_metadata().query_id();
+      int shard_id = query.query_metadata().shard_id();
+      int bucket_id = query.bucket_id();
+      for (const RawShard& shard : database) {
+        if (shard.shard_id == shard_id) {
+          for (const auto& bucket : shard.buckets) {
+            if (bucket.first == bucket_id) {
+              expected_results[query_id] = bucket.second;
+            }
+          }
+        }
+      }
+    }
+
+    absl::StatusOr<ApplyQueriesRequest> request = CreateApplyQueriesRequest(
+        queries, database, /*encode_database=*/GetParam());
+    ASSERT_TRUE(request.ok());
+    request->set_finalize_results(finalize_results);
+
+    absl::StatusOr<ApplyQueriesResponse> response = ApplyQueries(*request);
+    ASSERT_TRUE(response.ok());
+    ASSERT_EQ(response->query_results_size(), expected_results.size());
+
+    DecryptQueriesRequest decrypt_request;
+    *decrypt_request.mutable_parameters() = CreateTestParameters();
+    *decrypt_request.mutable_private_key() = keys_.private_key();
+    *decrypt_request.mutable_public_key() = keys_.public_key();
+
+    if (finalize_results) {
+      *decrypt_request.mutable_encrypted_queries() = response->query_results();
+    } else {
+      FinalizeResultsRequest finalize_request;
+      *finalize_request.mutable_parameters() = CreateTestParameters();
+      *finalize_request.mutable_encrypted_results() = response->query_results();
+      absl::StatusOr<FinalizeResultsResponse> finalize_response =
+          FinalizeResults(finalize_request);
+      ASSERT_TRUE(finalize_response.ok());
+      ASSERT_EQ(finalize_response->finalized_results_size(), queries.size());
+      *decrypt_request.mutable_encrypted_queries() =
+          finalize_response->finalized_results();
+    }
+
+    absl::StatusOr<DecryptQueriesResponse> decrypt_response =
+        DecryptQueries(decrypt_request);
+    ASSERT_TRUE(decrypt_response.ok());
+    ASSERT_EQ(decrypt_response->result_size(), queries.size());
+
+    absl::flat_hash_map<int, std::string> results;
+    for (const auto& result : decrypt_response->result()) {
+      int query_id = result.query_metadata().query_id();
+      results[query_id] = result.result();
+    }
+
+    EXPECT_THAT(results, UnorderedElementsAreArray(expected_results));
+  }
+};
 
 TEST_P(ApplyQueriesTest, ApplyQueries) {
   const std::vector<PlaintextQuery> queries = {
@@ -313,56 +380,8 @@ TEST_P(ApplyQueriesTest, ApplyQueries) {
       CreatePlaintextQuery(/*query_id=*/2, /*shard_id=*/1,
                            /*bucket_index=*/kEmptyBucketId),
   };
-  const absl::flat_hash_set<int> query_ids = {0, 1, 2};
 
-  absl::StatusOr<ApplyQueriesRequest> request =
-      CreateApplyQueriesRequest(queries, /*encode_database=*/GetParam());
-  ASSERT_TRUE(request.ok());
-
-  absl::StatusOr<ApplyQueriesResponse> response = ApplyQueries(*request);
-  ASSERT_TRUE(response.ok());
-  ASSERT_EQ(response->query_results_size(), queries.size());
-
-  FinalizeResultsRequest finalize_request;
-  *finalize_request.mutable_parameters() = CreateTestParameters();
-  *finalize_request.mutable_encrypted_results() = response->query_results();
-  absl::StatusOr<FinalizeResultsResponse> finalize_response =
-      FinalizeResults(finalize_request);
-  ASSERT_TRUE(finalize_response.ok());
-  ASSERT_EQ(finalize_response->finalized_results_size(), queries.size());
-
-  DecryptQueriesRequest decrypt_request;
-  *decrypt_request.mutable_parameters() = CreateTestParameters();
-  *decrypt_request.mutable_private_key() = keys_.private_key();
-  *decrypt_request.mutable_public_key() = keys_.public_key();
-  *decrypt_request.mutable_encrypted_queries() =
-      finalize_response->finalized_results();
-
-  absl::StatusOr<DecryptQueriesResponse> decrypt_response =
-      DecryptQueries(decrypt_request);
-  ASSERT_TRUE(decrypt_response.ok());
-  ASSERT_EQ(decrypt_response->result_size(), queries.size());
-
-  absl::flat_hash_set<int> seen_query_ids;
-  for (const auto& result : decrypt_response->result()) {
-    int query_id = result.query_metadata().query_id();
-    seen_query_ids.insert(query_id);
-    bool did_match = false;
-    for (const PlaintextQuery& query : queries) {
-      if (query.query_metadata().query_id() == query_id) {
-        EXPECT_EQ(result.result(),
-                  CreateTestBucketContent(query.query_metadata().shard_id(),
-                                          query.bucket_id()));
-        EXPECT_EQ(result.query_metadata().shard_id(),
-                  query.query_metadata().shard_id());
-        did_match = true;
-        break;
-      }
-    }
-    EXPECT_TRUE(did_match) << result.DebugString();
-  }
-
-  EXPECT_THAT(seen_query_ids, UnorderedElementsAreArray(query_ids));
+  RunTest(queries, /*finalize_results=*/false);
 }
 
 TEST_P(ApplyQueriesTest, ApplyQueriesWithFinalizing) {
@@ -374,48 +393,8 @@ TEST_P(ApplyQueriesTest, ApplyQueriesWithFinalizing) {
       CreatePlaintextQuery(/*query_id=*/102, /*shard_id=*/1,
                            /*bucket_index=*/kEmptyBucketId),
   };
-  const absl::flat_hash_set<int> query_ids = {10, 110, 102};
 
-  absl::StatusOr<ApplyQueriesRequest> request =
-      CreateApplyQueriesRequest(queries, /*encode_database=*/GetParam());
-  ASSERT_TRUE(request.ok());
-  request->set_finalize_results(true);
-
-  absl::StatusOr<ApplyQueriesResponse> response = ApplyQueries(*request);
-  ASSERT_TRUE(response.ok());
-  ASSERT_EQ(response->query_results_size(), queries.size());
-
-  DecryptQueriesRequest decrypt_request;
-  *decrypt_request.mutable_parameters() = CreateTestParameters();
-  *decrypt_request.mutable_private_key() = keys_.private_key();
-  *decrypt_request.mutable_public_key() = keys_.public_key();
-  *decrypt_request.mutable_encrypted_queries() = response->query_results();
-
-  absl::StatusOr<DecryptQueriesResponse> decrypt_response =
-      DecryptQueries(decrypt_request);
-  ASSERT_TRUE(decrypt_response.ok());
-  ASSERT_EQ(decrypt_response->result_size(), queries.size());
-
-  absl::flat_hash_set<int> seen_query_ids;
-  for (const auto& result : decrypt_response->result()) {
-    int query_id = result.query_metadata().query_id();
-    seen_query_ids.insert(query_id);
-    bool did_match = false;
-    for (const PlaintextQuery& query : queries) {
-      if (query.query_metadata().query_id() == query_id) {
-        EXPECT_EQ(result.result(),
-                  CreateTestBucketContent(query.query_metadata().shard_id(),
-                                          query.bucket_id()));
-        EXPECT_EQ(result.query_metadata().shard_id(),
-                  query.query_metadata().shard_id());
-        did_match = true;
-        break;
-      }
-    }
-    EXPECT_TRUE(did_match) << result.DebugString();
-  }
-
-  EXPECT_THAT(seen_query_ids, UnorderedElementsAreArray(query_ids));
+  RunTest(queries, /*finalize_results=*/true);
 }
 
 TEST_P(ApplyQueriesTest, ApplyQueriesWithNoPublicKeys) {
@@ -461,7 +440,7 @@ TEST_P(ApplyQueriesTest, ApplyQueriesWithNoShards) {
   EXPECT_EQ(response.status().code(), absl::StatusCode::kInvalidArgument);
 }
 
-TEST_P(ApplyQueriesTest, ApplyQueriesWithNoShard) {
+TEST_P(ApplyQueriesTest, ApplyQueriesWithMissingShard) {
   const std::vector<RawShard> raw_shards = {
       {0, {{0, "hello"}, {1, "goodbye"}}},
   };
@@ -494,6 +473,21 @@ TEST_P(ApplyQueriesTest, ApplyQueriesWithDuplicateBucket) {
 
   absl::StatusOr<ApplyQueriesResponse> response = ApplyQueries(*request);
   EXPECT_EQ(response.status().code(), absl::StatusCode::kInvalidArgument);
+}
+
+TEST_P(ApplyQueriesTest, ApplyQueriesWithShardSubset) {
+  // Specify a database with one bucket per shard.
+  const std::vector<RawShard> raw_shards = {
+      {0, {{17, "hello"}}},
+      {1, {{97, "goodbye"}}},
+  };
+
+  const std::vector<PlaintextQuery> queries = {
+      CreatePlaintextQuery(/*query_id=*/0, /*shard_id=*/0, /*bucket_index=*/17),
+      CreatePlaintextQuery(/*query_id=*/1, /*shard_id=*/1, /*bucket_index=*/97),
+  };
+
+  RunTest(queries, raw_shards, /*finalize_results=*/true);
 }
 
 INSTANTIATE_TEST_SUITE_P(ApplyQueriesTest, ApplyQueriesTest, ::testing::Bool());
