@@ -319,6 +319,7 @@ class ApplyQueriesTest : public ServerTest,
       int query_id = query.query_metadata().query_id();
       int shard_id = query.query_metadata().shard_id();
       int bucket_id = query.bucket_id();
+      expected_results[query_id] = "";
       for (const RawShard& shard : database) {
         if (shard.shard_id == shard_id) {
           for (const auto& bucket : shard.buckets) {
@@ -480,11 +481,13 @@ TEST_P(ApplyQueriesTest, ApplyQueriesWithShardSubset) {
   const std::vector<RawShard> raw_shards = {
       {0, {{17, "hello"}}},
       {1, {{97, "goodbye"}}},
+      {2, {{22, "aloha"}}},
   };
 
   const std::vector<PlaintextQuery> queries = {
       CreatePlaintextQuery(/*query_id=*/0, /*shard_id=*/0, /*bucket_index=*/17),
       CreatePlaintextQuery(/*query_id=*/1, /*shard_id=*/1, /*bucket_index=*/97),
+      CreatePlaintextQuery(/*query_id=*/2, /*shard_id=*/2, /*bucket_index=*/0),
   };
 
   RunTest(queries, raw_shards, /*finalize_results=*/true);

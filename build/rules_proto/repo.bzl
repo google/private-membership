@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Repository rules/macros for rules_cc.
+Repository rules/macros for rules_proto.
 """
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")

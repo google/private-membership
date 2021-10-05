@@ -25,6 +25,7 @@ load("//build/com_google_absl:repo.bzl", "com_google_absl_repo")
 load("//build/com_github_google_glog:repo.bzl", "com_github_google_glog_repo")
 load("//build/com_github_gflags_gflags:repo.bzl", "com_github_gflags_gflags_repo")
 load("//build/com_github_google_shell:repo.bzl", "com_github_google_shell_repo")
+load("//build/com_github_google_private_join_and_compute:repo.bzl", "com_github_google_private_join_and_compute_repo")
 load("//build/boringssl:repo.bzl", "boringssl_repo")
 
 def private_membership_repositories():
@@ -40,4 +41,5 @@ def private_membership_repositories():
     com_github_google_glog_repo()
     com_github_gflags_gflags_repo()
     com_github_google_shell_repo()
+    com_github_google_private_join_and_compute_repo()
     boringssl_repo()
