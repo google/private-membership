@@ -13,16 +13,16 @@
 # limitations under the License.
 
 """
-Repository rules/macros for com_github_google_shell.
+Repository rules/macros for com_github_google_private_join_and_compute.
 """
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-def com_github_google_shell_repo():
-    if "com_github_google_shell" not in native.existing_rules():
+def com_github_google_private_join_and_compute_repo():
+    if "com_github_google_private_join_and_compute" not in native.existing_rules():
         http_archive(
-            name = "com_github_google_shell",
-            sha256 = "807d42caed3056cea63b9048a2fd69122c071740d43c9de546cc0fabded87a5c",
-            strip_prefix = "shell-encryption-507781e129a03f8178c9716d79163fae23d34b6a",
-            url = "https://github.com/google/shell-encryption/archive/507781e129a03f8178c9716d79163fae23d34b6a.tar.gz",
+            name = "com_github_google_private_join_and_compute",
+            sha256 = "b1a83e1bc778fe902b782ae6d06fdf590a1f74684954c05592463ddad75f8ddb",
+            strip_prefix = "private-join-and-compute-505ba981d66c9e5e73e18cfa647b4685f74784cb",
+            url = "https://github.com/google/private-join-and-compute/archive/505ba981d66c9e5e73e18cfa647b4685f74784cb.tar.gz",
         )
