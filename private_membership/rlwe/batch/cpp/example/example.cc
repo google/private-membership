@@ -23,8 +23,8 @@
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
 #include "private_membership/rlwe/batch/cpp/client/client.h"
-#include "private_membership/rlwe/batch/proto/client.pb.h"
 #include "private_membership/rlwe/batch/cpp/server/server.h"
+#include "private_membership/rlwe/batch/proto/client.pb.h"
 #include "private_membership/rlwe/batch/proto/server.pb.h"
 #include "private_membership/rlwe/batch/proto/shared.pb.h"
 
@@ -32,9 +32,10 @@ namespace private_membership {
 namespace batch {
 namespace {
 
-// A million bucket database split into 5 shards.
+// A 20,000 bucket database split into 5 shards. Each bucket is 400 bytes.
 constexpr int kNumberOfShards = 5;
-const int kNumberOfBucketsPerShard = 4000;
+constexpr int kNumberOfBucketsPerShard = 4000;
+constexpr int kContentByteLength = 400;
 
 // Create parameters for example.
 Parameters CreateParameters() {
@@ -64,18 +65,22 @@ Parameters CreateParameters() {
 }
 
 std::string CreateDatabaseContents(int shard_id, int bucket_id) {
-  // Every 7-th bucket will be empty.
-  if (bucket_id % 7 == 6) {
-    return "";
+  // Every 700-th bucket will be empty.
+  if (bucket_id % 700 == 6) {
+    return std::string(kContentByteLength, '0');
   }
 
   // All odd buckets will be "shard_id,bucket_id".
   if (bucket_id % 2 == 1) {
-    return absl::StrCat(shard_id, ",", bucket_id);
+    std::string bucket = absl::StrCat(shard_id, ",", bucket_id);
+    bucket.append(kContentByteLength - bucket.size(), '0');
+    return bucket;
   }
 
   // All even buckets will be "bucket_id:shard_id".
-  return absl::StrCat(bucket_id, ":", shard_id);
+  std::string bucket = absl::StrCat(bucket_id, ":", shard_id);
+  bucket.append(kContentByteLength - bucket.size(), '0');
+  return bucket;
 }
 
 std::vector<RawDatabaseShard> CreateRawDatabase() {
