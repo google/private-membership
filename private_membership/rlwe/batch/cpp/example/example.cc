@@ -66,7 +66,7 @@ Parameters CreateParameters() {
 
 std::string CreateDatabaseContents(int shard_id, int bucket_id) {
   // Every 700-th bucket will be empty.
-  if (bucket_id % 700 == 6) {
+  if (bucket_id % 700 == 0) {
     return std::string(kContentByteLength, '0');
   }
 
@@ -106,10 +106,17 @@ PlaintextQuery CreatePlaintextQuery(int query_id, int shard_id, int bucket_id) {
 
 std::vector<PlaintextQuery> CreatePlaintextQueries() {
   std::vector<PlaintextQuery> queries = {
+<<<<<<< HEAD
       // Empty buckets (bucket_id divisible by 7).
       CreatePlaintextQuery(/*query_id=*/0, /*shard_id=*/0, /*bucket_id=*/28),
       CreatePlaintextQuery(/*query_id=*/6, /*shard_id=*/3,
                            /*bucket_id=*/707),
+=======
+      // Empty buckets (bucket_id divisible by 700).
+      CreatePlaintextQuery(/*query_id=*/0, /*shard_id=*/0, /*bucket_id=*/0),
+      CreatePlaintextQuery(/*query_id=*/6, /*shard_id=*/3,
+                           /*bucket_id=*/700),
+>>>>>>> df0095b (removing BUILD file and fixing some errrors)
 
       // Odd buckets.
       CreatePlaintextQuery(/*query_id=*/10, /*shard_id=*/4,
