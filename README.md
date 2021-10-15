@@ -45,7 +45,9 @@ The Private Set Membership library requires the following dependencies:
 
 In order to run this library, you need to install Bazel, if you don't have
 it already.
-[Follow the instructions for your platform on the Bazel website.](https://docs.bazel.build/versions/master/install.html)
+[Follow the instructions for your platform on the Bazel website. Make sure you
+ are installing version 4.2.1 or above.]
+(https://docs.bazel.build/versions/master/install.html)
 
 You also need to install Git, if you don't have it already.
 [Follow the instructions for your platform on the Git website.](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -64,12 +66,6 @@ You may also run all tests (recursively) using the following command:
 
 ```bash
 bazel test ... --cxxopt='-std=c++17'
-```
-
-If you get an error, you may need to build/test with the following flags:
-
-```bash
-bazel build ... --cxxopt='-std=c++17' --incompatible_disable_deprecated_attr_params=false --incompatible_depset_is_not_iterable=false --incompatible_new_actions_api=false --incompatible_no_support_tools_in_action_inputs=false
 ```
 
 ## Disclaimers
