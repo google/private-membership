@@ -103,6 +103,17 @@ message ApplyQueriesRequest {
   // Queries to be applied.
   repeated EncryptedQueries queries = 4;
 
+  // If set, this must specify a nonce per query: the key of the map is the
+  // query id and the value is the nonce.
+  //
+  // Additionally, the database must not contain any entries for the last bucket
+  // in each shard. For each query, when it is executed, the last bucket will
+  // contain the associated nonce.
+  //
+  // This must be set if and only if enable_padding_nonces is true in
+  // parameters.shard_parameters.
+  map<int32, bytes> padding_nonces = 8;
+
   // Finalize results before returning. This should only set if no other
   // homomorphic operations will be performed afterwards.
   bool finalize_results = 5;
