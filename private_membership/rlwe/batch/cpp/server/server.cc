@@ -22,6 +22,7 @@
 #include <utility>
 #include <vector>
 
+#include <google/protobuf/map.h>
 #include <google/protobuf/repeated_field.h>
 #include "absl/algorithm/container.h"
 #include "absl/container/flat_hash_map.h"
@@ -465,6 +466,12 @@ ApplyFirstLevel(const Context& context,
     if (bucket.contents.size() <= column_index) {
       continue;
     }
+
+    if (bucket.id < 0 || bucket.id >= apply_context.buckets_per_shard()) {
+      return absl::InvalidArgumentError(
+          absl::StrCat("Bucket ID ", bucket.id, " not within [0, ",
+                       apply_context.buckets_per_shard(), ")."));
+    }
     int query_index = bucket.id % apply_context.queries_per_level();
     int result_index = bucket.id / apply_context.queries_per_level();
 
@@ -628,15 +635,38 @@ SerializeOrFinalizeQueries(
 absl::Status ApplyQueryToShard(
     const Context& context, const Context& finalize_context,
     const Parameters& parameters,
-    const std::vector<DeserializedQuery>& shard_queries, const Shard& shard,
+    const std::vector<DeserializedQuery>& shard_queries,
+    const google::protobuf::Map<int, std::string>& padding_nonces, Shard& shard,
     bool finalize_results, ApplyQueriesResponse& response) {
+  bool add_padding_bucket =
+      parameters.shard_parameters().enable_padding_nonces();
   for (const DeserializedQuery& shard_query : shard_queries) {
+    if (add_padding_bucket) {
+      auto nonce_itr = padding_nonces.find(shard_query.query_id);
+      if (nonce_itr == padding_nonces.end()) {
+        return absl::InvalidArgumentError("Missing padding nonce for query");
+      }
+      absl::StatusOr<std::vector<rlwe::Polynomial<ModularInt>>>
+          encoded_padding_nonce = EncodeBytes(context, nonce_itr->second);
+      if (!encoded_padding_nonce.ok()) {
+        return encoded_padding_nonce.status();
+      }
+      int padding_bucket_id =
+          parameters.shard_parameters().number_of_buckets_per_shard() - 1;
+      shard.buckets.push_back(
+          {padding_bucket_id, *std::move(encoded_padding_nonce)});
+    }
+
     // Apply query to the relevant shard.
     absl::StatusOr<std::vector<rlwe::SymmetricRlweCiphertext<ModularInt>>>
         result_ciphertexts =
             ApplyQuery(context, parameters, shard, shard_query);
     if (!result_ciphertexts.ok()) {
       return result_ciphertexts.status();
+    }
+
+    if (add_padding_bucket) {
+      shard.buckets.pop_back();
     }
 
     // Serialize (and potentially finalize) resulting ciphertexts.
@@ -692,6 +722,10 @@ absl::StatusOr<EncodeDatabaseResponse> EncodeDatabase(
 
 absl::StatusOr<ApplyQueriesResponse> ApplyQueries(
     const ApplyQueriesRequest& request) {
+  const Parameters& parameters = request.parameters();
+  const Parameters::ShardParameters& shard_parameters =
+      parameters.shard_parameters();
+
   if (request.public_key().galois_key().empty()) {
     return absl::InvalidArgumentError("Expect at least one public key");
   } else if (request.has_encoded_database() &&
@@ -702,15 +736,18 @@ absl::StatusOr<ApplyQueriesResponse> ApplyQueries(
     return absl::InvalidArgumentError("Expect at least one encoded shard");
   } else if (request.queries().empty()) {
     return absl::InvalidArgumentError("Expect at least one query");
+  } else if (shard_parameters.enable_padding_nonces() ==
+             request.padding_nonces().empty()) {
+    return absl::InvalidArgumentError("Padding nonces are misconfigured");
   }
 
   // Compute necessary information from parameters.
-  auto context = CreateRlweRequestContext(request.parameters());
+  auto context = CreateRlweRequestContext(parameters);
   if (!context.ok()) {
     return context.status();
   }
   // Compute necessary information from parameters.
-  auto finalize_context = CreateRlweResponseContext(request.parameters());
+  auto finalize_context = CreateRlweResponseContext(parameters);
   if (!finalize_context.ok()) {
     return finalize_context.status();
   }
@@ -738,13 +775,25 @@ absl::StatusOr<ApplyQueriesResponse> ApplyQueries(
     return database.status();
   }
 
+  if (shard_parameters.enable_padding_nonces()) {
+    int padding_bucket_id = shard_parameters.number_of_buckets_per_shard() - 1;
+    for (const auto& [shard_id, shard] : *database) {
+      for (const Bucket& bucket : shard.buckets) {
+        if (bucket.id == padding_bucket_id) {
+          return absl::InvalidArgumentError(absl::StrCat(
+              "Padding nonces provided but there is already a bucket with id ",
+              padding_bucket_id));
+        }
+      }
+    }
+  }
+
   ApplyQueriesResponse response;
   for (const EncryptedQueries& encrypted_queries : request.queries()) {
     // Deserialize all queries.
     absl::StatusOr<absl::flat_hash_map<int, std::vector<DeserializedQuery>>>
-        queries = DeserializeQueries(**context, request.parameters(),
-                                     encrypted_queries, levels_of_expansion,
-                                     expander->get());
+        queries = DeserializeQueries(**context, parameters, encrypted_queries,
+                                     levels_of_expansion, expander->get());
     if (!queries.ok()) {
       return queries.status();
     }
@@ -757,8 +806,9 @@ absl::StatusOr<ApplyQueriesResponse> ApplyQueries(
       }
 
       absl::Status apply_status = ApplyQueryToShard(
-          **context, **finalize_context, request.parameters(), shard_queries,
-          database_shard->second, request.finalize_results(), response);
+          **context, **finalize_context, parameters, shard_queries,
+          request.padding_nonces(), database_shard->second,
+          request.finalize_results(), response);
       if (!apply_status.ok()) {
         return apply_status;
       }

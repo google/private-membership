@@ -36,6 +36,7 @@ cc_library(
 cc_test(
     name = "server_test",
     srcs = ["server_test.cc"],
+    shard_count = 2,
     deps = [
         ":server",
         "//private_membership/rlwe/batch/cpp:constants",

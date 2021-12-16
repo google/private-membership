@@ -40,6 +40,10 @@ message Parameters {
 
     // Number of required fake queries.
     int32 required_fake_queries = 4;
+
+    // If true, the last bucket in each shard is reserved for a padding nonce
+    // that varies with each query.
+    bool enable_padding_nonces = 5;
   }
 
   // This message holds all relevant information for the cryptosystem.
