@@ -11,6 +11,7 @@ cc_library(
         "//private_membership/rlwe/batch/cpp:constants",
         "//private_membership/rlwe/batch/cpp:context",
         "//private_membership/rlwe/batch/cpp:encoding",
+        "//private_membership/rlwe/batch/cpp:parameters",
         "//private_membership/rlwe/batch/cpp:prng",
         "//private_membership/rlwe/batch/proto:server_cc_proto",
         "//private_membership/rlwe/batch/proto:shared_cc_proto",
@@ -36,11 +37,13 @@ cc_library(
 cc_test(
     name = "server_test",
     srcs = ["server_test.cc"],
+    shard_count = 2,
     deps = [
         ":server",
         "//private_membership/rlwe/batch/cpp:constants",
         "//private_membership/rlwe/batch/cpp:context",
         "//private_membership/rlwe/batch/cpp:encoding",
+        "//private_membership/rlwe/batch/cpp:parameters",
         "//private_membership/rlwe/batch/cpp:test_helper",
         "//private_membership/rlwe/batch/cpp/client",
         "//private_membership/rlwe/batch/proto:client_cc_proto",

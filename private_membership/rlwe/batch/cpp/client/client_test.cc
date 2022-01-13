@@ -195,7 +195,7 @@ TEST(ClientTest, GeneratesKeys) {
   GenerateKeysRequest request = CreateTestGenerateKeysRequest();
 
   absl::StatusOr<GenerateKeysResponse> response = GenerateKeys(request);
-  ASSERT_TRUE(response.ok());
+  ASSERT_TRUE(response.ok()) << response.status();
 
   auto request_context = CreateRlweRequestContext(request.parameters());
   ASSERT_TRUE(request_context.ok());

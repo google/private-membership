@@ -15,26 +15,26 @@
 #include "private_membership/rlwe/batch/cpp/client/client_helper.h"
 
 #include <cmath>
+#include <limits>
 #include <string>
 #include <vector>
 
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
+#include "private_membership/rlwe/batch/cpp/parameters.h"
 #include "private_membership/rlwe/batch/proto/client.pb.h"
 #include "private_membership/rlwe/batch/proto/shared.pb.h"
 
 namespace private_membership {
 namespace batch {
 
-// Arbitrary, realistic maximum values to avoid integer overflows.
-constexpr int kMaximumLevelsOfRecursion = 30;
-constexpr int kMaximumNumShards = (1 << 30);
-constexpr int kMaximumNumBucketsPerShard = (1 << 30);
-
 absl::StatusOr<BitVector> GenerateBitVector(
     const EncryptQueriesRequest& request) {
   const Parameters& parameters = request.parameters();
+  if (auto status = ValidateParameters(parameters); !status.ok()) {
+    return status;
+  }
 
   // Retrieve all relevant parameters.
   int num_queries = request.plaintext_queries_size();
@@ -43,21 +43,20 @@ absl::StatusOr<BitVector> GenerateBitVector(
       parameters.shard_parameters().number_of_buckets_per_shard();
   int levels_of_recursion =
       parameters.crypto_parameters().levels_of_recursion();
-  if (num_shards <= 0 || num_buckets_per_query <= 0 ||
-      levels_of_recursion <= 0) {
-    return absl::InvalidArgumentError(
-        "The input parameters are invalid because one or more parameters are "
-        "non-negative.");
-  } else if (num_shards >= kMaximumNumShards ||
-             num_buckets_per_query > kMaximumNumBucketsPerShard ||
-             levels_of_recursion > kMaximumLevelsOfRecursion) {
-    return absl::InvalidArgumentError(
-        "The input parameters are invalid because one or more parameters are "
-        "too large.");
+
+  if (num_queries == 0) {
+    return BitVector{};
   }
+
   int num_slots_per_level = static_cast<int>(
       std::ceil(std::pow(num_buckets_per_query, 1.0 / levels_of_recursion)));
   int num_slots_per_query = num_slots_per_level * levels_of_recursion;
+
+  if (std::numeric_limits<int>::max() / num_queries <= num_slots_per_query) {
+    return absl::InvalidArgumentError(
+        "The input parameters are invalid because the total size is too large");
+  }
+
   int total_size = num_queries * num_slots_per_query;
 
   // Generate all indices that should have a 1-entry.

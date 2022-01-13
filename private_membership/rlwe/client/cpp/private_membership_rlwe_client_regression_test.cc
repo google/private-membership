@@ -43,11 +43,10 @@ absl::Status ParseProtoFromFile(absl::string_view path, T* proto_out) {
 
 void VerifyClient(
     const PrivateMembershipRlweClientRegressionTestData::TestCase& test_case) {
-  auto client_or_status = PrivateMembershipRlweClient::CreateForTesting(
-      test_case.use_case(), {test_case.plaintext_id()},
-      test_case.ec_cipher_key(), test_case.seed());
-  EXPECT_OK(client_or_status.status());
-  auto client = std::move(client_or_status.value());
+  ASSERT_OK_AND_ASSIGN(auto client,
+                       PrivateMembershipRlweClient::CreateForTesting(
+                           test_case.use_case(), {test_case.plaintext_id()},
+                           test_case.ec_cipher_key(), test_case.seed()));
 
   ASSERT_OK_AND_ASSIGN(auto oprf_request, client->CreateOprfRequest());
   EXPECT_EQ(oprf_request.SerializeAsString(),

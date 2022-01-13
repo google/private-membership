@@ -27,8 +27,8 @@ namespace {
 constexpr int kCurveId = NID_X9_62_prime256v1;
 
 using ::rlwe::testing::StatusIs;
-using testing::Eq;
-using testing::HasSubstr;
+using ::testing::Eq;
+using ::testing::HasSubstr;
 
 class CryptoUtilsTest : public ::testing::Test {
  protected:

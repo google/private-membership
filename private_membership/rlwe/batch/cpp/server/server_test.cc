@@ -33,6 +33,7 @@
 #include "private_membership/rlwe/batch/cpp/constants.h"
 #include "private_membership/rlwe/batch/cpp/context.h"
 #include "private_membership/rlwe/batch/cpp/encoding.h"
+#include "private_membership/rlwe/batch/cpp/parameters.h"
 #include "private_membership/rlwe/batch/cpp/test_helper.h"
 #include "private_membership/rlwe/batch/proto/client.pb.h"
 #include "private_membership/rlwe/batch/proto/server.pb.h"
@@ -48,7 +49,7 @@ namespace {
 
 using ::testing::UnorderedElementsAreArray;
 
-const int kEmptyBucketId = kNumberOfBucketsPerShard - 2;
+constexpr int kEmptyBucketId = kNumberOfBucketsPerShard - 2;
 
 // Define struct to enable initialization.
 struct RawShard {
@@ -146,6 +147,11 @@ absl::StatusOr<FinalizeResultsRequest> CreateFinalizeResultsRequest(
 class ServerTest : public ::testing::Test {
  protected:
   void SetUp() override {
+    absl::Status test_paramater_validation_status =
+        ValidateParameters(CreateTestParameters());
+    ASSERT_TRUE(test_paramater_validation_status.ok())
+        << test_paramater_validation_status;
+
     auto request_context = CreateRlweRequestContext(CreateTestParameters());
     ASSERT_TRUE(request_context.ok());
     ASSERT_NE(request_context->get(), nullptr);
@@ -313,7 +319,8 @@ class ApplyQueriesTest : public ServerTest,
   }
 
   void RunTest(const std::vector<PlaintextQuery>& queries,
-               const std::vector<RawShard>& database, bool finalize_results) {
+               const std::vector<RawShard>& database, bool finalize_results,
+               const absl::flat_hash_map<int, std::string>& nonces = {}) {
     absl::flat_hash_map<int, std::string> expected_results;
     for (const PlaintextQuery& query : queries) {
       int query_id = query.query_metadata().query_id();
@@ -329,15 +336,25 @@ class ApplyQueriesTest : public ServerTest,
           }
         }
       }
+      if (!nonces.empty() && bucket_id == kNumberOfBucketsPerShard - 1) {
+        expected_results[query_id] = nonces.at(query_id);
+      }
     }
 
     absl::StatusOr<ApplyQueriesRequest> request = CreateApplyQueriesRequest(
         queries, database, /*encode_database=*/GetParam());
-    ASSERT_TRUE(request.ok());
+    ASSERT_TRUE(request.ok()) << request.status();
     request->set_finalize_results(finalize_results);
+    *request->mutable_padding_nonces() = {nonces.begin(), nonces.end()};
+
+    if (!nonces.empty()) {
+      request->mutable_parameters()
+          ->mutable_shard_parameters()
+          ->set_enable_padding_nonces(true);
+    }
 
     absl::StatusOr<ApplyQueriesResponse> response = ApplyQueries(*request);
-    ASSERT_TRUE(response.ok());
+    ASSERT_TRUE(response.ok()) << response.status();
     ASSERT_EQ(response->query_results_size(), expected_results.size());
 
     DecryptQueriesRequest decrypt_request;
@@ -385,7 +402,7 @@ TEST_P(ApplyQueriesTest, ApplyQueries) {
   RunTest(queries, /*finalize_results=*/false);
 }
 
-TEST_P(ApplyQueriesTest, ApplyQueriesWithFinalizing) {
+TEST_P(ApplyQueriesTest, Finalizing) {
   const std::vector<PlaintextQuery> queries = {
       CreatePlaintextQuery(/*query_id=*/10, /*shard_id=*/0,
                            /*bucket_index=*/0),
@@ -398,7 +415,7 @@ TEST_P(ApplyQueriesTest, ApplyQueriesWithFinalizing) {
   RunTest(queries, /*finalize_results=*/true);
 }
 
-TEST_P(ApplyQueriesTest, ApplyQueriesWithNoPublicKeys) {
+TEST_P(ApplyQueriesTest, NoPublicKeys) {
   const std::vector<PlaintextQuery> queries = {
       CreatePlaintextQuery(/*query_id=*/0, /*shard_id=*/0, /*bucket_index=*/0),
   };
@@ -412,7 +429,7 @@ TEST_P(ApplyQueriesTest, ApplyQueriesWithNoPublicKeys) {
   EXPECT_EQ(response.status().code(), absl::StatusCode::kInvalidArgument);
 }
 
-TEST_P(ApplyQueriesTest, ApplyQueriesWithNoQueries) {
+TEST_P(ApplyQueriesTest, NoQueries) {
   const std::vector<PlaintextQuery> queries = {
       CreatePlaintextQuery(/*query_id=*/0, /*shard_id=*/0, /*bucket_index=*/0),
   };
@@ -426,7 +443,7 @@ TEST_P(ApplyQueriesTest, ApplyQueriesWithNoQueries) {
   EXPECT_EQ(response.status().code(), absl::StatusCode::kInvalidArgument);
 }
 
-TEST_P(ApplyQueriesTest, ApplyQueriesWithNoShards) {
+TEST_P(ApplyQueriesTest, NoShards) {
   const std::vector<PlaintextQuery> queries = {
       CreatePlaintextQuery(/*query_id=*/0, /*shard_id=*/0, /*bucket_index=*/0),
   };
@@ -441,7 +458,7 @@ TEST_P(ApplyQueriesTest, ApplyQueriesWithNoShards) {
   EXPECT_EQ(response.status().code(), absl::StatusCode::kInvalidArgument);
 }
 
-TEST_P(ApplyQueriesTest, ApplyQueriesWithMissingShard) {
+TEST_P(ApplyQueriesTest, MissingShard) {
   const std::vector<RawShard> raw_shards = {
       {0, {{0, "hello"}, {1, "goodbye"}}},
   };
@@ -460,7 +477,7 @@ TEST_P(ApplyQueriesTest, ApplyQueriesWithMissingShard) {
   EXPECT_EQ(response->query_results_size(), 1);
 }
 
-TEST_P(ApplyQueriesTest, ApplyQueriesWithDuplicateBucket) {
+TEST_P(ApplyQueriesTest, DuplicateBucket) {
   // Specify a database with multiple definitions of a single bucket.
   const std::vector<RawShard> raw_shards = {
       {0, {{0, "hello"}, {0, "goodbye"}}},
@@ -476,7 +493,7 @@ TEST_P(ApplyQueriesTest, ApplyQueriesWithDuplicateBucket) {
   EXPECT_EQ(response.status().code(), absl::StatusCode::kInvalidArgument);
 }
 
-TEST_P(ApplyQueriesTest, ApplyQueriesWithShardSubset) {
+TEST_P(ApplyQueriesTest, ShardSubset) {
   // Specify a database with one bucket per shard.
   const std::vector<RawShard> raw_shards = {
       {0, {{17, "hello"}}},
@@ -491,6 +508,136 @@ TEST_P(ApplyQueriesTest, ApplyQueriesWithShardSubset) {
   };
 
   RunTest(queries, raw_shards, /*finalize_results=*/true);
+}
+
+TEST_P(ApplyQueriesTest, PaddingNonces) {
+  const std::vector<RawShard> raw_shards = {
+      {0, {{1, "hello"}}},
+      {1, {{17, "aloha"}}},
+  };
+
+  const std::vector<PlaintextQuery> queries = {
+      CreatePlaintextQuery(/*query_id=*/123, /*shard_id=*/0,
+                           /*bucket_index=*/kNumberOfBucketsPerShard - 1),
+      CreatePlaintextQuery(/*query_id=*/456, /*shard_id=*/1,
+                           /*bucket_index=*/17)};
+
+  absl::flat_hash_map<int, std::string> padding_nonces = {
+      {123, "some-nonce-that-will-be-used"},
+      {456, "some-nonce-that-will-not-be-used"},
+  };
+
+  RunTest(queries, raw_shards, /*finalize_results=*/true, padding_nonces);
+}
+
+TEST_P(ApplyQueriesTest, MissingPaddingNonce) {
+  const std::vector<RawShard> raw_shards = {
+      {0, {{1, "hello"}}},
+      {1, {{17, "aloha"}}},
+  };
+
+  const std::vector<PlaintextQuery> queries = {
+      CreatePlaintextQuery(/*query_id=*/123, /*shard_id=*/0,
+                           /*bucket_index=*/kNumberOfBucketsPerShard - 1),
+      CreatePlaintextQuery(/*query_id=*/456, /*shard_id=*/1,
+                           /*bucket_index=*/17)};
+
+  absl::flat_hash_map<int, std::string> padding_nonces = {{123, "some-nonce"}};
+
+  absl::StatusOr<ApplyQueriesRequest> request = CreateApplyQueriesRequest(
+      queries, raw_shards, /*encode_database=*/GetParam());
+  ASSERT_TRUE(request.ok());
+  *request->mutable_padding_nonces() = {padding_nonces.begin(),
+                                        padding_nonces.end()};
+  request->mutable_parameters()
+      ->mutable_shard_parameters()
+      ->set_enable_padding_nonces(true);
+
+  absl::StatusOr<ApplyQueriesResponse> response = ApplyQueries(*request);
+  EXPECT_EQ(response.status().code(), absl::StatusCode::kInvalidArgument);
+}
+
+TEST_P(ApplyQueriesTest, PaddingNoncesAndLastBucket) {
+  const std::vector<RawShard> raw_shards = {
+      {0, {{kNumberOfBucketsPerShard - 1, "hello"}}}};
+
+  const std::vector<PlaintextQuery> queries = {CreatePlaintextQuery(
+      /*query_id=*/123, /*shard_id=*/0, /*bucket_index=*/0)};
+
+  absl::flat_hash_map<int, std::string> padding_nonces = {{123, "some-nonce"}};
+
+  absl::StatusOr<ApplyQueriesRequest> request = CreateApplyQueriesRequest(
+      queries, raw_shards, /*encode_database=*/GetParam());
+  ASSERT_TRUE(request.ok());
+  *request->mutable_padding_nonces() = {padding_nonces.begin(),
+                                        padding_nonces.end()};
+  request->mutable_parameters()
+      ->mutable_shard_parameters()
+      ->set_enable_padding_nonces(true);
+
+  absl::StatusOr<ApplyQueriesResponse> response = ApplyQueries(*request);
+  EXPECT_EQ(response.status().code(), absl::StatusCode::kInvalidArgument);
+}
+
+TEST_P(ApplyQueriesTest, InvalidPaddingNonceParameters) {
+  const std::vector<RawShard> raw_shards = {{0, {{1, "hello"}}}};
+
+  const std::vector<PlaintextQuery> queries = {CreatePlaintextQuery(
+      /*query_id=*/123, /*shard_id=*/0, /*bucket_index=*/0)};
+
+  absl::flat_hash_map<int, std::string> padding_nonces = {{123, "some-nonce"}};
+
+  absl::StatusOr<ApplyQueriesRequest> request = CreateApplyQueriesRequest(
+      queries, raw_shards, /*encode_database=*/GetParam());
+  ASSERT_TRUE(request.ok());
+  *request->mutable_padding_nonces() = {padding_nonces.begin(),
+                                        padding_nonces.end()};
+  request->mutable_parameters()
+      ->mutable_shard_parameters()
+      ->set_enable_padding_nonces(false);
+
+  EXPECT_EQ(ApplyQueries(*request).status().code(),
+            absl::StatusCode::kInvalidArgument);
+
+  request->clear_padding_nonces();
+  request->mutable_parameters()
+      ->mutable_shard_parameters()
+      ->set_enable_padding_nonces(true);
+
+  EXPECT_EQ(ApplyQueries(*request).status().code(),
+            absl::StatusCode::kInvalidArgument);
+}
+
+TEST_P(ApplyQueriesTest, TooSmallBucketId) {
+  const std::vector<RawShard> raw_shards = {
+      {0, {{-1, "hello"}}},
+  };
+  // Send a query for shard index 1 that is not specified in the input.
+  const std::vector<PlaintextQuery> queries = {
+      CreatePlaintextQuery(/*query_id=*/0, /*shard_id=*/0, /*bucket_index=*/0),
+  };
+  absl::StatusOr<ApplyQueriesRequest> request = CreateApplyQueriesRequest(
+      queries, raw_shards, /*encode_database=*/GetParam());
+  ASSERT_TRUE(request.ok());
+
+  absl::StatusOr<ApplyQueriesResponse> response = ApplyQueries(*request);
+  EXPECT_EQ(response.status().code(), absl::StatusCode::kInvalidArgument);
+}
+
+TEST_P(ApplyQueriesTest, TooLargeBucketId) {
+  const std::vector<RawShard> raw_shards = {
+      {0, {{kNumberOfBucketsPerShard, "hello"}}},
+  };
+  // Send a query for shard index 1 that is not specified in the input.
+  const std::vector<PlaintextQuery> queries = {
+      CreatePlaintextQuery(/*query_id=*/0, /*shard_id=*/0, /*bucket_index=*/0),
+  };
+  absl::StatusOr<ApplyQueriesRequest> request = CreateApplyQueriesRequest(
+      queries, raw_shards, /*encode_database=*/GetParam());
+  ASSERT_TRUE(request.ok());
+
+  absl::StatusOr<ApplyQueriesResponse> response = ApplyQueries(*request);
+  EXPECT_EQ(response.status().code(), absl::StatusCode::kInvalidArgument);
 }
 
 INSTANTIATE_TEST_SUITE_P(ApplyQueriesTest, ApplyQueriesTest, ::testing::Bool());
