@@ -87,18 +87,10 @@ message PrivateMembershipRlweQueryResponse {
 // Proto containing plaintext IDs supplied to the client library.
 message RlwePlaintextId {
   // Non-sensitive portion of the identifier.
-  // This is deprecated. Use non_sensitive_bytes_id instead.
-  string non_sensitive_id = 1 [deprecated = true];
+  string non_sensitive_id = 1;
 
   // Sensitive portion of the identifier.
-  // This is deprecated. Use sensitive_bytes_id instead.
-  string sensitive_id = 2 [deprecated = true];
-
-  // Non-sensitive portion of the identifier.
-  bytes non_sensitive_bytes_id = 3;
-
-  // Sensitive portion of the identifier.
-  bytes sensitive_bytes_id = 4;
+  string sensitive_id = 2;
 }
 
 // Different use cases of the RLWE-based PSM protocol.
@@ -113,14 +105,6 @@ enum RlweUseCase {
   // The device state of Chrome OS device, used for Zero Touch, License
   // Packaging.
   CROS_DEVICE_STATE = 5;
-
-  // The device state of Chrome OS device, used for Forced Re-enrollment.
-  CROS_DEVICE_SECONDARY_STATE = 12;
-
-  // Use-cases for ChromeOS Device Active Reporting to Fresnel.
-  CROS_FRESNEL_DAILY = 13;
-  CROS_FRESNEL_MONTHLY = 14;
-  CROS_FRESNEL_ALL_TIME = 15;
 
   reserved 4, 6, 7, 8, 9, 10, 11;
 }
