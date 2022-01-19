@@ -115,7 +115,12 @@ absl::Status ValidateParameters(const Parameters& parameters) {
       !status.ok()) {
     return status;
   }
-  return ValidateShardParameters(parameters.shard_parameters());
+  if (auto status = ValidateShardParameters(parameters.shard_parameters());
+      !status.ok()) {
+    return status;
+  }
+
+  return absl::OkStatus();
 }
 
 }  // namespace batch
