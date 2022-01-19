@@ -33,6 +33,7 @@
 #include "private_membership/rlwe/batch/cpp/constants.h"
 #include "private_membership/rlwe/batch/cpp/context.h"
 #include "private_membership/rlwe/batch/cpp/encoding.h"
+#include "private_membership/rlwe/batch/cpp/parameters.h"
 #include "private_membership/rlwe/batch/cpp/test_helper.h"
 #include "private_membership/rlwe/batch/proto/client.pb.h"
 #include "private_membership/rlwe/batch/proto/server.pb.h"
@@ -146,6 +147,11 @@ absl::StatusOr<FinalizeResultsRequest> CreateFinalizeResultsRequest(
 class ServerTest : public ::testing::Test {
  protected:
   void SetUp() override {
+    absl::Status test_paramater_validation_status =
+        ValidateParameters(CreateTestParameters());
+    ASSERT_TRUE(test_paramater_validation_status.ok())
+        << test_paramater_validation_status;
+
     auto request_context = CreateRlweRequestContext(CreateTestParameters());
     ASSERT_TRUE(request_context.ok());
     ASSERT_NE(request_context->get(), nullptr);

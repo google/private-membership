@@ -24,12 +24,13 @@
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "private_membership/rlwe/batch/proto/client.pb.h"
 #include "private_membership/rlwe/batch/cpp/client/client_helper.h"
 #include "private_membership/rlwe/batch/cpp/constants.h"
 #include "private_membership/rlwe/batch/cpp/context.h"
 #include "private_membership/rlwe/batch/cpp/padding.h"
+#include "private_membership/rlwe/batch/cpp/parameters.h"
 #include "private_membership/rlwe/batch/cpp/prng.h"
+#include "private_membership/rlwe/batch/proto/client.pb.h"
 #include "private_membership/rlwe/batch/proto/shared.pb.h"
 #include "shell_encryption/context.h"
 #include "shell_encryption/galois_key.h"
@@ -181,6 +182,10 @@ absl::StatusOr<std::string> DecryptQueryResult(
 
 absl::StatusOr<GenerateKeysResponse> GenerateKeys(
     const GenerateKeysRequest& request) {
+  if (auto status = ValidateParameters(request.parameters()); !status.ok()) {
+    return status;
+  }
+
   auto request_context = CreateRlweRequestContext(request.parameters());
   if (!request_context.ok()) {
     return request_context.status();
@@ -244,6 +249,10 @@ absl::StatusOr<EncryptQueriesResponse> EncryptQueries(
     const EncryptQueriesRequest& request) {
   // Generate context from parameters.
   const Parameters& parameters = request.parameters();
+  if (auto status = ValidateParameters(parameters); !status.ok()) {
+    return status;
+  }
+
   auto request_context = CreateRlweRequestContext(parameters);
   if (!request_context.ok()) {
     return request_context.status();
@@ -307,6 +316,9 @@ absl::StatusOr<DecryptQueriesResponse> DecryptQueries(
     const DecryptQueriesRequest& request) {
   // Generate context from parameters.
   const Parameters& parameters = request.parameters();
+  if (auto status = ValidateParameters(parameters); !status.ok()) {
+    return status;
+  }
   auto response_context = CreateRlweResponseContext(parameters);
   if (!response_context.ok()) {
     return response_context.status();

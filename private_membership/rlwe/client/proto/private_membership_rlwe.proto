@@ -16,6 +16,8 @@ syntax = "proto3";
 
 package private_membership.rlwe;
 
+option go_package = "github.com/google/private-membership";
+
 import "private_membership/rlwe/client/proto/private_membership.proto";
 import "shell_encryption/serialization.proto";
 

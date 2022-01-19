@@ -12,6 +12,7 @@ cc_library(
         "//private_membership/rlwe/batch/cpp:constants",
         "//private_membership/rlwe/batch/cpp:context",
         "//private_membership/rlwe/batch/cpp:padding",
+        "//private_membership/rlwe/batch/cpp:parameters",
         "//private_membership/rlwe/batch/cpp:prng",
         "//private_membership/rlwe/batch/proto:client_cc_proto",
         "//private_membership/rlwe/batch/proto:shared_cc_proto",
@@ -38,6 +39,7 @@ cc_library(
     srcs = ["client_helper.cc"],
     hdrs = ["client_helper.h"],
     deps = [
+        "//private_membership/rlwe/batch/cpp:parameters",
         "//private_membership/rlwe/batch/proto:client_cc_proto",
         "//private_membership/rlwe/batch/proto:shared_cc_proto",
         "@com_google_absl//absl/status",

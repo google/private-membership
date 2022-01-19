@@ -33,6 +33,7 @@
 #include "private_membership/rlwe/batch/cpp/constants.h"
 #include "private_membership/rlwe/batch/cpp/context.h"
 #include "private_membership/rlwe/batch/cpp/encoding.h"
+#include "private_membership/rlwe/batch/cpp/parameters.h"
 #include "private_membership/rlwe/batch/cpp/prng.h"
 #include "private_membership/rlwe/batch/proto/server.pb.h"
 #include "private_membership/rlwe/batch/proto/shared.pb.h"
@@ -49,7 +50,6 @@
 
 namespace private_membership {
 namespace batch {
-
 namespace {
 
 // Represents a query deserialized in RAM.
@@ -79,24 +79,15 @@ class ApplyQueriesContext {
   // Create context from parameters.
   static absl::StatusOr<ApplyQueriesContext> Create(
       const Parameters& parameters) {
+    if (auto status = ValidateParameters(parameters); !status.ok()) {
+      return status;
+    }
     int levels_of_recursion =
         parameters.crypto_parameters().levels_of_recursion();
-    if (levels_of_recursion <= 0) {
-      return absl::InvalidArgumentError(
-          "Invalid parameters: levels_of_recursion must be positive.");
-    }
     int buckets_per_shard =
         parameters.shard_parameters().number_of_buckets_per_shard();
-    if (buckets_per_shard <= 0) {
-      return absl::InvalidArgumentError(
-          "Invalid parameters: buckets_per_shard must be positive.");
-    }
     int queries_per_level =
         std::ceil(std::pow(buckets_per_shard, 1.0 / levels_of_recursion));
-    if (queries_per_level <= 0) {
-      return absl::InvalidArgumentError(
-          "Invalid parameters: queries_per_level must be positive.");
-    }
     return ApplyQueriesContext(
         levels_of_recursion, buckets_per_shard, queries_per_level,
         (buckets_per_shard + queries_per_level - 1) / queries_per_level);
@@ -394,14 +385,15 @@ DeserializeQueries(const Context& context, const Parameters& parameters,
                    rlwe::GaloisKeysObliviousExpander<ModularInt>* expander) {
   const int levels_of_recursion =
       parameters.crypto_parameters().levels_of_recursion();
-  if (levels_of_recursion <= 0) {
-    return absl::InvalidArgumentError(
-        "Invalid parameters. Levels of recursion must be positive.");
-  }
   const int buckets_per_query =
       parameters.shard_parameters().number_of_buckets_per_shard();
+
   const int ciphertexts_per_level = static_cast<int>(
       std::ceil(std::pow(buckets_per_query, 1.0 / levels_of_recursion)));
+  if (std::numeric_limits<int>::max() / levels_of_recursion <=
+      ciphertexts_per_level) {
+    return absl::InvalidArgumentError("Too many ciphertexts per level");
+  }
   const int ciphertexts_per_query = ciphertexts_per_level * levels_of_recursion;
 
   // Deserialize to compressed queries.
@@ -694,6 +686,10 @@ absl::Status ApplyQueryToShard(
 
 absl::StatusOr<EncodeDatabaseResponse> EncodeDatabase(
     const EncodeDatabaseRequest& request) {
+  if (auto status = ValidateParameters(request.parameters()); !status.ok()) {
+    return status;
+  }
+
   auto request_context = CreateRlweRequestContext(request.parameters());
   if (!request_context.ok()) {
     return request_context.status();
@@ -723,6 +719,10 @@ absl::StatusOr<EncodeDatabaseResponse> EncodeDatabase(
 absl::StatusOr<ApplyQueriesResponse> ApplyQueries(
     const ApplyQueriesRequest& request) {
   const Parameters& parameters = request.parameters();
+  if (auto status = ValidateParameters(parameters); !status.ok()) {
+    return status;
+  }
+
   const Parameters::ShardParameters& shard_parameters =
       parameters.shard_parameters();
 
@@ -820,6 +820,10 @@ absl::StatusOr<ApplyQueriesResponse> ApplyQueries(
 
 absl::StatusOr<SumCiphertextsResponse> SumCiphertexts(
     const SumCiphertextsRequest& request) {
+  if (auto status = ValidateParameters(request.parameters()); !status.ok()) {
+    return status;
+  }
+
   auto context = CreateRlweRequestContext(request.parameters());
   if (!context.ok()) {
     return context.status();
@@ -847,6 +851,9 @@ absl::StatusOr<SumCiphertextsResponse> SumCiphertexts(
 
 absl::StatusOr<FinalizeResultsResponse> FinalizeResults(
     const FinalizeResultsRequest& request) {
+  if (auto status = ValidateParameters(request.parameters()); !status.ok()) {
+    return status;
+  }
   auto request_context = CreateRlweRequestContext(request.parameters());
   if (!request_context.ok()) {
     return request_context.status();

@@ -27,7 +27,7 @@ namespace private_membership {
 namespace {
 
 using ::rlwe::testing::StatusIs;
-using testing::HasSubstr;
+using ::testing::HasSubstr;
 
 std::string GetRandomBytes(size_t length) {
   std::unique_ptr<uint8_t[]> buf(new uint8_t[length]);

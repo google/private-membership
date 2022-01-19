@@ -84,6 +84,16 @@ cc_library(
 )
 
 cc_library(
+    name = "parameters",
+    srcs = ["parameters.cc"],
+    hdrs = ["parameters.h"],
+    deps = [
+        "//private_membership/rlwe/batch/proto:shared_cc_proto",
+        "@com_google_absl//absl/status",
+    ],
+)
+
+cc_library(
     name = "prng",
     srcs = [
         "prng.cc",
