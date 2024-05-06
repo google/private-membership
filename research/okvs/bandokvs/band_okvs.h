@@ -17,21 +17,6 @@
 
 namespace band_okvs {
 
-/*
-std::vector<__uint128_t> CreateBandBlocks(const oc::block& block,
-                                          oc::span<oc::block> xor_blocks,
-                                          __uint128_t high_mask,
-                                          int high_mask_idx) {
-  std::vector<__uint128_t> res(xor_blocks.size());
-  for (int i = 0; i <= high_mask_idx; i++) {
-    res[i] = (block ^ xor_blocks[i]).get<__uint128_t>(0);
-  }
-  res[high_mask_idx] &= high_mask;
-  res[0] |= 1;
-  return res;
-}
-*/
-
 template<typename T>
 inline T CreateBand(oc::span<oc::block> blocks,
                     __uint128_t high_mask) {
@@ -89,89 +74,6 @@ inline uint<6> CreateBand(oc::span<oc::block> blocks,
                  (blocks[5]).get<__uint128_t>(0) & high_mask);
 }
 
-/*
-template<typename T>
-inline T CreateBand(const oc::block& block, oc::span<oc::block> xor_blocks,
-                    __uint128_t high_mask, int high_mask_idx) {
-  return T();
-}
-
-template<>
-inline uint<1> CreateBand(const oc::block& block,
-                          oc::span<oc::block> xor_blocks,
-                          __uint128_t high_mask,
-                          int high_mask_idx) {
-  std::vector<__uint128_t> band_blocks = CreateBandBlocks(block, xor_blocks,
-                                                          high_mask,
-                                                          high_mask_idx);
-  return uint<1>(band_blocks[0]);
-}
-
-template<>
-inline uint<2> CreateBand(const oc::block& block,
-                          oc::span<oc::block> xor_blocks,
-                          __uint128_t high_mask,
-                          int high_mask_idx) {
-  std::vector<__uint128_t> band_blocks = CreateBandBlocks(block, xor_blocks,
-                                                          high_mask,
-                                                          high_mask_idx);
-  return uint<2>(band_blocks[0], band_blocks[1]);
-}
-
-template<>
-inline uint<3> CreateBand(const oc::block& block,
-                          oc::span<oc::block> xor_blocks,
-                          __uint128_t high_mask,
-                          int high_mask_idx) {
-  std::vector<__uint128_t> band_blocks = CreateBandBlocks(block, xor_blocks,
-                                                          high_mask,
-                                                          high_mask_idx);
-  return uint<3>(band_blocks[0], band_blocks[1], band_blocks[2]);
-}
-
-template<>
-inline uint<4> CreateBand(const oc::block& block,
-                          oc::span<oc::block> xor_blocks,
-                          __uint128_t high_mask,
-                          int high_mask_idx) {
-  std::vector<__uint128_t> band_blocks = CreateBandBlocks(block, xor_blocks,
-                                                          high_mask,
-                                                          high_mask_idx);
-  return uint<4>(band_blocks[0],
-                 band_blocks[1],
-                 band_blocks[2],
-                 band_blocks[3]);
-}
-
-template<>
-inline uint<5> CreateBand(const oc::block& block,
-                          oc::span<oc::block> xor_blocks,
-                          __uint128_t high_mask,
-                          int high_mask_idx) {
-  std::vector<__uint128_t> band_blocks = CreateBandBlocks(block, xor_blocks,
-                                                          high_mask,
-                                                          high_mask_idx);
-  return uint<5>(band_blocks[0],
-                 band_blocks[1],
-                 band_blocks[2],
-                 band_blocks[3],
-                 band_blocks[4]);
-}
-
-template<>
-inline uint<6> CreateBand(const oc::block& block,
-                          oc::span<oc::block> xor_blocks,
-                          __uint128_t high_mask,
-                          int high_mask_idx) {
-  std::vector<__uint128_t> band_blocks = CreateBandBlocks(block, xor_blocks,
-                                                          high_mask,
-                                                          high_mask_idx);
-  return uint<6>(band_blocks[0], band_blocks[1], band_blocks[2],
-                 band_blocks[3],
-                 band_blocks[4], band_blocks[5]);
-}
-*/
-
 template<typename T>
 inline void GenBands(int n, const oc::block* keys,
                      int okvs_length, int band_length,
@@ -188,7 +90,6 @@ inline void GenBands(int n, const oc::block* keys,
       high_mask = band_length % 128 == 0 ? static_cast<__uint128_t>(-1) :
                   (static_cast<__uint128_t>(1) << (band_length % 128)) - 1;
   uint32_t divisor = okvs_length - band_length + 1;
-  //libdivide::divider<uint32_t> divisor_d(okvs_length - band_length + 1);
 
   oc::AES aes(oc::ZeroBlock);
 #pragma GCC unroll 8
@@ -196,7 +97,6 @@ inline void GenBands(int n, const oc::block* keys,
     oc::block block = aes.hashBlock(keys[i]);
     uint32_t p = block.get<uint32_t>(0);
     uint32_t start_pos = p % divisor;
-    //uint32_t start_pos = p - divisor * (p / divisor_d);
 
     for (int k = 0; k < blocks.size(); k++) {
       expanded_keys[k] = block ^ xor_blocks[k];
@@ -225,7 +125,6 @@ inline void GenBandsAndValues(int n, const oc::block* keys,
       high_mask = band_length % 128 == 0 ? static_cast<__uint128_t>(-1) :
                   (static_cast<__uint128_t>(1) << (band_length % 128)) - 1;
   uint32_t divisor = okvs_length - band_length + 1;
-  //libdivide::divider<uint32_t> divisor_d(okvs_length - band_length + 1);
   oc::AES aes(oc::ZeroBlock);
   #pragma GCC unroll 16
   for (int i = 0; i < n; ++i) {
@@ -233,7 +132,6 @@ inline void GenBandsAndValues(int n, const oc::block* keys,
     oc::block block = aes.hashBlock(keys[i]);
     uint32_t p = block.get<uint32_t>(0);
     uint32_t start_pos = p % divisor;
-    //uint32_t start_pos = p - divisor * (p / divisor_d);
 
     for (int k = 0; k < num_blocks; k++) {
       expanded_keys[k] = block ^ xor_blocks[k];
