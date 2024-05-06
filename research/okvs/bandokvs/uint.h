@@ -1,5 +1,5 @@
-#ifndef COMPRESSION_BANDOKVS_UINT_H_
-#define COMPRESSION_BANDOKVS_UINT_H_
+#ifndef BANDOKVS_UINT_H_
+#define BANDOKVS_UINT_H_
 
 namespace band_okvs {
 
@@ -419,4 +419,4 @@ constexpr inline bool operator!=(uint<Size> lhs, int rhs) {
 
 }
 
-#endif //COMPRESSION_BANDOKVS_UINT_H_
+#endif //BANDOKVS_UINT_H_
