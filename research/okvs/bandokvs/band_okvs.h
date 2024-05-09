@@ -17,6 +17,8 @@
 
 namespace band_okvs {
 
+namespace {
+
 template<typename T>
 inline T CreateBand(oc::span<oc::block> blocks,
                     __uint128_t high_mask) {
@@ -141,6 +143,8 @@ inline void GenBandsAndValues(int n, const oc::block* keys,
     out[i].value_ = values[i];
     out[i].band_ = CreateBand<T>(blocks, high_mask);
   }
+}
+
 }
 
 std::vector<__uint128_t> GenRandomValues(int n, uint64_t seed1 = 0,
