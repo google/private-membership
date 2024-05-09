@@ -7,9 +7,9 @@ using namespace band_okvs;
 
 void BandOkvsTest() {
   double epsilon = 0.05;
-  int n = 1 << 20;
+  int n = 1 << 24;
   int m = static_cast<int>((1 + epsilon) * n);
-  int band_length = 383;
+  int band_length = 412;
 
   std::random_device rd;
   std::uniform_int_distribution<uint64_t> dist;
@@ -17,8 +17,6 @@ void BandOkvsTest() {
   oc::PRNG prng(oc::block(dist(rd), dist(rd)));
   std::vector<oc::block> keys(n);
   prng.get<oc::block>(keys);
-
-  using band_type = band_okvs::uint<3>;
 
   std::vector<oc::block> values(n);
   GenRandomValuesBlocks(values, dist(rd), dist(rd));
@@ -30,9 +28,7 @@ void BandOkvsTest() {
 
   std::cout << "Encoding..." << std::endl;
   StartTimer();
-  if (!okvs.Encode<band_type, oc::block>(keys.data(),
-                                         values.data(),
-                                         out.data())) {
+  if (!okvs.Encode(keys.data(), values.data(), out.data())) {
     std::cout << "Failed to encode!" << std::endl;
     exit(0);
   }
@@ -43,7 +39,7 @@ void BandOkvsTest() {
   std::vector<oc::block> decoded(n);
   std::cout << "Decoding..." << std::endl;
   StartTimer();
-  okvs.Decode<band_type>(keys.data(), out.data(), decoded.data());
+  okvs.Decode(keys.data(), out.data(), decoded.data());
   EndTimer();
   std::cout << "Decoding done" << std::endl;
   std::cout << "Elapsed time: " << GetElapsedTime().count() << std::endl;

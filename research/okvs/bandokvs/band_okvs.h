@@ -17,6 +17,8 @@
 
 namespace band_okvs {
 
+namespace {
+
 template<typename T>
 inline T CreateBand(oc::span<oc::block> blocks,
                     __uint128_t high_mask) {
@@ -143,6 +145,8 @@ inline void GenBandsAndValues(int n, const oc::block* keys,
   }
 }
 
+}
+
 std::vector<__uint128_t> GenRandomValues(int n, uint64_t seed1 = 0,
                                          uint64_t seed2 = 0);
 std::vector<oc::block> GenRandomValuesBlocks(int n, uint64_t seed1 = 0,
@@ -165,7 +169,7 @@ class BandOkvs {
 
   // Add additional space
   int Size() const {
-    return num_vars_ + 1000;
+    return num_vars_ + 64;
   }
 
   int NumVars() const {
@@ -176,11 +180,48 @@ class BandOkvs {
     return num_eqns_;
   }
 
+  template<typename V>
+  bool Encode(const oc::block* keys, const V* values, V* out) {
+    if (band_length_ <= 128) {
+      return EncodeHelper<uint<1>, V>(keys, values, out);
+    } else if (band_length_ <= 256) {
+      return EncodeHelper<uint<2>, V>(keys, values, out);
+    } else if (band_length_ <= 384) {
+      return EncodeHelper<uint<3>, V>(keys, values, out);
+    } else if (band_length_ <= 512) {
+      return EncodeHelper<uint<4>, V>(keys, values, out);
+    } else if (band_length_ <= 640) {
+      return EncodeHelper<uint<5>, V>(keys, values, out);
+    } else if (band_length_ <= 768) {
+      return EncodeHelper<uint<6>, V>(keys, values, out);
+    }
+    std::cout << "Encode failed! Invalid band length: " << band_length_ << "\n";
+    return false;
+  }
+
+  template<typename V>
+  void Decode(const oc::block* keys, const V* okvs, V* out) {
+    if (band_length_ <= 128) {
+      return DecodeHelper<uint<1>, V>(keys, okvs, out);
+    } else if (band_length_ <= 256) {
+      return DecodeHelper<uint<2>, V>(keys, okvs, out);
+    } else if (band_length_ <= 384) {
+      return DecodeHelper<uint<3>, V>(keys, okvs, out);
+    } else if (band_length_ <= 512) {
+      return DecodeHelper<uint<4>, V>(keys, okvs, out);
+    } else if (band_length_ <= 640) {
+      return DecodeHelper<uint<5>, V>(keys, okvs, out);
+    } else if (band_length_ <= 768) {
+      return DecodeHelper<uint<6>, V>(keys, okvs, out);
+    }
+    std::cout << "Decode failed! Invalid band length: " << band_length_ << "\n";
+  }
+
+ private:
   template<typename T, typename V>
   inline bool ReduceToRowEchelonHelper(const BandAndValue<T, V>* bands,
                                        T* reduced_matrix,
-                                       V* reduced_values,
-                                       const V& zero_value) {
+                                       V* reduced_values) {
     int n = num_eqns_;
     for (int i = 0; i < n; ++i) {
       int offset = bands[i].BandStart();
@@ -211,7 +252,7 @@ class BandOkvs {
                      T* reduced_matrix,
                      V* reduced_values) {
     return ReduceToRowEchelonHelper<T, V>
-        (bands, reduced_matrix, reduced_values, oc::ZeroBlock);
+        (bands, reduced_matrix, reduced_values);
   }
 
   // all other types
@@ -226,7 +267,7 @@ class BandOkvs {
   }
 
   template<typename T, typename V>
-  bool Encode(const BandAndValue<T, V>* bands,
+  bool EncodeHelper(const BandAndValue<T, V>* bands,
               V* out) {
     std::vector<T> reduced_matrix(num_vars_);
 
@@ -239,9 +280,8 @@ class BandOkvs {
   }
 
   template<typename T, typename V>
-  bool Encode(const oc::block* keys, const V* values, V* out) {
+  bool EncodeHelper(const oc::block* keys, const V* values, V* out) {
     int n = num_eqns_;
-    auto time_start = std::chrono::steady_clock::now();
     oc::PRNG prng(prng_seed_);
     prng.get(out, num_vars_);
     BandAndValue<T, V>* bands =
@@ -251,17 +291,14 @@ class BandOkvs {
     //std::sort(bands, bands + n, lessthan());
     boost::sort::spreadsort::integer_sort(bands, bands + n,
                                           rightshift(), lessthan());
-    auto time_end = std::chrono::steady_clock::now();
-    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>((time_end
-        - time_start)).count() << std::endl;
 
-    bool encoded = Encode<T, V>(bands, out);
+    bool encoded = EncodeHelper<T, V>(bands, out);
     //free(bands);
     return encoded;
   }
 
   template<typename T, typename V>
-  inline void Decode(const Band<T>* bands, const V* okvs, V* out) {
+  inline void DecodeHelper(const Band<T>* bands, const V* okvs, V* out) {
     int n = num_eqns_;
     for (int i = 0; i < n; ++i) {
       int band_start = bands[i].BandStart();
@@ -273,7 +310,7 @@ class BandOkvs {
   }
 
   template<typename T, typename V>
-  void Decode(const oc::block* keys, const V* okvs, V* out) {
+  void DecodeHelper(const oc::block* keys, const V* okvs, V* out) {
     int n = num_eqns_;
     Band<T>* bands = (Band<T>*) malloc(n * sizeof(Band<T>));
 
@@ -283,11 +320,10 @@ class BandOkvs {
     boost::sort::spreadsort::integer_sort(bands, bands + n,
                                           rightshift(), lessthan());
 
-    Decode(bands, okvs, out);
+    DecodeHelper(bands, okvs, out);
     //free(bands);
   }
 
- private:
   inline static constexpr __mmask8
   table_[16] = {
     0,

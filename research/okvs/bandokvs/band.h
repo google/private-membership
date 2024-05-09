@@ -9,10 +9,10 @@ namespace band_okvs {
 template<typename T>
 class Band {
  public:
-  Band() : band_start_(0), idx_(0), band_(0) {}
+  Band() : band_start_(0), band_(0), idx_(0) {}
 
   Band(int band_start, T band, int idx)
-      : band_start_(band_start), idx_(idx), band_(band) {}
+      : band_start_(band_start), band_(band), idx_(idx) {}
 
   void Set(int band_start, T band, int idx) {
     band_start_ = band_start;
@@ -40,8 +40,8 @@ class Band {
   }
 
   size_t band_start_;
-  size_t idx_;
   T band_;
+  size_t idx_;
 };
 
 template<typename T, typename V>
