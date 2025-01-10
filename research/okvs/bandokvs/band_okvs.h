@@ -384,9 +384,9 @@ class BandOkvs {
   template<typename T, typename V>
   void Solve(const T* reduced_matrix, V* reduced_values) {
     for (int i = num_vars_ - 1; i >= 0; --i) {
-      //if (reduced_matrix[i] == 0) {
-      //continue;
-      //}
+      if (reduced_matrix[i] == 0) {
+        continue;
+      }
       __m512i res = DoXor(i, reduced_matrix[i], reduced_values, band_length_);
       __m128i res2 = DoXor512(res);
 
