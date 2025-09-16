@@ -3,6 +3,9 @@
 This is an implementation of the InsPIRe protocol for Private Information Retreival (PIR).
 This scheme was introduced in the paper ["InsPIRe: Communication-Efficient PIR with Silent Preprocessing"](https://eprint.iacr.org/2025/1352)
 
+## Reproducing Experimental Evaluation
+To reproduce the experimental results shown in the paper, refer to the `evaluation` directory.
+
 ## Running
 
 To build and run this code:
@@ -59,6 +62,3 @@ cargo run --release --bin run -- --num-items $NUM_ITEMS --item-size-bits $ITEM_S
 cargo run --release --bin inspire -- --num-items $NUM_ITEMS --item-size-bits $ITEM_SIZE_IN_BITS --dim0 $dim_0
 
 ```
-
-## Reproducing Experimental Evaluation
-To reproduce the experimental results shown in the paper, refer to the `evaluation` directory.
