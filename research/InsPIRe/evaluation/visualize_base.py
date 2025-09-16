@@ -46,11 +46,17 @@ def read_and_flatten(results_dir, name=None):
                 online_data = {f"online-{key}": value for key, value in log_data["online"].items()}
                 
                 # Flatten the nested JSON structure for easier analysis
-                flattened_data = {
-                    **log_data['specs'],
-                    **offline_data,
-                    **online_data,
-                }
+                if "specs" in log_data:
+                    flattened_data = {
+                        **log_data['specs'],
+                        **offline_data,
+                        **online_data,
+                    }
+                else:
+                    flattened_data = {
+                        **offline_data,
+                        **online_data,
+                    }
                 # Append the flattened data to the list
                 data.append(flattened_data)
     # Create a DataFrame from the collected data
@@ -123,32 +129,6 @@ def preprocess(df):
 
 
     return df
-
-# def pareto_frontier(df, x_col, y_col, tolerance=0.00):
-#   """Removes rows that are not on or within tolerance of the Pareto frontier.
-
-#   Args:
-#       df (pd.DataFrame): The DataFrame to process.
-#       x_col (str): The name of the column to minimize.
-#       y_col (str): The name of the column to minimize.
-#       tolerance (float): The tolerance percentage for including points near the
-#         Pareto frontier.  Defaults to 0.05 (5%).
-
-#   Returns:
-#       pd.DataFrame: A new DataFrame with Pareto frontier rows and rows within
-#       tolerance.
-#   """
-
-#   df = df.sort_values(by=x_col)
-#   df["pareto_front"] = df[y_col].cummin()
-
-#   # Calculate the tolerance threshold for each point on the frontier
-#   df["tolerance_threshold"] = df["pareto_front"] * (1 + tolerance)
-
-#   # Keep rows where y_col is less than or equal to the tolerance threshold
-#   return df[df[y_col] <= df["tolerance_threshold"]].drop(
-#       columns=["pareto_front", "tolerance_threshold"]
-#   )
 
 def pareto_frontier(df, x_col, y_col, tolerance=0.00):
   """Removes rows that are not on or within tolerance of the Pareto frontier.

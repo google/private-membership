@@ -1,8 +1,6 @@
 #!/bin/bash
 
-OUR_DIR="results/application-experiments/v2"
-
-# ONLINE_ONLY=" --online-only "
+OUR_DIR="results/application-experiments"
 
 echo Start > $OUR_DIR &&
 
