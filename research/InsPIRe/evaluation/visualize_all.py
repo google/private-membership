@@ -1,15 +1,15 @@
 from visualize_base import *
 
 # Directory containing log files
-results_dir_ypir = f"results/related-work/ypir"
-results_dir_simpleypir = f"results/related-work/simpleypir"
+results_dir_ypir = f"results/ypir"
+results_dir_simpleypir = f"results/simpleypir"
 results_dir_inspire_0 = f"results/inspire_0"
 results_dir_rgswpir = f"results/inspire"
 results_dir_inspire_squared = f"results/inspire-squared"
-results_dir_kspir = f"results/related-work/kspir"
-results_dir_hintlesspir = f"results/related-work/hintlesspir"
+results_dir_kspir = f"results/kspir"
+results_dir_hintlesspir = f"results/hintlesspir"
 
-figures_dir_all = f"figures/all/v02"
+figures_dir_all = f"figures/all"
 os.makedirs(figures_dir_all, exist_ok=True)
 
 df_inspire_0_raw = read_and_flatten(results_dir=results_dir_inspire_0, name='inspire')
@@ -51,7 +51,6 @@ df_hintlesspir_raw['resizedItemSizeBits'] = 32*1024*8
 # Get all unique dbSizes from both dataframes
 all_db_sizes_mb = [1024.0, 8192.0, 32768.0]
 all_entry_sizes_bits = [1, 512, 32*1024*8]
-# all_entry_sizes_bits = [1]
 
 for input_item_size_bits in all_entry_sizes_bits:
 
@@ -210,3 +209,5 @@ for input_item_size_bits in all_entry_sizes_bits:
             f.write(f"------------------------------ DB Size = {dbSize} MB ------------------------------\n")
             f.write(ready.to_string(header=False))
             f.write("\n")
+
+print(f"Tables written to {figures_dir_all}")

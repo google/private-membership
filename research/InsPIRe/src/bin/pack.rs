@@ -448,6 +448,7 @@ fn benchmark_packing(
 
     // (measurement, filename)
     let dirname = format!("evaluation/results/packing/{}", version);
+    std::fs::create_dir_all(&dirname).unwrap();
     let mut file = std::fs::File::create(format!("{}/{}", dirname, filename)).unwrap();
     serde_json::to_writer_pretty(&mut file, &measurement).unwrap();
 }
@@ -484,44 +485,23 @@ pub struct PackingMeasurement {
 
 fn main() {
     let num_trials = 3;
-    let version = "v11";
-
-    // let total_num_to_pack = 2048;
-    // benchmark_packing(PackingType::CDKS, true, 0, total_num_to_pack, num_trials, version);
-    // for gamma in vec![128, 64, 32, 16, 8] {
-    //     benchmark_packing(
-    //         PackingType::InspiRING,
-    //         true,
-    //         gamma,
-    //         total_num_to_pack,
-    //         num_trials,
-    //         version,
-    //     );
-    //     benchmark_packing(
-    //         PackingType::InspiRING,
-    //         false,
-    //         gamma,
-    //         total_num_to_pack,
-    //         num_trials,
-    //         version,
-    //     );
-    // }
+    let version = "";
 
     for i in 1..2 {
         let total_num_to_pack = 4096 * i;
         println!("total_num_to_pack={}", total_num_to_pack);
 
         benchmark_packing(PackingType::CDKS, true, 0, total_num_to_pack, num_trials, version);
-        for gamma in vec![2048,] {
+        for gamma in vec![2048, 1024, 512, ] {
             println!("gamma={}", gamma);
-            // benchmark_packing(
-            //     PackingType::InspiRING,
-            //     true,
-            //     gamma,
-            //     total_num_to_pack,
-            //     num_trials,
-            //     version,
-            // );
+            benchmark_packing(
+                PackingType::InspiRING,
+                true,
+                gamma,
+                total_num_to_pack,
+                num_trials,
+                version,
+            );
             benchmark_packing(
                 PackingType::InspiRING,
                 false,

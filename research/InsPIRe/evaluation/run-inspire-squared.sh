@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RESULTS_DIR="results/inspire-pareto/v07"
+RESULTS_DIR="results/inspire-squared"
 mkdir -p "$RESULTS_DIR"
 
 mkdir -p saved_targets

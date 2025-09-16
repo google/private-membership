@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RESULTS_DIR="results/pir-experiments/small"
+RESULTS_DIR="results/inspire_0"
 mkdir -p $RESULTS_DIR
 
 mkdir -p saved_targets
