@@ -18,6 +18,10 @@ df_inspire_0_raw = df_inspire_0_raw[df_inspire_0_raw["gamma0"] == 2048]
 
 # Read and preprocess inspire-pareto data
 df_inspire_squared_raw = read_and_flatten(results_dir=results_dir_inspire_squared, name='inspire^2')
+# add column names if they don't exists
+for col in df_inspire_0_raw.columns:
+    if col not in df_inspire_squared_raw.columns:
+        df_inspire_squared_raw[col] = 0
 df_inspire_squared_raw = df_inspire_squared_raw[df_inspire_squared_raw["gamma1"] == 1024]
 df_inspire_squared_raw = df_inspire_squared_raw[df_inspire_squared_raw["gamma0"] == df_inspire_squared_raw["gamma2"]]
 df_inspire_squared_raw['payloadB'] = df_inspire_squared_raw['gamma0'] * 16 // 8
@@ -49,7 +53,11 @@ df_hintlesspir_raw['name'] = 'hintlesspir'
 df_hintlesspir_raw['resizedItemSizeBits'] = 32*1024*8
 
 # Get all unique dbSizes from both dataframes
-all_db_sizes_mb = [1024.0, 8192.0, 32768.0]
+
+all_db_sizes_mb = [1024.0]
+# # Uncomment this line to perform full experiments
+# all_db_sizes_mb = [1024.0, 8192.0, 32768.0]
+
 all_entry_sizes_bits = [1, 512, 32*1024*8]
 
 for input_item_size_bits in all_entry_sizes_bits:

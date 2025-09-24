@@ -7,7 +7,9 @@ mkdir -p saved_targets
 cp ../target/release/run saved_targets/
 TARGET=saved_targets/run
 
-for db_mb in 256 1024 8192 32768; do
+# Uncomment this line to perform full experiments
+# for db_mb in 1024 8192 32768; do
+for db_mb in 1024; do
   echo "DB Size=${db_mb}"
   num_items=$((2**20 * 8 * $db_mb)) # Compute 2^log_num_items
   item_size_bits=1 
@@ -25,5 +27,4 @@ for db_mb in 256 1024 8192 32768; do
       --out-report-json $output_file \
       --trials 5
   done
-
 done

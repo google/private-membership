@@ -1,8 +1,8 @@
 from visualize_base import *
 
 # Directory containing log files
-results_dir = f"results/inspire-squared/v07"
-figures_dir = f"figures/inspire-squared/v07"
+results_dir = f"results/inspire-squared"
+figures_dir = f"figures/inspire-squared"
 os.makedirs(figures_dir, exist_ok=True)
 
 df = read_and_flatten(results_dir=results_dir)

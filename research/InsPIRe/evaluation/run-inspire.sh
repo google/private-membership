@@ -14,8 +14,10 @@ echo "PIR over a database consisting of 1-bit entries for three database sizes, 
 # and the second is a space-separated list of log_dim0 values
 declare -A combinations_map
 combinations_map[33]="17 16 15 14 13 12 11 10"
-combinations_map[36]="17 16 15 14 13 12"
-combinations_map[38]="20 19 18 17 16 15"
+
+# # Uncomment this line to perform full experiments
+# combinations_map[36]="17 16 15 14 13 12"
+# combinations_map[38]="20 19 18 17 16 15"
 
 item_size_bits=1
 for log2_num_items in "${!combinations_map[@]}"; do
@@ -44,8 +46,10 @@ echo "PIR over a database consisting of 64B entries for three database sizes, 1 
 # and the second is a space-separated list of log_dim0 values
 declare -A combinations_map
 combinations_map[33]="17 16 15 14 13 12"
-combinations_map[36]="19 18 17 16 15 14 13"
-combinations_map[38]="20 19 18 17 16 15"
+
+# # Uncomment this line to perform full experiments
+# combinations_map[36]="19 18 17 16 15 14 13"
+# combinations_map[38]="20 19 18 17 16 15"
 
 item_size_bits=$(((2**9)))
 for log2_num_bits in "${!combinations_map[@]}"; do
@@ -75,8 +79,10 @@ echo "PIR over a database consisting of 32 KB entries for three database sizes, 
 # and the second is a space-separated list of log_dim0 values
 declare -A combinations_map
 combinations_map[33]="15 14 13 12 11 10 9 8"
-combinations_map[36]="18 17 16 15 14 13 12"
-combinations_map[38]="20 19 18 17 16 15 14"
+
+# # Uncomment this line to perform full experiments
+# combinations_map[36]="18 17 16 15 14 13 12"
+# combinations_map[38]="20 19 18 17 16 15 14"
 
 item_size_bits=$((32*1024*8))
 for log2_num_bits in "${!combinations_map[@]}"; do
