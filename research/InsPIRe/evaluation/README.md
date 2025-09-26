@@ -25,17 +25,17 @@ All scripts can however be terminated earlier to achieve partial results.
 
 To generate the evaluation data of InsPIRe in the paper, run the following:
 ```
-run-inspire_0.sh
-run-inspire-squared.sh # Full version only
-run-inspire.sh
+./run-inspire_0.sh
+./run-inspire-squared.sh # Full version only
+./run-inspire.sh
 ```
-whikch produces the results in `results/inspire_0`, `results/inspire_squared` (Full version only), and `results/inspire`.
+which produces the results in `results/inspire_0`, `results/inspire_squared` (Full version only), and `results/inspire`.
 This data will validate our claim about the performance of InsPIRe in all tables in the paper.
 
 ## InsPIRe for applications
 To simulate the use of InsPIRe in applications, run the following:
 ```
-run-application-experiments.sh
+./run-application-experiments.sh
 ```
 which produces the results in `results/application-experiments`.
 

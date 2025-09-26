@@ -9,8 +9,9 @@ TARGET=saved_targets/run
 
 echo "Starting"
 
-## Running specific parameters
-for log_db_bits in 33 36 38; do
+# Uncomment this line to perform full experiments
+# for log_db_bits in 31 33 36 38; do
+for log_db_bits in 33; do
   db_bits=$((2**log_db_bits))
   item_size_bits=1
   for gamma_0 in 16 32 64; do

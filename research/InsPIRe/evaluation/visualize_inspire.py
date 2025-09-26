@@ -2,8 +2,8 @@ from visualize_base import *
 import math
 
 # Directory containing log files
-results_dir = f"results/inspire/v12"
-figures_dir = f"figures/inspire/v12"
+results_dir = f"results/inspire"
+figures_dir = f"figures/inspire"
 os.makedirs(figures_dir, exist_ok=True)
 # os.makedirs(os.path.join(figures_dir, "poly-degree-ablation"), exist_ok=True)
 

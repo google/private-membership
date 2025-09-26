@@ -2,7 +2,7 @@
 
 OUR_DIR="results/application-experiments"
 
-echo Start > $OUR_DIR &&
+mkdir $OUR_DIR &&
 
 ############## Peer routing
 cargo run --release --bin run -- --num-items 256 --item-size-bits $((3 * 1024 * 4)) --protocol-type SimplePIR --second-level-packing-mask InspiRING --second-level-packing-body NoPacking --small-params --gammas 1024 $ONLINE_ONLY --trials 10 --out-report-json $OUR_DIR/peer-routing.json &&
