@@ -20,7 +20,7 @@ namespace private_membership {
 namespace rlwe {
 
 ::rlwe::StatusOr<std::string> Truncate(absl::string_view in, int bit_length) {
-  if (bit_length < 0 || bit_length > in.size() * 8) {
+  if (bit_length < 0 || bit_length > static_cast<int>(in.size() * 8)) {
     return absl::InvalidArgumentError("Truncation bit length out of bounds.");
   }
   if (bit_length == 0) {
@@ -37,7 +37,7 @@ namespace rlwe {
 
 ::rlwe::StatusOr<uint32_t> TruncateAsUint32(absl::string_view in,
                                             int bit_length) {
-  if (bit_length <= 0 || bit_length > in.size() * 8) {
+  if (bit_length <= 0 || bit_length > static_cast<int>(in.size() * 8)) {
     return absl::InvalidArgumentError("Truncation bit length out of bounds.");
   }
   if (bit_length > 32) {

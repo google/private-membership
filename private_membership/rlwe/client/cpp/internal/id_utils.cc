@@ -17,7 +17,7 @@
 namespace private_membership {
 
 std::string PadOrTruncate(absl::string_view in, int len) {
-  if (len <= in.size()) {
+  if (len <= static_cast<int>(in.size())) {
     return std::string(in.substr(0, len));
   }
   std::string ret(in);
