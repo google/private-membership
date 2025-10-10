@@ -17,6 +17,7 @@ syntax = "proto3";
 package private_membership;
 
 option go_package = "github.com/google/private-membership";
+option optimize_for = LITE_RUNTIME;
 
 // An enum describing different types of available hash functions.
 enum HashType {

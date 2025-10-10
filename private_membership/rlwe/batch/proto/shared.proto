@@ -19,6 +19,7 @@ package private_membership.batch;
 import "shell_encryption/serialization.proto";
 
 option java_package = "com.google.privatemembership.batch";
+option optimize_for = LITE_RUNTIME;
 
 // All messages in this file are shared between the client and server
 // libraries.

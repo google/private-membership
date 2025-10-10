@@ -20,6 +20,7 @@ import "private_membership/rlwe/batch/proto/shared.proto";
 import "shell_encryption/serialization.proto";
 
 option java_package = "com.google.privatemembership.batch.client";
+option optimize_for = LITE_RUNTIME;
 
 // Contains all information about the private key.
 message PrivateKey {

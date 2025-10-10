@@ -4,6 +4,8 @@ package private_membership.rlwe;
 
 import "private_membership/rlwe/client/proto/private_membership_rlwe.proto";
 
+option optimize_for = LITE_RUNTIME;
+
 // The regression test data consists of multiple test cases.
 message PrivateMembershipRlweClientRegressionTestData {
   message TestCase {
