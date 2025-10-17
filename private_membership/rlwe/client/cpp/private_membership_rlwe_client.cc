@@ -154,7 +154,7 @@ absl::Status PrivateMembershipRlweClient::ValidateOprfResponse(
 PrivateMembershipRlweClient::CreateQueryRequest(
     const private_membership::rlwe::PrivateMembershipRlweOprfResponse&
         oprf_response) {
-  RETURN_IF_ERROR(ValidateOprfResponse(oprf_response));
+  RLWE_RETURN_IF_ERROR(ValidateOprfResponse(oprf_response));
 
   // Initialize PIR client.
   int encrypted_bucket_id_length =
@@ -259,7 +259,7 @@ absl::Status PrivateMembershipRlweClient::ValidateQueryResponse(
 PrivateMembershipRlweClient::ProcessQueryResponse(
     const private_membership::rlwe::PrivateMembershipRlweQueryResponse&
         query_response) {
-  RETURN_IF_ERROR(ValidateQueryResponse(query_response));
+  RLWE_RETURN_IF_ERROR(ValidateQueryResponse(query_response));
 
   // Keep track of seen encrypted IDs to avoid duplicates.
   absl::flat_hash_set<std::string> seen_encrypted_ids;

@@ -96,16 +96,42 @@ message RlwePlaintextId {
 
 // Different use cases of the RLWE-based PSM protocol.
 //
-// NEXT ID: 16
+// NEXT ID: 25
 enum RlweUseCase {
   RLWE_USE_CASE_UNDEFINED = 0;
   TEST_USE_CASE = 1;
   TEST_USE_CASE2 = 2;
   TEST_USE_CASE3 = 3;
 
-  // The device state of Chrome OS device, used for Zero Touch, License
-  // Packaging.
+  // Use case with empty database.
+  EMPTY_USE_CASE = 22;
+
+  // The device state of ChromeOS device, used for Zero Touch, License
+  // Packaging. This is zero-disclosure database, i.e. client does not reveal
+  // any bits to the server.
   CROS_DEVICE_STATE = 5;
+
+  // The device state of ChromeOS device, used for all managed devices and
+  // License Packaging. This is partial-disclosure database, i.e. client will be
+  // asked to reveal some bits of the hash of non-sensitive identifier.
+  CROS_DEVICE_STATE_UNIFIED = 23;
+
+  // The device state of ChromeOS device.
+  CROS_DEVICE_SECONDARY_STATE = 12 [deprecated = true];
+  CROS_DEVICE_STATE_BACKUP = 21 [deprecated = true];
+
+  // Use-cases for ChromeOS Device Active Reporting to Fresnel.
+  CROS_FRESNEL_DAILY = 13;
+  CROS_FRESNEL_MONTHLY = 14;
+  CROS_FRESNEL_FIRST_ACTIVE = 15;
+  CROS_FRESNEL_7DAY_ACTIVE = 16;
+  CROS_FRESNEL_28DAY_ACTIVE = 17;
+  CROS_FRESNEL_CHURN_MONTHLY_COHORT = 19;
+  CROS_FRESNEL_CHURN_MONTHLY_OBSERVATION = 20;
+
+  // Use-cases for Cellular Carrier Lock (SimLock).
+  CROS_SIM_LOCK = 18;
+  CROS_SIM_LOCK_DEVMODE = 24;
 
   reserved 4, 6, 7, 8, 9, 10, 11;
 }
