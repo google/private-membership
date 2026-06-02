@@ -87,7 +87,6 @@ absl::StatusOr<std::string> Pad(absl::string_view bytes, int max_byte_length) {
   return absl::StrCat(length_in_byte, padded_bytes);
 }
 
-// LINT.IfChange(Unpad)
 absl::StatusOr<std::string> Unpad(absl::string_view bytes) {
   if (bytes.length() < 4) {
     return absl::InvalidArgumentError("Invalid bytes does not encode length.");
@@ -101,9 +100,7 @@ absl::StatusOr<std::string> Unpad(absl::string_view bytes) {
   }
   return std::string(bytes.substr(4, *bytes_length));
 }
-// LINT.ThenChange(//depot/google3/privacy/private_membership/common/typescript/crypto_utils.ts:Unpad)
 
-// LINT.IfChange(HashEncryptedId)
 std::string HashEncryptedId(absl::string_view encrypted_id,
                             ::private_join_and_compute::Context* ctx) {
   // Salt used in SHA256 hash function for creating sensitive matching
@@ -117,9 +114,7 @@ std::string HashEncryptedId(absl::string_view encrypted_id,
       std::string(reinterpret_cast<const char*>(kSensitiveIdHashSalt), 32),
       encrypted_id));
 }
-// LINT.ThenChange(//depot/google3/privacy/private_membership/common/typescript/crypto_utils.ts:HashEncryptedId)
 
-// LINT.IfChange(GetValueEncryptionKey)
 absl::StatusOr<std::string> GetValueEncryptionKey(
     absl::string_view encrypted_id, ::private_join_and_compute::Context* ctx) {
   // Salt user in SHA256 hash function to generate value encryption key.
@@ -137,7 +132,6 @@ absl::StatusOr<std::string> GetValueEncryptionKey(
           encrypted_id)),
       kRequiredAesKeyLength);
 }
-// LINT.ThenChange(//depot/google3/privacy/private_membership/common/typescript/crypto_utils.ts:GetValueEncryptionKey)
 
 absl::StatusOr<std::string> EncryptValue(const absl::string_view encrypted_id,
                                          const absl::string_view value,
@@ -175,7 +169,6 @@ absl::StatusOr<std::string> EncryptValue(const absl::string_view encrypted_id,
   return (*cipher)->Encrypt(*std::move(plaintext));
 }
 
-// LINT.IfChange(DecryptValue)
 absl::StatusOr<std::string> DecryptValue(
     const absl::string_view encrypted_id,
     const absl::string_view encrypted_value,
@@ -187,9 +180,7 @@ absl::StatusOr<std::string> DecryptValue(
   return DecryptValueWithKey(*value_encryption_key, encrypted_value,
                              encryption_scheme, ctx);
 }
-// LINT.ThenChange(//depot/google3/privacy/private_membership/common/typescript/crypto_utils.ts:DecryptValue)
 
-// LINT.IfChange(DecryptValueWithKey)
 absl::StatusOr<std::string> DecryptValueWithKey(
     const absl::string_view encryption_key,
     const absl::string_view encrypted_value,
@@ -210,7 +201,6 @@ absl::StatusOr<std::string> DecryptValueWithKey(
   }
   return Unpad(*std::move(plaintext));
 }
-// LINT.ThenChange(//depot/google3/privacy/private_membership/common/typescript/crypto_utils.ts:DecryptValueWithKey)
 
 absl::StatusOr<std::string> Truncate(std::string_view in, int bit_length) {
   if (bit_length < 0 || bit_length > in.size() * 8) {

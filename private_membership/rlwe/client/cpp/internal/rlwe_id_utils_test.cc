@@ -195,12 +195,10 @@ TEST(RlweIdUtils, AllSensitiveIdHashTypesCovered) {
   // The EnumerateEnumValues method is unavailable in Chromium.
   // Test uses a hardcoded vector of the enums in order to allow clean
   // compilation and have this test coverage in Chromium.
-  // LINT.IfChange(encrypted_bucket_hash_types)
   std::vector<EncryptedBucketHashType> encrypted_bucket_hash_types = {
       ENCRYPTED_BUCKET_HASH_TYPE_UNDEFINED, ENCRYPTED_BUCKET_TEST_HASH_TYPE,
       SHA256_NON_SENSITIVE_AND_SENSITIVE_ID,
   };
-  // LINT.ThenChange()
 
   for (const auto& hash_type : encrypted_bucket_hash_types) {
     EncryptedBucketsParameters params;

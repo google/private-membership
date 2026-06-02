@@ -11,7 +11,6 @@ namespace private_membership {
 // Abstract interface for a cipher.
 class Cipher {
  public:
-  // LINT.IfChange
   // **IMPORTANT**: Keep the integer value in sync with the enum in
   // google3/privacy/private_membership/proto/private_membership.proto
   enum class Scheme {
@@ -21,9 +20,6 @@ class Cipher {
     kAesGcm256 = 3,
     kAesSiv = 4,
   };
-  // LINT.ThenChange(
-  //    //depot/google3/privacy/private_membership/proto/private_membership.proto,
-  //    //depot/google3/googlemac/iPhone/Firebase/Analytics/AppMeasurement/Nano/PrivateSetMembership/Protos/private_membership.proto)
 
   virtual ~Cipher() = default;
 
