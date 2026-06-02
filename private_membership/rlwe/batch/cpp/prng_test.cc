@@ -20,6 +20,8 @@
 #include <string>
 
 #include <gtest/gtest.h>
+#include "shell_encryption/testing/status_matchers.h"
+#include "shell_encryption/testing/status_testing.h"
 #include "absl/status/statusor.h"
 #include "shell_encryption/prng/prng.h"
 

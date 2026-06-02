@@ -1,60 +1,88 @@
-// Copyright 2020 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 #include "private_membership/rlwe/client/cpp/internal/oprf_utils.h"
 
+#include <sys/stat.h>
+
+#include <memory>
+#include <string>
+
 #include "private_join_and_compute/crypto/ec_commutative_cipher.h"
+#include "private_membership/rlwe/client/proto/private_membership_rlwe.pb.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include "shell_encryption/testing/status_matchers.h"
 #include "shell_encryption/testing/status_testing.h"
+#include "absl/status/status.h"
 
 namespace private_membership {
+namespace rlwe {
 namespace {
+
 
 using ::rlwe::testing::StatusIs;
 
-constexpr int kCurveId = NID_X9_62_prime256v1;
-
-TEST(OprfUtilsTest, ReEncryptIdSuccess) {
-  ASSERT_OK_AND_ASSIGN(
-      auto ec_cipher1,
-      private_join_and_compute::ECCommutativeCipher::CreateWithNewKey(
-          kCurveId, private_join_and_compute::ECCommutativeCipher::HashType::SHA256));
-  ASSERT_OK_AND_ASSIGN(
-      auto ec_cipher2,
-      private_join_and_compute::ECCommutativeCipher::CreateWithNewKey(
-          kCurveId, private_join_and_compute::ECCommutativeCipher::HashType::SHA256));
-  ASSERT_OK_AND_ASSIGN(auto encrypted_id, ec_cipher1->Encrypt("plaintext id"));
-
-  ASSERT_OK_AND_ASSIGN(auto doubly_encrypted_id,
-                       ReEncryptId(encrypted_id, ec_cipher2.get()));
-  EXPECT_EQ(doubly_encrypted_id.queried_encrypted_id(), encrypted_id);
-  ASSERT_OK_AND_ASSIGN(auto result, ec_cipher2->ReEncrypt(encrypted_id));
-  EXPECT_EQ(doubly_encrypted_id.doubly_encrypted_id(), result);
+TEST(OprfUtilsTest, CreateOprfCipher) {
+  EXPECT_OK(
+      CreateOprfCipher(OprfCurveAndHashType::kPrime256v1CurveIdWithSha256));
+  EXPECT_OK(
+      CreateOprfCipher(OprfCurveAndHashType::kPrime256v1CurveIdWithSswuRo));
 }
 
-TEST(OprfUtilsTest, ReEncryptIdFail) {
-  ASSERT_OK_AND_ASSIGN(
-      auto ec_cipher,
-      private_join_and_compute::ECCommutativeCipher::CreateWithNewKey(
-          kCurveId, private_join_and_compute::ECCommutativeCipher::HashType::SHA256));
-  // Empty substring necessary due to forked StatusIs.
+TEST(OprfUtilsTest, CreateOprfCipherWithUndefinedCurveAndHashType) {
   EXPECT_THAT(
-      ReEncryptId("not encrypted id", ec_cipher.get()),
-      StatusIs(absl::StatusCode::kInvalidArgument, testing::HasSubstr("")));
+      CreateOprfCipher(OprfCurveAndHashType::kUndefinedOprfCurveAndHashType),
+      StatusIs(absl::StatusCode::kInvalidArgument, ::testing::_));
+}
+
+TEST(OprfUtilsTest, CreateOprfCipherWithCorrectKeys) {
+  ASSERT_OK_AND_ASSIGN(
+      std::unique_ptr<::private_join_and_compute::ECCommutativeCipher> cipher1,
+      CreateOprfCipher(OprfCurveAndHashType::kPrime256v1CurveIdWithSswuRo));
+  ASSERT_OK_AND_ASSIGN(
+      std::unique_ptr<::private_join_and_compute::ECCommutativeCipher> cipher2,
+      CreateOprfCipher(OprfCurveAndHashType::kPrime256v1CurveIdWithSswuRo));
+  ASSERT_OK_AND_ASSIGN(
+      std::unique_ptr<::private_join_and_compute::ECCommutativeCipher> cipher3,
+      CreateOprfCipher(OprfCurveAndHashType::kPrime256v1CurveIdWithSswuRo,
+                       cipher1->GetPrivateKeyBytes()));
+  ASSERT_OK_AND_ASSIGN(std::string encrypted_id1, cipher1->Encrypt("test"));
+  ASSERT_OK_AND_ASSIGN(std::string encrypted_id2, cipher2->Encrypt("test"));
+  ASSERT_OK_AND_ASSIGN(std::string encrypted_id3, cipher3->Encrypt("test"));
+
+  EXPECT_EQ(encrypted_id1, encrypted_id3);
+  EXPECT_NE(encrypted_id1, encrypted_id2);
+}
+
+TEST(OprfUtilsTest, CreateOprfCipherWithCorrectCurveAndHashType) {
+  ASSERT_OK_AND_ASSIGN(
+      std::unique_ptr<::private_join_and_compute::ECCommutativeCipher> cipher1,
+      CreateOprfCipher(OprfCurveAndHashType::kPrime256v1CurveIdWithSswuRo));
+  ASSERT_OK_AND_ASSIGN(
+      std::unique_ptr<::private_join_and_compute::ECCommutativeCipher> cipher2,
+      CreateOprfCipher(OprfCurveAndHashType::kPrime256v1CurveIdWithSha256,
+                       cipher1->GetPrivateKeyBytes()));
+  ASSERT_OK_AND_ASSIGN(
+      std::unique_ptr<::private_join_and_compute::ECCommutativeCipher> cipher3,
+      CreateOprfCipher(OprfCurveAndHashType::kPrime256v1CurveIdWithSswuRo,
+                       cipher1->GetPrivateKeyBytes()));
+  ASSERT_OK_AND_ASSIGN(std::string encrypted_id1, cipher1->Encrypt("test"));
+  ASSERT_OK_AND_ASSIGN(std::string encrypted_id2, cipher2->Encrypt("test"));
+  ASSERT_OK_AND_ASSIGN(std::string encrypted_id3, cipher3->Encrypt("test"));
+
+  EXPECT_EQ(encrypted_id1, encrypted_id3);
+  EXPECT_NE(encrypted_id1, encrypted_id2);
+}
+
+TEST(OprfUtilsTest, ToInternalEnum) {
+  ASSERT_OK_AND_ASSIGN(auto val1, ToInternalEnum(OprfParams::OPRF_CONFIG_NID_X9_62_PRIME256V1_WITH_SHA256));
+  EXPECT_EQ(val1, OprfCurveAndHashType::kPrime256v1CurveIdWithSha256);
+  ASSERT_OK_AND_ASSIGN(auto val2, ToInternalEnum(OprfParams::OPRF_CONFIG_NID_X9_62_PRIME256V1_WITH_SSWU_RO));
+  EXPECT_EQ(val2, OprfCurveAndHashType::kPrime256v1CurveIdWithSswuRo);
+  ASSERT_OK_AND_ASSIGN(auto val3, ToInternalEnum(OprfParams::OPRF_CONFIG_UNSPECIFIED));
+  EXPECT_EQ(val3, OprfCurveAndHashType::kUndefinedOprfCurveAndHashType);
+  EXPECT_THAT(ToInternalEnum(static_cast<OprfParams>(-1)),
+              StatusIs(absl::StatusCode::kInvalidArgument, ::testing::_));
 }
 
 }  // namespace
+}  // namespace rlwe
 }  // namespace private_membership

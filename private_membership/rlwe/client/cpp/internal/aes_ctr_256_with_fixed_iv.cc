@@ -14,10 +14,17 @@
 
 #include "private_membership/rlwe/client/cpp/internal/aes_ctr_256_with_fixed_iv.h"
 
+#include <cstdint>
+#include <memory>
+#include <string>
 #include <vector>
 
-#include <openssl/err.h>
-#include <openssl/evp.h>
+#include "absl/memory/memory.h"
+#include "absl/status/status.h"
+#include "absl/status/statusor.h"
+#include "absl/strings/string_view.h"
+#include <openssl/base.h>
+#include <openssl/cipher.h>
 
 namespace private_membership {
 
@@ -32,7 +39,7 @@ absl::string_view EnsureNotNull(absl::string_view str) {
 
 }  // namespace
 
-::rlwe::StatusOr<std::unique_ptr<AesCtr256WithFixedIV>>
+absl::StatusOr<std::unique_ptr<AesCtr256WithFixedIV>>
 AesCtr256WithFixedIV::Create(absl::string_view key) {
   if (key.size() != kKeySize) {
     return absl::InvalidArgumentError("Key size is invalid.");
@@ -43,7 +50,7 @@ AesCtr256WithFixedIV::Create(absl::string_view key) {
 AesCtr256WithFixedIV::AesCtr256WithFixedIV(absl::string_view key)
     : key_(EnsureNotNull(key)), iv_(kIVSize, 0) {}
 
-::rlwe::StatusOr<std::string> AesCtr256WithFixedIV::Encrypt(
+absl::StatusOr<std::string> AesCtr256WithFixedIV::Encrypt(
     absl::string_view plaintext) const {
   plaintext = EnsureNotNull(plaintext);
 
@@ -78,7 +85,7 @@ AesCtr256WithFixedIV::AesCtr256WithFixedIV(absl::string_view key)
                      plaintext.size());
 }
 
-::rlwe::StatusOr<std::string> AesCtr256WithFixedIV::Decrypt(
+absl::StatusOr<std::string> AesCtr256WithFixedIV::Decrypt(
     absl::string_view ciphertext) const {
   if (ciphertext.data() == nullptr) {
     return absl::InternalError("Invalid null ciphertext.");

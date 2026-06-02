@@ -19,13 +19,13 @@
 #include <utility>
 #include <vector>
 
-#include <google/protobuf/repeated_field.h>
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "private_membership/rlwe/batch/cpp/constants.h"
 #include "private_membership/rlwe/batch/cpp/padding.h"
 #include "private_membership/rlwe/batch/proto/shared.pb.h"
+#include <google/protobuf/repeated_field.h>
 #include "shell_encryption/context.h"
 #include "shell_encryption/galois_key.h"
 #include "shell_encryption/integral_types.h"

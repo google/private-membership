@@ -1,0 +1,2528 @@
+diff -urN tink_base_orig/apps/BUILD.bazel tink_base_mod/apps/BUILD.bazel
+--- tink_base_orig/apps/BUILD.bazel	2026-05-29 16:15:23.000000000 +0000
++++ tink_base_mod/apps/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/apps/paymentmethodtoken/BUILD.bazel tink_base_mod/apps/paymentmethodtoken/BUILD.bazel
+--- tink_base_orig/apps/paymentmethodtoken/BUILD.bazel	2026-05-29 16:15:23.000000000 +0000
++++ tink_base_mod/apps/paymentmethodtoken/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@tink_java//tools:gen_maven_jar_rules.bzl", "gen_maven_jar_rules")
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/apps/paymentmethodtoken/src/main/java/com/google/crypto/tink/apps/paymentmethodtoken/BUILD.bazel tink_base_mod/apps/paymentmethodtoken/src/main/java/com/google/crypto/tink/apps/paymentmethodtoken/BUILD.bazel
+--- tink_base_orig/apps/paymentmethodtoken/src/main/java/com/google/crypto/tink/apps/paymentmethodtoken/BUILD.bazel	2026-05-29 16:15:23.000000000 +0000
++++ tink_base_mod/apps/paymentmethodtoken/src/main/java/com/google/crypto/tink/apps/paymentmethodtoken/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/apps/paymentmethodtoken/src/test/BUILD.bazel tink_base_mod/apps/paymentmethodtoken/src/test/BUILD.bazel
+--- tink_base_orig/apps/paymentmethodtoken/src/test/BUILD.bazel	2026-05-29 16:15:23.000000000 +0000
++++ tink_base_mod/apps/paymentmethodtoken/src/test/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@tink_java//tools:gen_java_test_rules.bzl", "gen_java_test_rules")
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/apps/rewardedads/BUILD.bazel tink_base_mod/apps/rewardedads/BUILD.bazel
+--- tink_base_orig/apps/rewardedads/BUILD.bazel	2026-05-29 16:15:24.000000000 +0000
++++ tink_base_mod/apps/rewardedads/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@tink_java//tools:gen_maven_jar_rules.bzl", "gen_maven_jar_rules")
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/apps/rewardedads/src/main/java/com/google/crypto/tink/apps/rewardedads/BUILD.bazel tink_base_mod/apps/rewardedads/src/main/java/com/google/crypto/tink/apps/rewardedads/BUILD.bazel
+--- tink_base_orig/apps/rewardedads/src/main/java/com/google/crypto/tink/apps/rewardedads/BUILD.bazel	2026-05-29 16:15:24.000000000 +0000
++++ tink_base_mod/apps/rewardedads/src/main/java/com/google/crypto/tink/apps/rewardedads/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/apps/rewardedads/src/test/BUILD.bazel tink_base_mod/apps/rewardedads/src/test/BUILD.bazel
+--- tink_base_orig/apps/rewardedads/src/test/BUILD.bazel	2026-05-29 16:15:24.000000000 +0000
++++ tink_base_mod/apps/rewardedads/src/test/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@tink_java//tools:gen_java_test_rules.bzl", "gen_java_test_rules")
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/apps/webpush/BUILD.bazel tink_base_mod/apps/webpush/BUILD.bazel
+--- tink_base_orig/apps/webpush/BUILD.bazel	2026-05-29 16:15:23.000000000 +0000
++++ tink_base_mod/apps/webpush/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@tink_java//tools:gen_maven_jar_rules.bzl", "gen_maven_jar_rules")
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/apps/webpush/src/main/java/com/google/crypto/tink/apps/webpush/BUILD.bazel tink_base_mod/apps/webpush/src/main/java/com/google/crypto/tink/apps/webpush/BUILD.bazel
+--- tink_base_orig/apps/webpush/src/main/java/com/google/crypto/tink/apps/webpush/BUILD.bazel	2026-05-29 16:15:24.000000000 +0000
++++ tink_base_mod/apps/webpush/src/main/java/com/google/crypto/tink/apps/webpush/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/apps/webpush/src/test/BUILD.bazel tink_base_mod/apps/webpush/src/test/BUILD.bazel
+--- tink_base_orig/apps/webpush/src/test/BUILD.bazel	2026-05-29 16:15:24.000000000 +0000
++++ tink_base_mod/apps/webpush/src/test/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@tink_java//tools:gen_java_test_rules.bzl", "gen_java_test_rules")
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/BUILD.bazel tink_base_mod/BUILD.bazel
+--- tink_base_orig/BUILD.bazel	2026-05-29 16:15:23.000000000 +0000
++++ tink_base_mod/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,10 +1,13 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ # Description:
+ #   Tink (https://github.com/google/tink) is a small crypto library that
+ #   provides a safe, simple, agile and fast way to accomplish some common
+ #   crypto tasks.
+ load("@rules_python//python:defs.bzl", "py_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/aead/BUILD.bazel tink_base_mod/cc/aead/BUILD.bazel
+--- tink_base_orig/cc/aead/BUILD.bazel	2026-05-29 16:15:18.000000000 +0000
++++ tink_base_mod/cc/aead/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/aead/internal/BUILD.bazel tink_base_mod/cc/aead/internal/BUILD.bazel
+--- tink_base_orig/cc/aead/internal/BUILD.bazel	2026-05-29 16:15:18.000000000 +0000
++++ tink_base_mod/cc/aead/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/aead/subtle/BUILD.bazel tink_base_mod/cc/aead/subtle/BUILD.bazel
+--- tink_base_orig/cc/aead/subtle/BUILD.bazel	2026-05-29 16:15:18.000000000 +0000
++++ tink_base_mod/cc/aead/subtle/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_base_orig/cc/BUILD.bazel tink_base_mod/cc/BUILD.bazel
+--- tink_base_orig/cc/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/cc/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@tink_base//:tink_version.bzl", "TINK_VERSION_LABEL")
+ load("@tink_base//tools:common.bzl", "template_rule")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/config/BUILD.bazel tink_base_mod/cc/config/BUILD.bazel
+--- tink_base_orig/cc/config/BUILD.bazel	2026-05-29 16:15:18.000000000 +0000
++++ tink_base_mod/cc/config/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@bazel_skylib//rules:common_settings.bzl", "bool_flag")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/daead/BUILD.bazel tink_base_mod/cc/daead/BUILD.bazel
+--- tink_base_orig/cc/daead/BUILD.bazel	2026-05-29 16:15:18.000000000 +0000
++++ tink_base_mod/cc/daead/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/daead/internal/BUILD.bazel tink_base_mod/cc/daead/internal/BUILD.bazel
+--- tink_base_orig/cc/daead/internal/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/daead/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_base_orig/cc/daead/subtle/BUILD.bazel tink_base_mod/cc/daead/subtle/BUILD.bazel
+--- tink_base_orig/cc/daead/subtle/BUILD.bazel	2026-05-29 16:15:18.000000000 +0000
++++ tink_base_mod/cc/daead/subtle/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/hybrid/BUILD.bazel tink_base_mod/cc/hybrid/BUILD.bazel
+--- tink_base_orig/cc/hybrid/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/cc/hybrid/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/hybrid/internal/BUILD.bazel tink_base_mod/cc/hybrid/internal/BUILD.bazel
+--- tink_base_orig/cc/hybrid/internal/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/cc/hybrid/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_base_orig/cc/hybrid/subtle/BUILD.bazel tink_base_mod/cc/hybrid/subtle/BUILD.bazel
+--- tink_base_orig/cc/hybrid/subtle/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/cc/hybrid/subtle/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_base_orig/cc/integration/awskms/BUILD.bazel tink_base_mod/cc/integration/awskms/BUILD.bazel
+--- tink_base_orig/cc/integration/awskms/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/cc/integration/awskms/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/integration/gcpkms/BUILD.bazel tink_base_mod/cc/integration/gcpkms/BUILD.bazel
+--- tink_base_orig/cc/integration/gcpkms/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/cc/integration/gcpkms/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/internal/BUILD.bazel tink_base_mod/cc/internal/BUILD.bazel
+--- tink_base_orig/cc/internal/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/jwt/BUILD.bazel tink_base_mod/cc/jwt/BUILD.bazel
+--- tink_base_orig/cc/jwt/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/jwt/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/jwt/internal/BUILD.bazel tink_base_mod/cc/jwt/internal/BUILD.bazel
+--- tink_base_orig/cc/jwt/internal/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/jwt/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/mac/BUILD.bazel tink_base_mod/cc/mac/BUILD.bazel
+--- tink_base_orig/cc/mac/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/mac/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/mac/internal/BUILD.bazel tink_base_mod/cc/mac/internal/BUILD.bazel
+--- tink_base_orig/cc/mac/internal/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/mac/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_base_orig/cc/mac/subtle/BUILD.bazel tink_base_mod/cc/mac/subtle/BUILD.bazel
+--- tink_base_orig/cc/mac/subtle/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/mac/subtle/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_base_orig/cc/prf/BUILD.bazel tink_base_mod/cc/prf/BUILD.bazel
+--- tink_base_orig/cc/prf/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/prf/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(
+     default_visibility = ["//:__subpackages__"],
+ )
+diff -urN tink_base_orig/cc/prf/internal/BUILD.bazel tink_base_mod/cc/prf/internal/BUILD.bazel
+--- tink_base_orig/cc/prf/internal/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/prf/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_base_orig/cc/prf/subtle/BUILD.bazel tink_base_mod/cc/prf/subtle/BUILD.bazel
+--- tink_base_orig/cc/prf/subtle/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/prf/subtle/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_base_orig/cc/proto/BUILD.bazel tink_base_mod/cc/proto/BUILD.bazel
+--- tink_base_orig/cc/proto/BUILD.bazel	2026-05-29 16:15:18.000000000 +0000
++++ tink_base_mod/cc/proto/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/signature/BUILD.bazel tink_base_mod/cc/signature/BUILD.bazel
+--- tink_base_orig/cc/signature/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/cc/signature/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/signature/internal/BUILD.bazel tink_base_mod/cc/signature/internal/BUILD.bazel
+--- tink_base_orig/cc/signature/internal/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/cc/signature/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_base_orig/cc/signature/subtle/BUILD.bazel tink_base_mod/cc/signature/subtle/BUILD.bazel
+--- tink_base_orig/cc/signature/subtle/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/signature/subtle/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_base_orig/cc/streamingaead/BUILD.bazel tink_base_mod/cc/streamingaead/BUILD.bazel
+--- tink_base_orig/cc/streamingaead/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/cc/streamingaead/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/streamingaead/internal/BUILD.bazel tink_base_mod/cc/streamingaead/internal/BUILD.bazel
+--- tink_base_orig/cc/streamingaead/internal/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/cc/streamingaead/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_base_orig/cc/streamingaead/subtle/BUILD.bazel tink_base_mod/cc/streamingaead/subtle/BUILD.bazel
+--- tink_base_orig/cc/streamingaead/subtle/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/cc/streamingaead/subtle/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_base_orig/cc/subtle/BUILD.bazel tink_base_mod/cc/subtle/BUILD.bazel
+--- tink_base_orig/cc/subtle/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/subtle/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/subtle/mac/BUILD.bazel tink_base_mod/cc/subtle/mac/BUILD.bazel
+--- tink_base_orig/cc/subtle/mac/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/subtle/mac/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/subtle/prf/BUILD.bazel tink_base_mod/cc/subtle/prf/BUILD.bazel
+--- tink_base_orig/cc/subtle/prf/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/subtle/prf/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/subtle/random.h tink_base_mod/cc/subtle/random.h
+--- tink_base_orig/cc/subtle/random.h	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/subtle/random.h	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,4 @@
++#include <cstdint>
+ // Copyright 2017 Google Inc.
+ //
+ // Licensed under the Apache License, Version 2.0 (the "License");
+diff -urN tink_base_orig/cc/third_party/boringssl_fips/BUILD.bazel tink_base_mod/cc/third_party/boringssl_fips/BUILD.bazel
+--- tink_base_orig/cc/third_party/boringssl_fips/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/third_party/boringssl_fips/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ boringssl_headers = [
+diff -urN tink_base_orig/cc/third_party/BUILD.bazel tink_base_mod/cc/third_party/BUILD.bazel
+--- tink_base_orig/cc/third_party/BUILD.bazel	2026-05-29 16:15:19.000000000 +0000
++++ tink_base_mod/cc/third_party/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/cc/util/BUILD.bazel tink_base_mod/cc/util/BUILD.bazel
+--- tink_base_orig/cc/util/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/cc/util/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/cc/util/secret_data.h tink_base_mod/cc/util/secret_data.h
+--- tink_base_orig/cc/util/secret_data.h	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/cc/util/secret_data.h	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,4 @@
++#include <cstdint>
+ // Copyright 2020 Google LLC
+ //
+ // Licensed under the Apache License, Version 2.0 (the "License");
+diff -urN tink_base_orig/examples/cc/digital_signatures/BUILD.bazel tink_base_mod/examples/cc/digital_signatures/BUILD.bazel
+--- tink_base_orig/examples/cc/digital_signatures/BUILD.bazel	2026-05-29 16:15:32.000000000 +0000
++++ tink_base_mod/examples/cc/digital_signatures/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/examples/cc/helloworld/BUILD.bazel tink_base_mod/examples/cc/helloworld/BUILD.bazel
+--- tink_base_orig/examples/cc/helloworld/BUILD.bazel	2026-05-29 16:15:32.000000000 +0000
++++ tink_base_mod/examples/cc/helloworld/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/examples/cc/hybrid_encryption/BUILD.bazel tink_base_mod/examples/cc/hybrid_encryption/BUILD.bazel
+--- tink_base_orig/examples/cc/hybrid_encryption/BUILD.bazel	2026-05-29 16:15:32.000000000 +0000
++++ tink_base_mod/examples/cc/hybrid_encryption/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/examples/java_src/aead/BUILD tink_base_mod/examples/java_src/aead/BUILD
+--- tink_base_orig/examples/java_src/aead/BUILD	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/java_src/aead/BUILD	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/examples/java_src/cleartextkeyset/BUILD tink_base_mod/examples/java_src/cleartextkeyset/BUILD
+--- tink_base_orig/examples/java_src/cleartextkeyset/BUILD	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/java_src/cleartextkeyset/BUILD	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/examples/java_src/deterministicaead/BUILD tink_base_mod/examples/java_src/deterministicaead/BUILD
+--- tink_base_orig/examples/java_src/deterministicaead/BUILD	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/java_src/deterministicaead/BUILD	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/examples/java_src/encryptedkeyset/BUILD tink_base_mod/examples/java_src/encryptedkeyset/BUILD
+--- tink_base_orig/examples/java_src/encryptedkeyset/BUILD	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/java_src/encryptedkeyset/BUILD	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/examples/java_src/envelopeaead/BUILD tink_base_mod/examples/java_src/envelopeaead/BUILD
+--- tink_base_orig/examples/java_src/envelopeaead/BUILD	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/java_src/envelopeaead/BUILD	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/examples/java_src/gcs/BUILD tink_base_mod/examples/java_src/gcs/BUILD
+--- tink_base_orig/examples/java_src/gcs/BUILD	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/java_src/gcs/BUILD	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/examples/java_src/helloworld/BUILD tink_base_mod/examples/java_src/helloworld/BUILD
+--- tink_base_orig/examples/java_src/helloworld/BUILD	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/java_src/helloworld/BUILD	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@bazel_skylib//rules:build_test.bzl", "build_test")
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/examples/java_src/hybrid/BUILD tink_base_mod/examples/java_src/hybrid/BUILD
+--- tink_base_orig/examples/java_src/hybrid/BUILD	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/java_src/hybrid/BUILD	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/examples/java_src/mac/BUILD tink_base_mod/examples/java_src/mac/BUILD
+--- tink_base_orig/examples/java_src/mac/BUILD	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/java_src/mac/BUILD	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/examples/java_src/signature/BUILD tink_base_mod/examples/java_src/signature/BUILD
+--- tink_base_orig/examples/java_src/signature/BUILD	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/java_src/signature/BUILD	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/examples/java_src/streamingaead/BUILD tink_base_mod/examples/java_src/streamingaead/BUILD
+--- tink_base_orig/examples/java_src/streamingaead/BUILD	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/java_src/streamingaead/BUILD	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/examples/python/aead/BUILD.bazel tink_base_mod/examples/python/aead/BUILD.bazel
+--- tink_base_orig/examples/python/aead/BUILD.bazel	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/python/aead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_binary")
+ load("@pip_deps//:requirements.bzl", "requirement")
+ 
+diff -urN tink_base_orig/examples/python/cleartext_keyset/BUILD.bazel tink_base_mod/examples/python/cleartext_keyset/BUILD.bazel
+--- tink_base_orig/examples/python/cleartext_keyset/BUILD.bazel	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/python/cleartext_keyset/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_binary")
+ load("@pip_deps//:requirements.bzl", "requirement")
+ 
+diff -urN tink_base_orig/examples/python/deterministic_aead/BUILD.bazel tink_base_mod/examples/python/deterministic_aead/BUILD.bazel
+--- tink_base_orig/examples/python/deterministic_aead/BUILD.bazel	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/python/deterministic_aead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_binary")
+ load("@pip_deps//:requirements.bzl", "requirement")
+ 
+diff -urN tink_base_orig/examples/python/encrypted_keyset/BUILD.bazel tink_base_mod/examples/python/encrypted_keyset/BUILD.bazel
+--- tink_base_orig/examples/python/encrypted_keyset/BUILD.bazel	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/python/encrypted_keyset/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_binary")
+ load("@pip_deps//:requirements.bzl", "requirement")
+ 
+diff -urN tink_base_orig/examples/python/envelope_aead/BUILD.bazel tink_base_mod/examples/python/envelope_aead/BUILD.bazel
+--- tink_base_orig/examples/python/envelope_aead/BUILD.bazel	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/python/envelope_aead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_binary")
+ load("@pip_deps//:requirements.bzl", "requirement")
+ 
+diff -urN tink_base_orig/examples/python/gcs/BUILD.bazel tink_base_mod/examples/python/gcs/BUILD.bazel
+--- tink_base_orig/examples/python/gcs/BUILD.bazel	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/python/gcs/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_binary")
+ load("@pip_deps//:requirements.bzl", "requirement")
+ 
+diff -urN tink_base_orig/examples/python/hybrid/BUILD.bazel tink_base_mod/examples/python/hybrid/BUILD.bazel
+--- tink_base_orig/examples/python/hybrid/BUILD.bazel	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/python/hybrid/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_binary")
+ load("@pip_deps//:requirements.bzl", "requirement")
+ 
+diff -urN tink_base_orig/examples/python/mac/BUILD.bazel tink_base_mod/examples/python/mac/BUILD.bazel
+--- tink_base_orig/examples/python/mac/BUILD.bazel	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/python/mac/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_binary")
+ load("@pip_deps//:requirements.bzl", "requirement")
+ 
+diff -urN tink_base_orig/examples/python/signature/BUILD.bazel tink_base_mod/examples/python/signature/BUILD.bazel
+--- tink_base_orig/examples/python/signature/BUILD.bazel	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/python/signature/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_binary")
+ load("@pip_deps//:requirements.bzl", "requirement")
+ 
+diff -urN tink_base_orig/examples/python/streaming_aead/BUILD.bazel tink_base_mod/examples/python/streaming_aead/BUILD.bazel
+--- tink_base_orig/examples/python/streaming_aead/BUILD.bazel	2026-05-29 16:15:31.000000000 +0000
++++ tink_base_mod/examples/python/streaming_aead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_binary")
+ load("@pip_deps//:requirements.bzl", "requirement")
+ 
+diff -urN tink_base_orig/experimental/pqcrypto/cc/hybrid/BUILD.bazel tink_base_mod/experimental/pqcrypto/cc/hybrid/BUILD.bazel
+--- tink_base_orig/experimental/pqcrypto/cc/hybrid/BUILD.bazel	2026-05-29 16:15:16.000000000 +0000
++++ tink_base_mod/experimental/pqcrypto/cc/hybrid/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ # package containing hybrid encryption implementations of PQC primitives
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/experimental/pqcrypto/cc/hybrid/internal/BUILD.bazel tink_base_mod/experimental/pqcrypto/cc/hybrid/internal/BUILD.bazel
+--- tink_base_orig/experimental/pqcrypto/cc/hybrid/internal/BUILD.bazel	2026-05-29 16:15:16.000000000 +0000
++++ tink_base_mod/experimental/pqcrypto/cc/hybrid/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ # package containing hybrid encryption internal implementations of PQC primitives
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/experimental/pqcrypto/cc/subtle/BUILD.bazel tink_base_mod/experimental/pqcrypto/cc/subtle/BUILD.bazel
+--- tink_base_orig/experimental/pqcrypto/cc/subtle/BUILD.bazel	2026-05-29 16:15:16.000000000 +0000
++++ tink_base_mod/experimental/pqcrypto/cc/subtle/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ # package containing subtle implementations of PQC primitives
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/experimental/pqcrypto/cc/util/BUILD.bazel tink_base_mod/experimental/pqcrypto/cc/util/BUILD.bazel
+--- tink_base_orig/experimental/pqcrypto/cc/util/BUILD.bazel	2026-05-29 16:15:16.000000000 +0000
++++ tink_base_mod/experimental/pqcrypto/cc/util/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ # package containing useful functions for hybrid encryption PQC primitives
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/experimental/pqcrypto/proto/BUILD.bazel tink_base_mod/experimental/pqcrypto/proto/BUILD.bazel
+--- tink_base_orig/experimental/pqcrypto/proto/BUILD.bazel	2026-05-29 16:15:16.000000000 +0000
++++ tink_base_mod/experimental/pqcrypto/proto/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ # package containing useful functions for hybrid encryption PQC primitives
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/go/aead/BUILD.bazel tink_base_mod/go/aead/BUILD.bazel
+--- tink_base_orig/go/aead/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/aead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/aead/subtle/BUILD.bazel tink_base_mod/go/aead/subtle/BUILD.bazel
+--- tink_base_orig/go/aead/subtle/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/aead/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ go_library(
+     name = "go_default_library",
+diff -urN tink_base_orig/go/BUILD.bazel tink_base_mod/go/BUILD.bazel
+--- tink_base_orig/go/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "nogo")
+ load("@bazel_gazelle//:def.bzl", "gazelle")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/go/core/cryptofmt/BUILD.bazel tink_base_mod/go/core/cryptofmt/BUILD.bazel
+--- tink_base_orig/go/core/cryptofmt/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/core/cryptofmt/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])  # keep
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/core/primitiveset/BUILD.bazel tink_base_mod/go/core/primitiveset/BUILD.bazel
+--- tink_base_orig/go/core/primitiveset/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/core/primitiveset/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])  # keep
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/core/registry/BUILD.bazel tink_base_mod/go/core/registry/BUILD.bazel
+--- tink_base_orig/go/core/registry/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/core/registry/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])  # keep
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/daead/BUILD.bazel tink_base_mod/go/daead/BUILD.bazel
+--- tink_base_orig/go/daead/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/daead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])  # keep
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/daead/subtle/BUILD.bazel tink_base_mod/go/daead/subtle/BUILD.bazel
+--- tink_base_orig/go/daead/subtle/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/daead/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ go_library(
+     name = "go_default_library",
+diff -urN tink_base_orig/go/hybrid/BUILD.bazel tink_base_mod/go/hybrid/BUILD.bazel
+--- tink_base_orig/go/hybrid/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/hybrid/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+ go_library(
+diff -urN tink_base_orig/go/hybrid/subtle/BUILD.bazel tink_base_mod/go/hybrid/subtle/BUILD.bazel
+--- tink_base_orig/go/hybrid/subtle/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/hybrid/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ go_library(
+     name = "go_default_library",
+diff -urN tink_base_orig/go/insecurecleartextkeyset/BUILD.bazel tink_base_mod/go/insecurecleartextkeyset/BUILD.bazel
+--- tink_base_orig/go/insecurecleartextkeyset/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/insecurecleartextkeyset/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])  # keep
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/integration/awskms/BUILD.bazel tink_base_mod/go/integration/awskms/BUILD.bazel
+--- tink_base_orig/go/integration/awskms/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/integration/awskms/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/integration/gcpkms/BUILD.bazel tink_base_mod/go/integration/gcpkms/BUILD.bazel
+--- tink_base_orig/go/integration/gcpkms/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/integration/gcpkms/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/integration/hcvault/BUILD.bazel tink_base_mod/go/integration/hcvault/BUILD.bazel
+--- tink_base_orig/go/integration/hcvault/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/integration/hcvault/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/integration/hcvault/testdata/BUILD.bazel tink_base_mod/go/integration/hcvault/testdata/BUILD.bazel
+--- tink_base_orig/go/integration/hcvault/testdata/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/integration/hcvault/testdata/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/internal/BUILD.bazel tink_base_mod/go/internal/BUILD.bazel
+--- tink_base_orig/go/internal/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/internal/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])  # keep
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/keyset/BUILD.bazel tink_base_mod/go/keyset/BUILD.bazel
+--- tink_base_orig/go/keyset/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/keyset/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/go/kwp/subtle/BUILD.bazel tink_base_mod/go/kwp/subtle/BUILD.bazel
+--- tink_base_orig/go/kwp/subtle/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/kwp/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ go_library(
+     name = "go_default_library",
+diff -urN tink_base_orig/go/mac/BUILD.bazel tink_base_mod/go/mac/BUILD.bazel
+--- tink_base_orig/go/mac/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/mac/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/mac/subtle/BUILD.bazel tink_base_mod/go/mac/subtle/BUILD.bazel
+--- tink_base_orig/go/mac/subtle/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/mac/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ go_library(
+     name = "go_default_library",
+diff -urN tink_base_orig/go/prf/BUILD.bazel tink_base_mod/go/prf/BUILD.bazel
+--- tink_base_orig/go/prf/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/prf/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/prf/subtle/BUILD.bazel tink_base_mod/go/prf/subtle/BUILD.bazel
+--- tink_base_orig/go/prf/subtle/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/prf/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ go_library(
+     name = "go_default_library",
+diff -urN tink_base_orig/go/proto/BUILD.bazel tink_base_mod/go/proto/BUILD.bazel
+--- tink_base_orig/go/proto/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/proto/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ # gazelle:ignore
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ load("@io_bazel_rules_go//proto:def.bzl", "go_proto_library")
+ 
+ # protos
+diff -urN tink_base_orig/go/signature/BUILD.bazel tink_base_mod/go/signature/BUILD.bazel
+--- tink_base_orig/go/signature/BUILD.bazel	2026-05-29 16:15:24.000000000 +0000
++++ tink_base_mod/go/signature/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/signature/subtle/BUILD.bazel tink_base_mod/go/signature/subtle/BUILD.bazel
+--- tink_base_orig/go/signature/subtle/BUILD.bazel	2026-05-29 16:15:24.000000000 +0000
++++ tink_base_mod/go/signature/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ go_library(
+     name = "go_default_library",
+diff -urN tink_base_orig/go/streamingaead/BUILD.bazel tink_base_mod/go/streamingaead/BUILD.bazel
+--- tink_base_orig/go/streamingaead/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/streamingaead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/streamingaead/subtle/BUILD.bazel tink_base_mod/go/streamingaead/subtle/BUILD.bazel
+--- tink_base_orig/go/streamingaead/subtle/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/streamingaead/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+ go_library(
+diff -urN tink_base_orig/go/streamingaead/subtle/noncebased/BUILD.bazel tink_base_mod/go/streamingaead/subtle/noncebased/BUILD.bazel
+--- tink_base_orig/go/streamingaead/subtle/noncebased/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/streamingaead/subtle/noncebased/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+ go_library(
+diff -urN tink_base_orig/go/subtle/BUILD.bazel tink_base_mod/go/subtle/BUILD.bazel
+--- tink_base_orig/go/subtle/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])  # keep
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+diff -urN tink_base_orig/go/subtle/random/BUILD.bazel tink_base_mod/go/subtle/random/BUILD.bazel
+--- tink_base_orig/go/subtle/random/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/subtle/random/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])  # keep
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+diff -urN tink_base_orig/go/testing/fakekms/BUILD.bazel tink_base_mod/go/testing/fakekms/BUILD.bazel
+--- tink_base_orig/go/testing/fakekms/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/testing/fakekms/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,8 +1,11 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+ licenses(["notice"])
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ go_library(
+     name = "go_default_library",
+diff -urN tink_base_orig/go/testkeyset/BUILD.bazel tink_base_mod/go/testkeyset/BUILD.bazel
+--- tink_base_orig/go/testkeyset/BUILD.bazel	2026-05-29 16:15:25.000000000 +0000
++++ tink_base_mod/go/testkeyset/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])  # keep
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/go/testutil/BUILD.bazel tink_base_mod/go/testutil/BUILD.bazel
+--- tink_base_orig/go/testutil/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/testutil/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ go_library(
+     name = "go_default_library",
+diff -urN tink_base_orig/go/tink/BUILD.bazel tink_base_mod/go/tink/BUILD.bazel
+--- tink_base_orig/go/tink/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/go/tink/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])  # keep
++package(default_visibility = ["//visibility:public"])  # keep
+ 
+ licenses(["notice"])  # keep
+ 
+diff -urN tink_base_orig/javascript/aead/BUILD.bazel tink_base_mod/javascript/aead/BUILD.bazel
+--- tink_base_orig/javascript/aead/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/aead/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "aead",
+diff -urN tink_base_orig/javascript/aead/internal/BUILD.bazel tink_base_mod/javascript/aead/internal/BUILD.bazel
+--- tink_base_orig/javascript/aead/internal/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/aead/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "internal",
+diff -urN tink_base_orig/javascript/aead/subtle/BUILD.bazel tink_base_mod/javascript/aead/subtle/BUILD.bazel
+--- tink_base_orig/javascript/aead/subtle/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/aead/subtle/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "subtle",
+diff -urN tink_base_orig/javascript/binary/BUILD.bazel tink_base_mod/javascript/binary/BUILD.bazel
+--- tink_base_orig/javascript/binary/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/binary/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "binary",
+diff -urN tink_base_orig/javascript/binary/insecure/BUILD.bazel tink_base_mod/javascript/binary/insecure/BUILD.bazel
+--- tink_base_orig/javascript/binary/insecure/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/binary/insecure/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "insecure",
+diff -urN tink_base_orig/javascript/BUILD.bazel tink_base_mod/javascript/BUILD.bazel
+--- tink_base_orig/javascript/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,8 +1,11 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/karma:index.bzl", "karma_web_test_suite")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ load("@tink_angular//:ng_package.bzl", "ng_package")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "javascript",
+diff -urN tink_base_orig/javascript/exception/BUILD.bazel tink_base_mod/javascript/exception/BUILD.bazel
+--- tink_base_orig/javascript/exception/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/exception/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "exception",
+diff -urN tink_base_orig/javascript/hybrid/BUILD.bazel tink_base_mod/javascript/hybrid/BUILD.bazel
+--- tink_base_orig/javascript/hybrid/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/hybrid/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "hybrid",
+diff -urN tink_base_orig/javascript/hybrid/internal/BUILD.bazel tink_base_mod/javascript/hybrid/internal/BUILD.bazel
+--- tink_base_orig/javascript/hybrid/internal/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/hybrid/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "internal",
+diff -urN tink_base_orig/javascript/internal/BUILD.bazel tink_base_mod/javascript/internal/BUILD.bazel
+--- tink_base_orig/javascript/internal/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,8 +1,11 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_closure//closure:defs.bzl", "closure_proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ load(":ts_library_from_closure.bzl", "ts_library_from_closure")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library_from_closure(
+     name = "proto",
+diff -urN tink_base_orig/javascript/mac/BUILD.bazel tink_base_mod/javascript/mac/BUILD.bazel
+--- tink_base_orig/javascript/mac/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/mac/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "mac",
+diff -urN tink_base_orig/javascript/mac/internal/BUILD.bazel tink_base_mod/javascript/mac/internal/BUILD.bazel
+--- tink_base_orig/javascript/mac/internal/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/mac/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "internal",
+diff -urN tink_base_orig/javascript/mac/subtle/BUILD.bazel tink_base_mod/javascript/mac/subtle/BUILD.bazel
+--- tink_base_orig/javascript/mac/subtle/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/mac/subtle/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "subtle",
+diff -urN tink_base_orig/javascript/signature/BUILD.bazel tink_base_mod/javascript/signature/BUILD.bazel
+--- tink_base_orig/javascript/signature/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/signature/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "signature",
+diff -urN tink_base_orig/javascript/signature/internal/BUILD.bazel tink_base_mod/javascript/signature/internal/BUILD.bazel
+--- tink_base_orig/javascript/signature/internal/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/signature/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "internal",
+diff -urN tink_base_orig/javascript/signature/subtle/BUILD.bazel tink_base_mod/javascript/signature/subtle/BUILD.bazel
+--- tink_base_orig/javascript/signature/subtle/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/signature/subtle/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "subtle",
+diff -urN tink_base_orig/javascript/subtle/BUILD.bazel tink_base_mod/javascript/subtle/BUILD.bazel
+--- tink_base_orig/javascript/subtle/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/subtle/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "subtle",
+diff -urN tink_base_orig/javascript/testing/BUILD.bazel tink_base_mod/javascript/testing/BUILD.bazel
+--- tink_base_orig/javascript/testing/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/testing/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "testing",
+diff -urN tink_base_orig/javascript/testing/internal/BUILD.bazel tink_base_mod/javascript/testing/internal/BUILD.bazel
+--- tink_base_orig/javascript/testing/internal/BUILD.bazel	2026-05-29 16:15:17.000000000 +0000
++++ tink_base_mod/javascript/testing/internal/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@npm//@bazel/typescript:index.bzl", "ts_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ ts_library(
+     name = "internal",
+diff -urN tink_base_orig/java_src/BUILD.bazel tink_base_mod/java_src/BUILD.bazel
+--- tink_base_orig/java_src/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/java_src/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("//tools:gen_maven_jar_rules.bzl", "gen_maven_jar_rules")
+ load("@tink_base//tools:common.bzl", "check_deps")
+ 
+diff -urN tink_base_orig/java_src/proto/BUILD.bazel tink_base_mod/java_src/proto/BUILD.bazel
+--- tink_base_orig/java_src/proto/BUILD.bazel	2026-05-29 16:15:26.000000000 +0000
++++ tink_base_mod/java_src/proto/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/aead/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/aead/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/aead/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/aead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/aead/subtle/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/aead/subtle/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/aead/subtle/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/aead/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ java_library(
+     name = "aead_factory",
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/annotations/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/annotations/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/annotations/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/annotations/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+ load("@tink_base//:tink_version.bzl", "TINK_VERSION_LABEL")
+ load("@tink_base//tools:common.bzl", "template_rule")
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/config/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/config/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/config/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/config/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+ load("@bazel_skylib//rules:common_settings.bzl", "bool_flag")
+ 
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/daead/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/daead/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/daead/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/daead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/hybrid/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/hybrid/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/hybrid/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/hybrid/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/hybrid/subtle/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/hybrid/subtle/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/hybrid/subtle/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/hybrid/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ java_library(
+     name = "rsa_kem_hybrid_encrypt",
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/integration/android/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/integration/android/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/integration/android/BUILD.bazel	2026-05-29 16:15:29.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/integration/android/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/integration/awskms/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/integration/awskms/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/integration/awskms/BUILD.bazel	2026-05-29 16:15:29.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/integration/awskms/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/integration/gcpkms/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/integration/gcpkms/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/integration/gcpkms/BUILD.bazel	2026-05-29 16:15:29.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/integration/gcpkms/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/internal/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/internal/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/internal/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/internal/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/jwt/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/jwt/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/jwt/BUILD.bazel	2026-05-29 16:15:29.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/jwt/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/mac/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/mac/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/mac/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/mac/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/prf/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/prf/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/prf/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/prf/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/signature/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/signature/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/signature/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/signature/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/signature/internal/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/signature/internal/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/signature/internal/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/signature/internal/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/streamingaead/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/streamingaead/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/streamingaead/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/streamingaead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/subtle/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/subtle/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/subtle/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/subtle/prf/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/subtle/prf/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/subtle/prf/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/subtle/prf/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/testing/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/testing/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/testing/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/testing/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ package(
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/tinkkey/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/tinkkey/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/tinkkey/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/tinkkey/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/java_src/src/main/java/com/google/crypto/tink/util/BUILD.bazel tink_base_mod/java_src/src/main/java/com/google/crypto/tink/util/BUILD.bazel
+--- tink_base_orig/java_src/src/main/java/com/google/crypto/tink/util/BUILD.bazel	2026-05-29 16:15:28.000000000 +0000
++++ tink_base_mod/java_src/src/main/java/com/google/crypto/tink/util/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/java_src/src/test/BUILD.bazel tink_base_mod/java_src/src/test/BUILD.bazel
+--- tink_base_orig/java_src/src/test/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/aead/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/aead/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/aead/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/aead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/aead/subtle/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/aead/subtle/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/aead/subtle/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/aead/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/config/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/config/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/config/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/config/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/daead/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/daead/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/daead/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/daead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ package(default_testonly = 1)
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/hybrid/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/hybrid/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/hybrid/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/hybrid/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/hybrid/subtle/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/hybrid/subtle/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/hybrid/subtle/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/hybrid/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/integration/awskms/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/integration/awskms/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/integration/awskms/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/integration/awskms/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/integration/gcpkms/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/integration/gcpkms/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/integration/gcpkms/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/integration/gcpkms/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/internal/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/internal/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/internal/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/internal/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/jwt/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/jwt/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/jwt/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/jwt/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/mac/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/mac/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/mac/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/mac/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/prf/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/prf/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/prf/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/prf/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/signature/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/signature/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/signature/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/signature/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/signature/internal/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/signature/internal/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/signature/internal/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/signature/internal/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/streamingaead/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/streamingaead/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/streamingaead/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/streamingaead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/subtle/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/subtle/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/subtle/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/subtle/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/subtle/prf/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/subtle/prf/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/subtle/prf/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/subtle/prf/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/testing/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/testing/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/testing/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/testing/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/tinkkey/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/tinkkey/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/tinkkey/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/tinkkey/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/src/test/java/com/google/crypto/tink/util/BUILD.bazel tink_base_mod/java_src/src/test/java/com/google/crypto/tink/util/BUILD.bazel
+--- tink_base_orig/java_src/src/test/java/com/google/crypto/tink/util/BUILD.bazel	2026-05-29 16:15:27.000000000 +0000
++++ tink_base_mod/java_src/src/test/java/com/google/crypto/tink/util/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(
+diff -urN tink_base_orig/java_src/tools/BUILD.bazel tink_base_mod/java_src/tools/BUILD.bazel
+--- tink_base_orig/java_src/tools/BUILD.bazel	2026-05-29 16:15:29.000000000 +0000
++++ tink_base_mod/java_src/tools/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/java_src/tools/build_defs/BUILD.bazel tink_base_mod/java_src/tools/build_defs/BUILD.bazel
+--- tink_base_orig/java_src/tools/build_defs/BUILD.bazel	2026-05-29 16:15:29.000000000 +0000
++++ tink_base_mod/java_src/tools/build_defs/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/objc/BUILD.bazel tink_base_mod/objc/BUILD.bazel
+--- tink_base_orig/objc/BUILD.bazel	2026-05-29 16:15:29.000000000 +0000
++++ tink_base_mod/objc/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ package(default_visibility = ["//tools/build_defs:internal_pkg"])
+diff -urN tink_base_orig/objc/util/BUILD.bazel tink_base_mod/objc/util/BUILD.bazel
+--- tink_base_orig/objc/util/BUILD.bazel	2026-05-29 16:15:30.000000000 +0000
++++ tink_base_mod/objc/util/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//tools/build_defs:internal_pkg"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/proto/BUILD.bazel tink_base_mod/proto/BUILD.bazel
+--- tink_base_orig/proto/BUILD.bazel	2026-05-29 16:15:29.000000000 +0000
++++ tink_base_mod/proto/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ # -----------------------------------------------
+diff -urN tink_base_orig/proto/testing/BUILD.bazel tink_base_mod/proto/testing/BUILD.bazel
+--- tink_base_orig/proto/testing/BUILD.bazel	2026-05-29 16:15:29.000000000 +0000
++++ tink_base_mod/proto/testing/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ package(
+diff -urN tink_base_orig/python/tink/aead/BUILD.bazel tink_base_mod/python/tink/aead/BUILD.bazel
+--- tink_base_orig/python/tink/aead/BUILD.bazel	2026-05-29 16:15:22.000000000 +0000
++++ tink_base_mod/python/tink/aead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_library", "py_test")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/python/tink/BUILD.bazel tink_base_mod/python/tink/BUILD.bazel
+--- tink_base_orig/python/tink/BUILD.bazel	2026-05-29 16:15:22.000000000 +0000
++++ tink_base_mod/python/tink/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_library", "py_test")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/python/tink/cc/BUILD.bazel tink_base_mod/python/tink/cc/BUILD.bazel
+--- tink_base_orig/python/tink/cc/BUILD.bazel	2026-05-29 16:15:22.000000000 +0000
++++ tink_base_mod/python/tink/cc/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/python/tink/cc/pybind/BUILD.bazel tink_base_mod/python/tink/cc/pybind/BUILD.bazel
+--- tink_base_orig/python/tink/cc/pybind/BUILD.bazel	2026-05-29 16:15:22.000000000 +0000
++++ tink_base_mod/python/tink/cc/pybind/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@tink_py//tools/build_defs:tink_python_rules.bzl", "tink_pybind_extension", "tink_pybind_library")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+ 
+diff -urN tink_base_orig/python/tink/core/BUILD.bazel tink_base_mod/python/tink/core/BUILD.bazel
+--- tink_base_orig/python/tink/core/BUILD.bazel	2026-05-29 16:15:22.000000000 +0000
++++ tink_base_mod/python/tink/core/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_library")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ py_library(
+     name = "core",
+diff -urN tink_base_orig/python/tink/daead/BUILD.bazel tink_base_mod/python/tink/daead/BUILD.bazel
+--- tink_base_orig/python/tink/daead/BUILD.bazel	2026-05-29 16:15:22.000000000 +0000
++++ tink_base_mod/python/tink/daead/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_library", "py_test")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/python/tink/hybrid/BUILD.bazel tink_base_mod/python/tink/hybrid/BUILD.bazel
+--- tink_base_orig/python/tink/hybrid/BUILD.bazel	2026-05-29 16:15:22.000000000 +0000
++++ tink_base_mod/python/tink/hybrid/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_library", "py_test")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/python/tink/integration/awskms/BUILD.bazel tink_base_mod/python/tink/integration/awskms/BUILD.bazel
+--- tink_base_orig/python/tink/integration/awskms/BUILD.bazel	2026-05-29 16:15:21.000000000 +0000
++++ tink_base_mod/python/tink/integration/awskms/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_test")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ py_library(
+     name = "awskms",
+diff -urN tink_base_orig/python/tink/integration/gcpkms/BUILD.bazel tink_base_mod/python/tink/integration/gcpkms/BUILD.bazel
+--- tink_base_orig/python/tink/integration/gcpkms/BUILD.bazel	2026-05-29 16:15:21.000000000 +0000
++++ tink_base_mod/python/tink/integration/gcpkms/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_test")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ py_library(
+     name = "gcpkms",
+diff -urN tink_base_orig/python/tink/jwt/BUILD.bazel tink_base_mod/python/tink/jwt/BUILD.bazel
+--- tink_base_orig/python/tink/jwt/BUILD.bazel	2026-05-29 16:15:21.000000000 +0000
++++ tink_base_mod/python/tink/jwt/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_library", "py_test")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/python/tink/mac/BUILD.bazel tink_base_mod/python/tink/mac/BUILD.bazel
+--- tink_base_orig/python/tink/mac/BUILD.bazel	2026-05-29 16:15:22.000000000 +0000
++++ tink_base_mod/python/tink/mac/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_library", "py_test")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/python/tink/prf/BUILD.bazel tink_base_mod/python/tink/prf/BUILD.bazel
+--- tink_base_orig/python/tink/prf/BUILD.bazel	2026-05-29 16:15:21.000000000 +0000
++++ tink_base_mod/python/tink/prf/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_library")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/python/tink/proto/BUILD.bazel tink_base_mod/python/tink/proto/BUILD.bazel
+--- tink_base_orig/python/tink/proto/BUILD.bazel	2026-05-29 16:15:22.000000000 +0000
++++ tink_base_mod/python/tink/proto/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@com_google_protobuf//:protobuf.bzl", "py_proto_library")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/python/tink/signature/BUILD.bazel tink_base_mod/python/tink/signature/BUILD.bazel
+--- tink_base_orig/python/tink/signature/BUILD.bazel	2026-05-29 16:15:22.000000000 +0000
++++ tink_base_mod/python/tink/signature/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_library", "py_test")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/python/tink/streaming_aead/BUILD.bazel tink_base_mod/python/tink/streaming_aead/BUILD.bazel
+--- tink_base_orig/python/tink/streaming_aead/BUILD.bazel	2026-05-29 16:15:21.000000000 +0000
++++ tink_base_mod/python/tink/streaming_aead/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_library", "py_test")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/python/tink/testing/BUILD.bazel tink_base_mod/python/tink/testing/BUILD.bazel
+--- tink_base_orig/python/tink/testing/BUILD.bazel	2026-05-29 16:15:22.000000000 +0000
++++ tink_base_mod/python/tink/testing/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_library")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+ 
+diff -urN tink_base_orig/python/tools/BUILD.bazel tink_base_mod/python/tools/BUILD.bazel
+--- tink_base_orig/python/tools/BUILD.bazel	2026-05-29 16:15:22.000000000 +0000
++++ tink_base_mod/python/tools/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/python/tools/build_defs/BUILD.bazel tink_base_mod/python/tools/build_defs/BUILD.bazel
+--- tink_base_orig/python/tools/build_defs/BUILD.bazel	2026-05-29 16:15:22.000000000 +0000
++++ tink_base_mod/python/tools/build_defs/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/testdata/BUILD.bazel tink_base_mod/testdata/BUILD.bazel
+--- tink_base_orig/testdata/BUILD.bazel	2026-05-29 16:15:29.000000000 +0000
++++ tink_base_mod/testdata/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/testdata/templates/BUILD.bazel tink_base_mod/testdata/templates/BUILD.bazel
+--- tink_base_orig/testdata/templates/BUILD.bazel	2026-05-29 16:15:29.000000000 +0000
++++ tink_base_mod/testdata/templates/BUILD.bazel	2026-05-29 16:15:49.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/testing/cc/BUILD.bazel tink_base_mod/testing/cc/BUILD.bazel
+--- tink_base_orig/testing/cc/BUILD.bazel	2026-05-29 16:15:23.000000000 +0000
++++ tink_base_mod/testing/cc/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_proto_grpc//cpp:defs.bzl", "cpp_grpc_library")
+ 
+ package(
+diff -urN tink_base_orig/testing/cross_language/BUILD.bazel tink_base_mod/testing/cross_language/BUILD.bazel
+--- tink_base_orig/testing/cross_language/BUILD.bazel	2026-05-29 16:15:23.000000000 +0000
++++ tink_base_mod/testing/cross_language/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@pip_deps//:requirements.bzl", "requirement")
+ 
+ package(
+diff -urN tink_base_orig/testing/cross_language/util/BUILD.bazel tink_base_mod/testing/cross_language/util/BUILD.bazel
+--- tink_base_orig/testing/cross_language/util/BUILD.bazel	2026-05-29 16:15:23.000000000 +0000
++++ tink_base_mod/testing/cross_language/util/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_proto_grpc//python:defs.bzl", "python_grpc_library")
+ load("@rules_python//python:defs.bzl", "py_library")
+ load("@pip_deps//:requirements.bzl", "requirement")
+diff -urN tink_base_orig/testing/go/BUILD.bazel tink_base_mod/testing/go/BUILD.bazel
+--- tink_base_orig/testing/go/BUILD.bazel	2026-05-29 16:15:23.000000000 +0000
++++ tink_base_mod/testing/go/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
+ load("@rules_proto_grpc//go:defs.bzl", "go_grpc_library")
+ 
+diff -urN tink_base_orig/testing/java_src/BUILD.bazel tink_base_mod/testing/java_src/BUILD.bazel
+--- tink_base_orig/testing/java_src/BUILD.bazel	2026-05-29 16:15:22.000000000 +0000
++++ tink_base_mod/testing/java_src/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/testing/python/BUILD.bazel tink_base_mod/testing/python/BUILD.bazel
+--- tink_base_orig/testing/python/BUILD.bazel	2026-05-29 16:15:23.000000000 +0000
++++ tink_base_mod/testing/python/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_proto_grpc//python:defs.bzl", "python_grpc_library")
+ load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+ load("@tink_py_pip_deps//:requirements.bzl", "requirement")
+diff -urN tink_base_orig/tools/BUILD.bazel tink_base_mod/tools/BUILD.bazel
+--- tink_base_orig/tools/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/tools/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visiblity:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_base_orig/tools/build_defs/BUILD.bazel tink_base_mod/tools/build_defs/BUILD.bazel
+--- tink_base_orig/tools/build_defs/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/tools/build_defs/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ package_group(
+diff -urN tink_base_orig/tools/remote_build_execution/BUILD.bazel tink_base_mod/tools/remote_build_execution/BUILD.bazel
+--- tink_base_orig/tools/remote_build_execution/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/tools/remote_build_execution/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/tools/testing/BUILD.bazel tink_base_mod/tools/testing/BUILD.bazel
+--- tink_base_orig/tools/testing/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/tools/testing/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/tools/testing/cc/BUILD.bazel tink_base_mod/tools/testing/cc/BUILD.bazel
+--- tink_base_orig/tools/testing/cc/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/tools/testing/cc/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(
+     default_testonly = 1,
+     default_visibility = ["//:__subpackages__"],
+diff -urN tink_base_orig/tools/testing/cross_language/BUILD.bazel tink_base_mod/tools/testing/cross_language/BUILD.bazel
+--- tink_base_orig/tools/testing/cross_language/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/tools/testing/cross_language/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/tools/testing/go/BUILD.bazel tink_base_mod/tools/testing/go/BUILD.bazel
+--- tink_base_orig/tools/testing/go/BUILD.bazel	2026-05-29 16:15:21.000000000 +0000
++++ tink_base_mod/tools/testing/go/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_base_orig/tools/testing/javatests/com/google/crypto/tink/testing/BUILD.bazel tink_base_mod/tools/testing/javatests/com/google/crypto/tink/testing/BUILD.bazel
+--- tink_base_orig/tools/testing/javatests/com/google/crypto/tink/testing/BUILD.bazel	2026-05-29 16:15:21.000000000 +0000
++++ tink_base_mod/tools/testing/javatests/com/google/crypto/tink/testing/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ java_test(
+     name = "CompareKeysetsTest",
+diff -urN tink_base_orig/tools/testing/python/BUILD.bazel tink_base_mod/tools/testing/python/BUILD.bazel
+--- tink_base_orig/tools/testing/python/BUILD.bazel	2026-05-29 16:15:20.000000000 +0000
++++ tink_base_mod/tools/testing/python/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_binary")
+ load("@pip_deps//:requirements.bzl", "requirement")
+ 
+diff -urN tink_base_orig/tools/tinkey/BUILD.bazel tink_base_mod/tools/tinkey/BUILD.bazel
+--- tink_base_orig/tools/tinkey/BUILD.bazel	2026-05-29 16:15:21.000000000 +0000
++++ tink_base_mod/tools/tinkey/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_binary(
+diff -urN tink_base_orig/tools/tinkey/src/main/java/com/google/crypto/tink/tinkey/BUILD.bazel tink_base_mod/tools/tinkey/src/main/java/com/google/crypto/tink/tinkey/BUILD.bazel
+--- tink_base_orig/tools/tinkey/src/main/java/com/google/crypto/tink/tinkey/BUILD.bazel	2026-05-29 16:15:21.000000000 +0000
++++ tink_base_mod/tools/tinkey/src/main/java/com/google/crypto/tink/tinkey/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ package(default_visibility = ["//visibility:public"])
+diff -urN tink_base_orig/tools/tinkey/src/test/java/com/google/crypto/tink/tinkey/BUILD.bazel tink_base_mod/tools/tinkey/src/test/java/com/google/crypto/tink/tinkey/BUILD.bazel
+--- tink_base_orig/tools/tinkey/src/test/java/com/google/crypto/tink/tinkey/BUILD.bazel	2026-05-29 16:15:21.000000000 +0000
++++ tink_base_mod/tools/tinkey/src/test/java/com/google/crypto/tink/tinkey/BUILD.bazel	2026-05-29 16:15:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ java_test(

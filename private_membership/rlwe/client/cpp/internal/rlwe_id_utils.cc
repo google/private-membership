@@ -14,14 +14,21 @@
 
 #include "private_membership/rlwe/client/cpp/internal/rlwe_id_utils.h"
 
+#include <algorithm>
+#include <cstdint>
 #include <string>
+#include <utility>
 
+#include "private_join_and_compute/crypto/context.h"
+#include "private_join_and_compute/crypto/ec_commutative_cipher.h"
 #include "private_membership/rlwe/client/cpp/internal/crypto_utils.h"
+#include "private_membership/rlwe/client/proto/private_membership.pb.h"
+#include "private_membership/rlwe/client/proto/private_membership_rlwe.pb.h"
 #include "private_membership/rlwe/client/cpp/internal/constants.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "shell_encryption/status_macros.h"
+#include "shell_encryption/statusor.h"
 
 namespace private_membership {
 namespace rlwe {
@@ -34,8 +41,12 @@ namespace rlwe {
         "ECCipher and Context should both be non-null.");
   }
   std::string full_id = rlwe::HashRlwePlaintextId(id);
-  RLWE_ASSIGN_OR_RETURN(std::string encrypted_id, ec_cipher->Encrypt(full_id));
-  return ComputeBucketStoredEncryptedId(encrypted_id, params, ctx);
+  auto encrypted_id = ec_cipher->Encrypt(full_id);
+  if (!encrypted_id.ok()) {
+    return absl::InternalError(encrypted_id.status().message());
+  }
+  return ComputeBucketStoredEncryptedId(std::move(encrypted_id).value(), params,
+                                        ctx);
 }
 
 ::rlwe::StatusOr<std::string> ComputeBucketStoredEncryptedId(
@@ -46,26 +57,39 @@ namespace rlwe {
   }
   const std::string hashed_encrypted_id = HashEncryptedId(encrypted_id, ctx);
 
-  // Find the first byte that is not used by the bucket ID.
-  int start_byte = (params.encrypted_bucket_id_length() - 1) / 8 + 1;
+  switch (params.sensitive_id_hash_type()) {
+    case ENCRYPTED_BUCKET_HASH_TYPE_UNDEFINED: {
+      return absl::InvalidArgumentError(
+          "Sensitive id hash type must be defined.");
+    }
+    case ENCRYPTED_BUCKET_TEST_HASH_TYPE:
+    case SHA256_NON_SENSITIVE_AND_SENSITIVE_ID: {
+      // Find the first byte that is not used by the bucket ID.
+      int start_byte = (params.encrypted_bucket_id_length() - 1) / 8 + 1;
 
-  // Ensure that the total of the bytes stored in the bucket plus the length
-  // of the bucket ID is at least kBucketStoredEncryptedIdByteLength. Since
-  // the ID within a bucket needs to be represented at byte-level
-  // granularity, pad up the remainder of a byte if needed.
-  int byte_length =
-      kStoredEncryptedIdByteLength - (params.encrypted_bucket_id_length() / 8);
-  if (byte_length < 0) {
-    byte_length = 0;
+      // Ensure that the total of the bytes stored in the bucket plus the length
+      // of the bucket ID is at least kBucketStoredEncryptedIdByteLength. Since
+      // the ID within a bucket needs to be represented at byte-level
+      // granularity, pad up the remainder of a byte if needed.
+      int byte_length = kStoredEncryptedIdByteLength -
+                        (params.encrypted_bucket_id_length() / 8);
+      if (byte_length < 0) {
+        byte_length = 0;
+      }
+      std::string stored_encrypted_id(hashed_encrypted_id, start_byte,
+                                      byte_length);
+      return stored_encrypted_id;
+    }
+    default:
+      return absl::InvalidArgumentError(absl::StrCat(
+          "Unknown sensitive id hash type: ", params.sensitive_id_hash_type()));
   }
-  std::string stored_encrypted_id(hashed_encrypted_id, start_byte, byte_length);
-  return stored_encrypted_id;
 }
 
 std::string HashRlwePlaintextId(const RlwePlaintextId& id) {
   // For backward compatibility. We can show that if non_sensitive_id length is
   // 0, it is okay to concatenate without delimiters to make it injective.
-  if (id.non_sensitive_id().length() == 0) {
+  if (id.non_sensitive_id().empty()) {
     return absl::StrCat(0, id.sensitive_id().length(), id.sensitive_id());
   }
   static constexpr char delimiter[] = "/";
@@ -97,6 +121,22 @@ std::string HashRlwePlaintextId(const RlwePlaintextId& id) {
     default:
       return absl::InvalidArgumentError("Invalid hash type.");
   }
+}
+
+std::string BucketIdToByte(uint32_t bucket_id, int id_length) {
+  const int remaining_bits = id_length % 8;
+  // pad the last byte to get full 8 bits.
+  if (remaining_bits > 0) {
+    bucket_id <<= 8 - remaining_bits;
+  }
+
+  std::string bytes;
+  for (int i = 0; i < id_length; i += 8) {
+    bytes.push_back(static_cast<char>(bucket_id & 0xff));
+    bucket_id >>= 8;
+  }
+  std::reverse(bytes.begin(), bytes.end());
+  return bytes;
 }
 
 }  // namespace rlwe

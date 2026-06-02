@@ -15,11 +15,14 @@
 #ifndef PRIVATE_MEMBERSHIP_RLWE_CLIENT_CPP_INTERNAL_AES_CTR_256_WITH_FIXED_IV_H_
 #define PRIVATE_MEMBERSHIP_RLWE_CLIENT_CPP_INTERNAL_AES_CTR_256_WITH_FIXED_IV_H_
 
+#include <cstdint>
 #include <memory>
+#include <string>
 
+#include "private_membership/rlwe/client/cpp/internal/cipher.h"
+#include "private_membership/rlwe/client/cpp/open_source/chromium/private_membership_export.h"
+#include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include <openssl/evp.h>
-#include "shell_encryption/statusor.h"
 
 namespace private_membership {
 
@@ -30,23 +33,25 @@ namespace private_membership {
 // Security: This cipher does not provide probabilistic encryption or
 // authentication of the message. This should only be used in the scenario where
 // each key will encrypt at most one message.
-class AesCtr256WithFixedIV {
+class PRIVATE_MEMBERSHIP_EXPORT AesCtr256WithFixedIV : public Cipher {
  public:
   // Create a cipher with the input key.
   //
   // Returns INVALID_ARGUMENT if key is an invalid size.
-  static ::rlwe::StatusOr<std::unique_ptr<AesCtr256WithFixedIV>> Create(
+  static absl::StatusOr<std::unique_ptr<AesCtr256WithFixedIV>> Create(
       absl::string_view key);
 
   // Encrypts the plaintext.
   //
   // Returns INTERNAL on internal cryptographic errors.
-  ::rlwe::StatusOr<std::string> Encrypt(absl::string_view plaintext) const;
+  absl::StatusOr<std::string> Encrypt(
+      absl::string_view plaintext) const override;
 
   // Decrypts the ciphertext.
   //
   // Returns INTERNAL on internal cryptographic errors.
-  ::rlwe::StatusOr<std::string> Decrypt(absl::string_view ciphertext) const;
+  absl::StatusOr<std::string> Decrypt(
+      absl::string_view ciphertext) const override;
 
   // The key size in bytes.
   static constexpr uint8_t kKeySize = 32;

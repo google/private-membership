@@ -20,9 +20,10 @@
 #include <utility>
 #include <vector>
 
-#include <google/protobuf/repeated_field.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include "shell_encryption/testing/status_matchers.h"
+#include "shell_encryption/testing/status_testing.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/memory/memory.h"
@@ -38,6 +39,7 @@
 #include "private_membership/rlwe/batch/proto/client.pb.h"
 #include "private_membership/rlwe/batch/proto/server.pb.h"
 #include "private_membership/rlwe/batch/proto/shared.pb.h"
+#include <google/protobuf/repeated_field.h>
 #include "shell_encryption/context.h"
 #include "shell_encryption/polynomial.h"
 #include "shell_encryption/serialization.pb.h"
@@ -170,16 +172,15 @@ class ServerTest : public ::testing::Test {
         DeserializePrivateKey(keys_.private_key().request_key(),
                               *request_context_);
     ASSERT_TRUE(request_private_key.ok());
-    request_private_key_ =
-        absl::make_unique<rlwe::SymmetricRlweKey<ModularInt>>(
-            *std::move(request_private_key));
+    request_private_key_ = std::make_unique<rlwe::SymmetricRlweKey<ModularInt>>(
+        *std::move(request_private_key));
 
     absl::StatusOr<rlwe::SymmetricRlweKey<ModularInt>> response_private_key =
         DeserializePrivateKey(keys_.private_key().response_key(),
                               *response_context_);
     ASSERT_TRUE(response_private_key.ok());
     response_private_key_ =
-        absl::make_unique<rlwe::SymmetricRlweKey<ModularInt>>(
+        std::make_unique<rlwe::SymmetricRlweKey<ModularInt>>(
             *std::move(response_private_key));
   }
 

@@ -18,10 +18,10 @@
 #include <string>
 #include <utility>
 
-#include <google/protobuf/repeated_field.h>
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "private_membership/rlwe/batch/proto/shared.pb.h"
+#include <google/protobuf/repeated_field.h>
 #include "shell_encryption/context.h"
 #include "shell_encryption/integral_types.h"
 #include "shell_encryption/montgomery.h"

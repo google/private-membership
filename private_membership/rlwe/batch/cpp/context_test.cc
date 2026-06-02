@@ -15,6 +15,8 @@
 #include "private_membership/rlwe/batch/cpp/context.h"
 
 #include <gtest/gtest.h>
+#include "shell_encryption/testing/status_matchers.h"
+#include "shell_encryption/testing/status_testing.h"
 #include "absl/status/statusor.h"
 #include "private_membership/rlwe/batch/proto/shared.pb.h"
 #include "private_membership/rlwe/batch/cpp/test_helper.h"

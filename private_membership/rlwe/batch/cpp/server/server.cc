@@ -22,8 +22,6 @@
 #include <utility>
 #include <vector>
 
-#include <google/protobuf/map.h>
-#include <google/protobuf/repeated_field.h>
 #include "absl/algorithm/container.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
@@ -37,6 +35,8 @@
 #include "private_membership/rlwe/batch/cpp/prng.h"
 #include "private_membership/rlwe/batch/proto/server.pb.h"
 #include "private_membership/rlwe/batch/proto/shared.pb.h"
+#include <google/protobuf/map.h>
+#include <google/protobuf/repeated_field.h>
 #include "shell_encryption/galois_key.h"
 #include "shell_encryption/int256.h"
 #include "shell_encryption/montgomery.h"
@@ -420,6 +420,10 @@ DeserializeQueries(const Context& context, const Parameters& parameters,
   }
 
   // Expand queries using public key.
+  if (std::numeric_limits<int>::max() / ciphertexts_per_query <=
+          encrypted_queries.query_metadata_size()) {
+    return absl::InvalidArgumentError("Too many ciphertexts per query");
+  }
   const int number_of_ciphertexts =
       ciphertexts_per_query * encrypted_queries.query_metadata_size();
   absl::StatusOr<std::vector<rlwe::SymmetricRlweCiphertext<ModularInt>>>
@@ -439,11 +443,11 @@ DeserializeQueries(const Context& context, const Parameters& parameters,
 // Applies first level of queries to database. The first level consists of the
 // original encoded database being applied to the deserialized queries.
 absl::StatusOr<
-    std::vector<absl::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>>>
+    std::vector<std::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>>>
 ApplyFirstLevel(const Context& context,
                 const ApplyQueriesContext& apply_context, const Shard& shard,
                 const DeserializedQuery& deserialized_query, int column_index) {
-  std::vector<absl::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>> result(
+  std::vector<std::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>> result(
       apply_context.next_database_size());
 
   // Verify the current state of apply context is valid for this level.
@@ -467,7 +471,7 @@ ApplyFirstLevel(const Context& context,
     int query_index = bucket.id % apply_context.queries_per_level();
     int result_index = bucket.id / apply_context.queries_per_level();
 
-    absl::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>& ciphertext =
+    std::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>& ciphertext =
         result[result_index];
     if (!ciphertext.has_value()) {
       ciphertext = rlwe::SymmetricRlweCiphertext<ModularInt>(
@@ -496,13 +500,13 @@ ApplyFirstLevel(const Context& context,
 // Apply the next level of queries to the intermediate database. Unlike the
 // first level, this applies queries to ciphertexts from prior levels.
 absl::StatusOr<
-    std::vector<absl::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>>>
+    std::vector<std::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>>>
 ApplyNextLevel(
     const Context& context, const ApplyQueriesContext& apply_context,
     const DeserializedQuery& deserialized_query,
-    std::vector<absl::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>>&
+    std::vector<std::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>>&
         intermediate_database) {
-  std::vector<absl::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>> result(
+  std::vector<std::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>> result(
       apply_context.next_database_size());
 
   // Verify the current state of apply context is valid for this level.
@@ -513,7 +517,7 @@ ApplyNextLevel(
   }
 
   for (int i = 0; i < intermediate_database.size(); ++i) {
-    absl::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>& database_entry =
+    std::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>& database_entry =
         intermediate_database[i];
     if (!database_entry.has_value()) {
       continue;
@@ -529,7 +533,7 @@ ApplyNextLevel(
       return product.status();
     }
 
-    absl::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>& ciphertext =
+    std::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>& ciphertext =
         result[result_index];
     if (!ciphertext.has_value()) {
       ciphertext = *std::move(product);
@@ -556,7 +560,7 @@ absl::StatusOr<rlwe::SymmetricRlweCiphertext<ModularInt>> ApplyQueryToColumn(
   }
 
   absl::StatusOr<
-      std::vector<absl::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>>>
+      std::vector<std::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>>>
       result = ApplyFirstLevel(context, *apply_context, shard,
                                deserialized_query, column_index);
   if (!result.ok()) {
@@ -566,7 +570,7 @@ absl::StatusOr<rlwe::SymmetricRlweCiphertext<ModularInt>> ApplyQueryToColumn(
 
   for (int level = 1; level < apply_context->levels_of_recursion(); ++level) {
     absl::StatusOr<
-        std::vector<absl::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>>>
+        std::vector<std::optional<rlwe::SymmetricRlweCiphertext<ModularInt>>>>
         intermediate_result = ApplyNextLevel(context, *apply_context,
                                              deserialized_query, *result);
     if (!intermediate_result.ok()) {
@@ -721,6 +725,12 @@ absl::StatusOr<ApplyQueriesResponse> ApplyQueries(
   const Parameters& parameters = request.parameters();
   if (auto status = ValidateParameters(parameters); !status.ok()) {
     return status;
+  }
+  if (parameters.crypto_parameters().log_degree() > 20) {
+    return absl::InvalidArgumentError("Log degree is too large.");
+  }
+  if (parameters.crypto_parameters().log_t() > 10) {
+    return absl::InvalidArgumentError("Log t is too large.");
   }
 
   const Parameters::ShardParameters& shard_parameters =

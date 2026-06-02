@@ -1,4 +1,15 @@
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+
 package(default_visibility = ["//:__subpackages__"])
+
+cc_library(
+    name = "cipher",
+    hdrs = ["cipher.h"],
+    deps = [
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+    ],
+)
 
 cc_library(
     name = "aes_ctr_256_with_fixed_iv",
@@ -9,6 +20,8 @@ cc_library(
         "aes_ctr_256_with_fixed_iv.h",
     ],
     deps = [
+        ":cipher",
+        "//private_membership/rlwe/client/cpp/open_source/chromium:private_membership_export",
         "@boringssl//:ssl",
         "@com_github_google_shell//shell_encryption:statusor_fork",
         "@com_google_absl//absl/strings",
@@ -31,6 +44,72 @@ cc_test(
 )
 
 cc_library(
+    name = "aes_ctr_256_no_auth",
+    srcs = [
+        "aes_ctr_256_no_auth.cc",
+    ],
+    hdrs = [
+        "aes_ctr_256_no_auth.h",
+    ],
+    deps = [
+        ":cipher",
+        "//private_membership/rlwe/client/cpp/open_source/chromium:private_membership_export",
+        "@com_google_absl//absl/strings:string_view",
+        "@boringssl//:ssl",
+        "@com_google_absl//absl/memory",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+    ],
+)
+
+cc_test(
+    name = "aes_ctr_256_no_auth_test",
+    srcs = [
+        "aes_ctr_256_no_auth_test.cc",
+    ],
+    deps = [
+        ":aes_ctr_256_no_auth",
+        "@com_google_absl//absl/strings:string_view",
+        "@com_github_google_googletest//:gtest_main",
+        "@com_github_google_shell//shell_encryption/testing:status_is_fork",
+        "@com_github_google_shell//shell_encryption/testing:status_testing",
+        "@com_google_absl//absl/status",
+    ],
+)
+
+cc_library(
+    name = "aes_gcm_256",
+    srcs = [
+        "aes_gcm_256.cc",
+    ],
+    hdrs = [
+        "aes_gcm_256.h",
+    ],
+    deps = [
+        ":cipher",
+        "//private_membership/rlwe/client/cpp/open_source/chromium:private_membership_export",
+        "@boringssl//:ssl",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+    ],
+)
+
+cc_test(
+    name = "aes_gcm_256_test",
+    srcs = [
+        "aes_gcm_256_test.cc",
+    ],
+    deps = [
+        ":aes_gcm_256",
+        "@com_github_google_googletest//:gtest_main",
+        "@com_github_google_shell//shell_encryption/testing:status_is_fork",
+        "@com_github_google_shell//shell_encryption/testing:status_testing",
+        "@com_google_absl//absl/status",
+    ],
+)
+
+cc_library(
     name = "crypto_utils",
     srcs = [
         "crypto_utils.cc",
@@ -39,12 +118,18 @@ cc_library(
         "crypto_utils.h",
     ],
     deps = [
+        ":aes_ctr_256_no_auth",
         ":aes_ctr_256_with_fixed_iv",
+        ":aes_gcm_256",
+        ":cipher",
         ":id_utils",
+        "//private_membership/rlwe/client/cpp/open_source/chromium:private_membership_export",
         "//private_membership/rlwe/client/proto:private_membership_cc_proto",
         "@com_github_google_private_join_and_compute//private_join_and_compute/crypto:bn_util",
         "@com_github_google_private_join_and_compute//private_join_and_compute/crypto:ec_commutative_cipher",
         "@com_github_google_shell//shell_encryption:statusor_fork",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
     ],
 )
@@ -53,12 +138,22 @@ cc_test(
     name = "crypto_utils_test",
     srcs = ["crypto_utils_test.cc"],
     deps = [
+        ":aes_ctr_256_no_auth",
         ":aes_ctr_256_with_fixed_iv",
+        ":aes_gcm_256",
+        ":cipher",
         ":crypto_utils",
         "//private_membership/rlwe/client/proto:private_membership_cc_proto",
+        "@com_google_absl//absl/strings:string_view",
+        "@boringssl//:ssl",
         "@com_github_google_googletest//:gtest_main",
+        "@com_github_google_private_join_and_compute//private_join_and_compute/crypto:bn_util",
+        "@com_github_google_private_join_and_compute//private_join_and_compute/crypto:ec_commutative_cipher",
         "@com_github_google_shell//shell_encryption/testing:status_is_fork",
         "@com_github_google_shell//shell_encryption/testing:status_testing",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
     ],
 )
 
@@ -71,6 +166,7 @@ cc_library(
         "id_utils.h",
     ],
     deps = [
+        "//private_membership/rlwe/client/cpp/open_source/chromium:private_membership_export",
         "@com_google_absl//absl/strings",
     ],
 )
@@ -83,6 +179,8 @@ cc_test(
     deps = [
         ":id_utils",
         "@com_github_google_googletest//:gtest_main",
+        "@com_github_google_shell//shell_encryption/testing:status_is_fork",
+        "@com_github_google_shell//shell_encryption/testing:status_testing",
     ],
 )
 
@@ -95,9 +193,13 @@ cc_library(
         "oprf_utils.h",
     ],
     deps = [
-        "//private_membership/rlwe/client/proto:private_membership_cc_proto",
+        ":constants",
+        "//private_membership/rlwe/client/cpp/open_source/chromium:private_membership_export",
+        "//private_membership/rlwe/client/proto:private_membership_rlwe_cc_proto",
         "@com_github_google_private_join_and_compute//private_join_and_compute/crypto:ec_commutative_cipher",
         "@com_github_google_shell//shell_encryption:statusor_fork",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
     ],
 )
 
@@ -108,10 +210,12 @@ cc_test(
     ],
     deps = [
         ":oprf_utils",
+        "//private_membership/rlwe/client/proto:private_membership_rlwe_cc_proto",
         "@com_github_google_googletest//:gtest_main",
         "@com_github_google_private_join_and_compute//private_join_and_compute/crypto:ec_commutative_cipher",
         "@com_github_google_shell//shell_encryption/testing:status_is_fork",
         "@com_github_google_shell//shell_encryption/testing:status_testing",
+        "@com_google_absl//absl/status",
     ],
 )
 
@@ -140,6 +244,7 @@ cc_library(
         ":rlwe_id_utils",
         ":utils",
         "//private_membership/rlwe/client/cpp/internal:crypto_utils",
+        "//private_membership/rlwe/client/cpp/open_source/chromium:private_membership_export",
         "//private_membership/rlwe/client/proto:private_membership_rlwe_cc_proto",
         "@com_github_google_private_join_and_compute//private_join_and_compute/crypto:ec_commutative_cipher",
         "@com_github_google_shell//shell_encryption:statusor_fork",
@@ -154,13 +259,18 @@ cc_test(
         "encrypted_bucket_id_test.cc",
     ],
     deps = [
+        ":constants",
         ":encrypted_bucket_id",
+        ":oprf_utils",
         ":rlwe_id_utils",
-        "//private_membership/rlwe/client/cpp/internal/testing:constants",
         "//private_membership/rlwe/client/proto:private_membership_rlwe_cc_proto",
+        "@com_google_absl//absl/strings:string_view",
         "@com_github_google_googletest//:gtest_main",
+        "@com_github_google_private_join_and_compute//private_join_and_compute/crypto:bn_util",
         "@com_github_google_shell//shell_encryption/testing:status_is_fork",
         "@com_github_google_shell//shell_encryption/testing:status_testing",
+        "@com_google_absl//absl/status",
+        "@com_google_protobuf//:protobuf",
     ],
 )
 
@@ -175,6 +285,7 @@ cc_library(
     deps = [
         ":rlwe_id_utils",
         ":utils",
+        "//private_membership/rlwe/client/cpp/open_source/chromium:private_membership_export",
         "//private_membership/rlwe/client/proto:private_membership_cc_proto",
         "//private_membership/rlwe/client/proto:private_membership_rlwe_cc_proto",
         "@com_github_google_private_join_and_compute//private_join_and_compute/crypto:ec_commutative_cipher",
@@ -196,6 +307,7 @@ cc_test(
         "@com_github_google_googletest//:gtest_main",
         "@com_github_google_shell//shell_encryption/testing:status_is_fork",
         "@com_github_google_shell//shell_encryption/testing:status_testing",
+        "@com_google_protobuf//:protobuf",
     ],
 )
 
@@ -210,6 +322,7 @@ cc_library(
     deps = [
         ":constants",
         "//private_membership/rlwe/client/cpp/internal:crypto_utils",
+        "//private_membership/rlwe/client/cpp/open_source/chromium:private_membership_export",
         "//private_membership/rlwe/client/proto:private_membership_cc_proto",
         "//private_membership/rlwe/client/proto:private_membership_rlwe_cc_proto",
         "@com_github_google_private_join_and_compute//private_join_and_compute/crypto:ec_commutative_cipher",
@@ -224,10 +337,12 @@ cc_test(
     srcs = ["rlwe_id_utils_test.cc"],
     deps = [
         ":constants",
+        ":oprf_utils",
         ":rlwe_id_utils",
-        "//private_membership/rlwe/client/cpp/internal/testing:constants",
         "//private_membership/rlwe/client/proto:private_membership_cc_proto",
+        "//private_membership/rlwe/client/proto:private_membership_rlwe_cc_proto",
         "@com_github_google_googletest//:gtest_main",
+        "@com_github_google_private_join_and_compute//private_join_and_compute/crypto:bn_util",
         "@com_github_google_shell//shell_encryption/testing:status_is_fork",
         "@com_github_google_shell//shell_encryption/testing:status_testing",
         "@com_google_absl//absl/status",
@@ -244,6 +359,7 @@ cc_library(
     ],
     deps = [
         ":constants",
+        "//private_membership/rlwe/client/cpp/open_source/chromium:private_membership_export",
         "//private_membership/rlwe/client/proto:private_membership_rlwe_cc_proto",
         "@com_github_google_shell//shell_encryption:context",
         "@com_github_google_shell//shell_encryption:error_params",
@@ -262,7 +378,11 @@ cc_library(
         "utils.h",
     ],
     deps = [
+        ":crypto_utils",
+        "//private_membership/rlwe/client/cpp/open_source/chromium:private_membership_export",
         "@com_github_google_shell//shell_encryption:statusor_fork",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
     ],
 )

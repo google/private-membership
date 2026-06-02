@@ -1,0 +1,452 @@
+diff -urN pjc_orig/private_join_and_compute/BUILD pjc_mod/private_join_and_compute/BUILD
+--- pjc_orig/private_join_and_compute/BUILD	2026-05-29 16:14:36.000000000 +0000
++++ pjc_mod/private_join_and_compute/BUILD	2026-05-29 16:14:37.000000000 +0000
+@@ -1,3 +1,5 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
+ # Copyright 2019 Google LLC.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+@@ -43,7 +45,7 @@
+     deps = [
+         ":private_join_and_compute_proto",
+         "//private_join_and_compute/util:status_includes",
+-        "@abseil-cpp//absl/memory",
++        "@com_google_absl//absl/memory",
+     ],
+ )
+ 
+@@ -109,8 +111,8 @@
+         ":match_proto",
+         "//private_join_and_compute/crypto:bn_util",
+         "//private_join_and_compute/util:status_includes",
+-        "@abseil-cpp//absl/container:btree",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/container:btree",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -119,10 +121,10 @@
+     srcs = ["generate_dummy_data.cc"],
+     deps = [
+         ":data_util",
+-        "@abseil-cpp//absl/base",
+-        "@abseil-cpp//absl/flags:flag",
+-        "@abseil-cpp//absl/flags:parse",
+-        "@abseil-cpp//absl/log",
++        "@com_google_absl//absl/base",
++        "@com_google_absl//absl/flags:flag",
++        "@com_google_absl//absl/flags:parse",
++        "@com_google_absl//absl/log",
+     ],
+ )
+ 
+@@ -148,9 +150,9 @@
+         ":private_join_and_compute_rpc_impl",
+         ":protocol_server",
+         ":server_impl",
+-        "@abseil-cpp//absl/base",
+-        "@abseil-cpp//absl/flags:flag",
+-        "@abseil-cpp//absl/flags:parse",
++        "@com_google_absl//absl/base",
++        "@com_google_absl//absl/flags:flag",
++        "@com_google_absl//absl/flags:parse",
+         "@com_github_grpc_grpc//:grpc",
+         "@com_github_grpc_grpc//:grpc++",
+     ],
+@@ -164,10 +166,10 @@
+         ":data_util",
+         ":private_join_and_compute_proto",
+         ":protocol_client",
+-        "@abseil-cpp//absl/base",
+-        "@abseil-cpp//absl/flags:flag",
+-        "@abseil-cpp//absl/flags:parse",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/base",
++        "@com_google_absl//absl/flags:flag",
++        "@com_google_absl//absl/flags:parse",
++        "@com_google_absl//absl/strings",
+         "@com_github_grpc_grpc//:grpc",
+         "@com_github_grpc_grpc//:grpc++",
+     ],
+diff -urN pjc_orig/private_join_and_compute/crypto/BUILD pjc_mod/private_join_and_compute/crypto/BUILD
+--- pjc_orig/private_join_and_compute/crypto/BUILD	2026-05-29 16:14:36.000000000 +0000
++++ pjc_mod/private_join_and_compute/crypto/BUILD	2026-05-29 16:14:37.000000000 +0000
+@@ -1,3 +1,5 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
+ # Copyright 2019 Google LLC.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+@@ -32,7 +34,7 @@
+     hdrs = ["openssl_init.h"],
+     deps = [
+         ":openssl_includes",
+-        "@abseil-cpp//absl/log",
++        "@com_google_absl//absl/log",
+         "@boringssl//:ssl",
+     ],
+ )
+@@ -51,10 +53,10 @@
+         ":openssl_includes",
+         ":openssl_init",
+         "//private_join_and_compute/util:status_includes",
+-        "@abseil-cpp//absl/flags:flag",
+-        "@abseil-cpp//absl/log",
+-        "@abseil-cpp//absl/log:check",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/flags:flag",
++        "@com_google_absl//absl/log",
++        "@com_google_absl//absl/log:check",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -69,9 +71,9 @@
+     deps = [
+         ":bn_util",
+         ":openssl_includes",
+-        "@abseil-cpp//absl/log",
+-        "@abseil-cpp//absl/log:check",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/log",
++        "@com_google_absl//absl/log:check",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -89,9 +91,9 @@
+         ":bn_util",
+         ":openssl_includes",
+         "//private_join_and_compute/util:status_includes",
+-        "@abseil-cpp//absl/log",
+-        "@abseil-cpp//absl/log:check",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/log",
++        "@com_google_absl//absl/log:check",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -107,8 +109,8 @@
+         ":bn_util",
+         ":ec_util",
+         "//private_join_and_compute/util:status_includes",
+-        "@abseil-cpp//absl/log",
+-        "@abseil-cpp//absl/memory",
++        "@com_google_absl//absl/log",
++        "@com_google_absl//absl/memory",
+     ],
+ )
+ 
+@@ -125,8 +127,8 @@
+         ":ec_util",
+         ":elgamal",
+         "//private_join_and_compute/util:status_includes",
+-        "@abseil-cpp//absl/log",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/log",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -143,8 +145,8 @@
+         ":ec_commutative_cipher",
+         ":ec_util",
+         "//private_join_and_compute/util:status_includes",
+-        "@abseil-cpp//absl/log",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/log",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -161,9 +163,9 @@
+         ":ec_util",
+         ":elgamal",
+         "//private_join_and_compute/util:status_includes",
+-        "@abseil-cpp//absl/log",
+-        "@abseil-cpp//absl/log:check",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/log",
++        "@com_google_absl//absl/log:check",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -179,9 +181,9 @@
+         ":bn_util",
+         ":mont_mul",
+         "//private_join_and_compute/util:status_includes",
+-        "@abseil-cpp//absl/base",
+-        "@abseil-cpp//absl/log",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/base",
++        "@com_google_absl//absl/log",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -200,7 +202,7 @@
+         ":mont_mul",
+         ":paillier",
+         "//private_join_and_compute/util:status_includes",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -228,7 +230,7 @@
+     ],
+     deps = [
+         ":bn_util",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -251,10 +253,10 @@
+         ":paillier_proto",
+         ":two_modulus_crt",
+         "//private_join_and_compute/util:status_includes",
+-        "@abseil-cpp//absl/container:node_hash_map",
+-        "@abseil-cpp//absl/log",
+-        "@abseil-cpp//absl/log:check",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/container:node_hash_map",
++        "@com_google_absl//absl/log",
++        "@com_google_absl//absl/log:check",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -271,7 +273,7 @@
+         ":ec_util",
+         ":elgamal",
+         "//private_join_and_compute/util:status_includes",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -290,7 +292,7 @@
+         "//private_join_and_compute/crypto/proto:camenisch_shoup_cc_proto",
+         "//private_join_and_compute/crypto/proto:proto_util",
+         "//private_join_and_compute/util:status_includes",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -325,7 +327,7 @@
+         "//private_join_and_compute/crypto/proto:pedersen_cc_proto",
+         "//private_join_and_compute/crypto/proto:proto_util",
+         "//private_join_and_compute/util:status_includes",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+diff -urN pjc_orig/private_join_and_compute/crypto/dodis_yampolskiy_prf/BUILD pjc_mod/private_join_and_compute/crypto/dodis_yampolskiy_prf/BUILD
+--- pjc_orig/private_join_and_compute/crypto/dodis_yampolskiy_prf/BUILD	2026-05-29 16:14:36.000000000 +0000
++++ pjc_mod/private_join_and_compute/crypto/dodis_yampolskiy_prf/BUILD	2026-05-29 16:14:37.000000000 +0000
+@@ -1,3 +1,5 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
+ # Copyright 2019 Google LLC.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+@@ -14,7 +16,7 @@
+ 
+ # Implementation of Dodis-Yampolskiy VRF and OPRF.
+ 
+-load("@protobuf//bazel:proto_library.bzl", "proto_library")
++load("@com_google_protobuf//bazel:proto_library.bzl", "proto_library")
+ load("@rules_cc//cc:cc_library.bzl", "cc_library")
+ load("@rules_cc//cc:cc_test.bzl", "cc_test")
+ load("@rules_cc//cc:defs.bzl", "cc_library")
+@@ -52,8 +54,8 @@
+         "//private_join_and_compute/crypto:ec_util",
+         "//private_join_and_compute/crypto:pedersen_over_zn",
+         "//private_join_and_compute/crypto/proto:proto_util",
+-        "@abseil-cpp//absl/strings",
+-        "@protobuf//:protobuf_lite",
++        "@com_google_absl//absl/strings",
++        "@com_google_protobuf//:protobuf_lite",
+     ],
+ )
+ 
+@@ -109,8 +111,8 @@
+         "//private_join_and_compute/crypto/proto:camenisch_shoup_cc_proto",
+         "//private_join_and_compute/crypto/proto:ec_point_cc_proto",
+         "//private_join_and_compute/crypto/proto:proto_util",
+-        "@abseil-cpp//absl/strings",
+-        "@protobuf//:protobuf_lite",
++        "@com_google_absl//absl/strings",
++        "@com_google_protobuf//:protobuf_lite",
+     ],
+ )
+ 
+diff -urN pjc_orig/private_join_and_compute/crypto/proto/BUILD pjc_mod/private_join_and_compute/crypto/proto/BUILD
+--- pjc_orig/private_join_and_compute/crypto/proto/BUILD	2026-05-29 16:14:36.000000000 +0000
++++ pjc_mod/private_join_and_compute/crypto/proto/BUILD	2026-05-29 16:14:37.000000000 +0000
+@@ -1,3 +1,5 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
+ # Copyright 2019 Google LLC.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+@@ -12,7 +14,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-load("@protobuf//bazel:proto_library.bzl", "proto_library")
++load("@com_google_protobuf//bazel:proto_library.bzl", "proto_library")
+ load("@rules_cc//cc:cc_library.bzl", "cc_library")
+ load("@rules_cc//cc:cc_test.bzl", "cc_test")
+ load("@rules_cc//cc:defs.bzl", "cc_library")
+diff -urN pjc_orig/private_join_and_compute/py/BUILD pjc_mod/private_join_and_compute/py/BUILD
+--- pjc_orig/private_join_and_compute/py/BUILD	2026-05-29 16:14:36.000000000 +0000
++++ pjc_mod/private_join_and_compute/py/BUILD	2026-05-29 16:14:37.000000000 +0000
+@@ -1,3 +1,5 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
+ # Copyright 2019 Google LLC.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+diff -urN pjc_orig/private_join_and_compute/py/ciphers/BUILD pjc_mod/private_join_and_compute/py/ciphers/BUILD
+--- pjc_orig/private_join_and_compute/py/ciphers/BUILD	2026-05-29 16:14:36.000000000 +0000
++++ pjc_mod/private_join_and_compute/py/ciphers/BUILD	2026-05-29 16:14:37.000000000 +0000
+@@ -1,3 +1,5 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
+ # Copyright 2019 Google LLC.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+diff -urN pjc_orig/private_join_and_compute/py/crypto_util/BUILD pjc_mod/private_join_and_compute/py/crypto_util/BUILD
+--- pjc_orig/private_join_and_compute/py/crypto_util/BUILD	2026-05-29 16:14:36.000000000 +0000
++++ pjc_mod/private_join_and_compute/py/crypto_util/BUILD	2026-05-29 16:14:37.000000000 +0000
+@@ -1,3 +1,5 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
+ # Copyright 2019 Google LLC.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+diff -urN pjc_orig/private_join_and_compute/py/requirements/BUILD pjc_mod/private_join_and_compute/py/requirements/BUILD
+--- pjc_orig/private_join_and_compute/py/requirements/BUILD	2026-05-29 16:14:36.000000000 +0000
++++ pjc_mod/private_join_and_compute/py/requirements/BUILD	2026-05-29 16:14:37.000000000 +0000
+@@ -1,3 +1,5 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
+ # Copyright 2019 Google LLC.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+diff -urN pjc_orig/private_join_and_compute/util/BUILD pjc_mod/private_join_and_compute/util/BUILD
+--- pjc_orig/private_join_and_compute/util/BUILD	2026-05-29 16:14:35.000000000 +0000
++++ pjc_mod/private_join_and_compute/util/BUILD	2026-05-29 16:14:37.000000000 +0000
+@@ -1,3 +1,5 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
+ # Copyright 2019 Google LLC.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+@@ -31,9 +33,9 @@
+         "status_macros.h",
+     ],
+     deps = [
+-        "@abseil-cpp//absl/status",
+-        "@abseil-cpp//absl/status:statusor",
+-        "@protobuf//:protobuf_lite",
++        "@com_google_absl//absl/status",
++        "@com_google_absl//absl/status:statusor",
++        "@com_google_protobuf//:protobuf_lite",
+     ],
+ )
+ 
+@@ -46,7 +48,7 @@
+     ],
+     deps = [
+         ":status_includes",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/strings",
+         "@googletest//:gtest",
+     ],
+ )
+@@ -62,7 +64,7 @@
+     ],
+     deps = [
+         ":status_includes",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -89,8 +91,8 @@
+     deps = [
+         ":recordio",
+         ":status_includes",
+-        "@abseil-cpp//absl/strings",
+-        "@protobuf//:protobuf_lite",
++        "@com_google_absl//absl/strings",
++        "@com_google_protobuf//:protobuf_lite",
+     ],
+ )
+ 
+@@ -115,12 +117,12 @@
+     deps = [
+         ":file",
+         ":status_includes",
+-        "@abseil-cpp//absl/log",
+-        "@abseil-cpp//absl/memory",
+-        "@abseil-cpp//absl/status",
+-        "@abseil-cpp//absl/strings",
+-        "@abseil-cpp//absl/synchronization",
+-        "@protobuf//:protobuf_lite",
++        "@com_google_absl//absl/log",
++        "@com_google_absl//absl/memory",
++        "@com_google_absl//absl/status",
++        "@com_google_absl//absl/strings",
++        "@com_google_absl//absl/synchronization",
++        "@com_google_protobuf//:protobuf_lite",
+     ],
+ )
+ 
+@@ -134,8 +136,8 @@
+         ":status_includes",
+         ":status_testing_includes",
+         "//private_join_and_compute/crypto:bn_util",
+-        "@abseil-cpp//absl/random",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/random",
++        "@com_google_absl//absl/strings",
+         "@googletest//:gtest_main",
+     ],
+ )
+@@ -157,7 +159,7 @@
+         ":proto_util",
+         ":recordio",
+         ":status_includes",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 
+@@ -175,7 +177,7 @@
+         ":proto_util",
+         ":status_testing_includes",
+         ":test_proto",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/strings",
+         "@googletest//:gtest_main",
+     ],
+ )
+@@ -218,7 +220,7 @@
+         "//private_join_and_compute/crypto:bn_util",
+         "//private_join_and_compute/crypto:ec_key_proto",
+         "//private_join_and_compute/crypto:ec_util",
+-        "@abseil-cpp//absl/strings",
++        "@com_google_absl//absl/strings",
+     ],
+ )
+ 

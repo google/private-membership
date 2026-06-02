@@ -14,9 +14,24 @@
 
 #include "private_membership/rlwe/client/cpp/internal/crypto_utils.h"
 
+#include <cmath>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <string_view>
+#include <utility>
+
+#include "private_join_and_compute/crypto/context.h"
+#include "private_join_and_compute/crypto/ec_commutative_cipher.h"
+#include "private_membership/rlwe/client/cpp/internal/aes_ctr_256_no_auth.h"
 #include "private_membership/rlwe/client/cpp/internal/aes_ctr_256_with_fixed_iv.h"
+#include "private_membership/rlwe/client/cpp/internal/aes_gcm_256.h"
+#include "private_membership/rlwe/client/cpp/internal/cipher.h"
 #include "private_membership/rlwe/client/cpp/internal/id_utils.h"
-#include "shell_encryption/status_macros.h"
+#include "absl/status/status.h"
+#include "absl/status/statusor.h"
+#include "absl/strings/str_cat.h"
+#include "absl/strings/string_view.h"
 
 namespace private_membership {
 namespace {
@@ -30,7 +45,7 @@ std::string LengthToBytes(uint32_t length) {
   return std::string(ret, ret + 4);
 }
 
-::rlwe::StatusOr<uint32_t> BytesToLength(absl::string_view bytes) {
+absl::StatusOr<uint32_t> BytesToLength(absl::string_view bytes) {
   if (bytes.size() != 4) {
     return absl::InvalidArgumentError("Invalid byte size of length encoding.");
   }
@@ -42,10 +57,24 @@ std::string LengthToBytes(uint32_t length) {
   return ret;
 }
 
+absl::StatusOr<std::unique_ptr<Cipher>> CreateCipher(
+    const Cipher::Scheme encryption_scheme, const absl::string_view key) {
+  switch (encryption_scheme) {
+    case Cipher::Scheme::kAesCtr256WithFixedIv:
+      return AesCtr256WithFixedIV::Create(key);
+    case Cipher::Scheme::kAesCtr256NoAuth:
+      return AesCtr256NoAuth::Create(key);
+    case Cipher::Scheme::kAesGcm256:
+      return AesGcm256::Create(key);
+    default:
+      return absl::InvalidArgumentError(
+          absl::StrCat("Unsupported encryption scheme: ", encryption_scheme));
+  }
+}
+
 }  // namespace
 
-::rlwe::StatusOr<std::string> Pad(absl::string_view bytes,
-                                  int max_byte_length) {
+absl::StatusOr<std::string> Pad(absl::string_view bytes, int max_byte_length) {
   if (max_byte_length < bytes.length()) {
     return absl::InvalidArgumentError(
         "max_byte_length smaller than the input bytes length.");
@@ -58,16 +87,18 @@ std::string LengthToBytes(uint32_t length) {
   return absl::StrCat(length_in_byte, padded_bytes);
 }
 
-::rlwe::StatusOr<std::string> Unpad(absl::string_view bytes) {
+absl::StatusOr<std::string> Unpad(absl::string_view bytes) {
   if (bytes.length() < 4) {
     return absl::InvalidArgumentError("Invalid bytes does not encode length.");
   }
-  RLWE_ASSIGN_OR_RETURN(uint32_t bytes_length,
-                        BytesToLength(bytes.substr(0, 4)));
-  if (bytes_length + 4 > bytes.length()) {
+  absl::StatusOr<uint32_t> bytes_length = BytesToLength(bytes.substr(0, 4));
+  if (!bytes_length.ok()) {
+    return bytes_length.status();
+  }
+  if (*bytes_length + 4 > bytes.length()) {
     return absl::InvalidArgumentError("Incorrect bytes length.");
   }
-  return std::string(bytes.substr(4, bytes_length));
+  return std::string(bytes.substr(4, *bytes_length));
 }
 
 std::string HashEncryptedId(absl::string_view encrypted_id,
@@ -84,7 +115,7 @@ std::string HashEncryptedId(absl::string_view encrypted_id,
       encrypted_id));
 }
 
-::rlwe::StatusOr<std::string> GetValueEncryptionKey(
+absl::StatusOr<std::string> GetValueEncryptionKey(
     absl::string_view encrypted_id, ::private_join_and_compute::Context* ctx) {
   // Salt user in SHA256 hash function to generate value encryption key.
   // Randomly generated salt forcing adversaries to re-compute rainbow tables.
@@ -102,35 +133,88 @@ std::string HashEncryptedId(absl::string_view encrypted_id,
       kRequiredAesKeyLength);
 }
 
-::rlwe::StatusOr<std::string> EncryptValue(absl::string_view encrypted_id,
-                                           absl::string_view value,
-                                           uint32_t max_value_byte_length,
-                                           ::private_join_and_compute::Context* ctx) {
+absl::StatusOr<std::string> EncryptValue(const absl::string_view encrypted_id,
+                                         const absl::string_view value,
+                                         const uint32_t max_value_byte_length,
+                                         const Cipher::Scheme encryption_scheme,
+                                         ::private_join_and_compute::Context* ctx) {
   if (value.length() > max_value_byte_length) {
     return absl::InvalidArgumentError(absl::StrCat(
         "Length of value ", value.length(), " larger than maximum value byte ",
         "length ", max_value_byte_length, "."));
   }
-  RLWE_ASSIGN_OR_RETURN(auto value_encryption_key,
-                        GetValueEncryptionKey(encrypted_id, ctx));
-  RLWE_ASSIGN_OR_RETURN(auto aes_ctr,
-                        AesCtr256WithFixedIV::Create(value_encryption_key));
-  RLWE_ASSIGN_OR_RETURN(std::string plaintext,
-                        Pad(value, max_value_byte_length));
-  return aes_ctr->Encrypt(plaintext);
+  auto value_encryption_key = GetValueEncryptionKey(encrypted_id, ctx);
+  if (!value_encryption_key.ok()) {
+    return value_encryption_key.status();
+  }
+
+  absl::StatusOr<std::unique_ptr<Cipher>> cipher =
+      CreateCipher(encryption_scheme, *value_encryption_key);
+  if (!cipher.ok()) {
+    return cipher.status();
+  }
+
+  absl::StatusOr<std::string> plaintext;
+  // Skip padding for unauthenticated encryption because the for failed
+  // decryption, the output will not be in the correct format.
+  if (encryption_scheme == Cipher::Scheme::kAesCtr256NoAuth) {
+    plaintext = std::string(value);
+  } else {
+    plaintext = Pad(value, max_value_byte_length);
+  }
+  if (!plaintext.ok()) {
+    return plaintext.status();
+  }
+
+  return (*cipher)->Encrypt(*std::move(plaintext));
 }
 
-::rlwe::StatusOr<std::string> DecryptValue(absl::string_view encrypted_id,
-                                           absl::string_view encrypted_value,
-                                           ::private_join_and_compute::Context* ctx) {
-  RLWE_ASSIGN_OR_RETURN(auto value_encryption_key,
-                        GetValueEncryptionKey(encrypted_id, ctx));
-  RLWE_ASSIGN_OR_RETURN(auto aes_ctr,
-                        AesCtr256WithFixedIV::Create(value_encryption_key));
-
-  RLWE_ASSIGN_OR_RETURN(std::string plaintext,
-                        aes_ctr->Decrypt(encrypted_value));
-  return Unpad(plaintext);
+absl::StatusOr<std::string> DecryptValue(
+    const absl::string_view encrypted_id,
+    const absl::string_view encrypted_value,
+    const Cipher::Scheme encryption_scheme, ::private_join_and_compute::Context* ctx) {
+  auto value_encryption_key = GetValueEncryptionKey(encrypted_id, ctx);
+  if (!value_encryption_key.ok()) {
+    return value_encryption_key.status();
+  }
+  return DecryptValueWithKey(*value_encryption_key, encrypted_value,
+                             encryption_scheme, ctx);
 }
 
+absl::StatusOr<std::string> DecryptValueWithKey(
+    const absl::string_view encryption_key,
+    const absl::string_view encrypted_value,
+    const Cipher::Scheme encryption_scheme, ::private_join_and_compute::Context* ctx) {
+  absl::StatusOr<std::unique_ptr<Cipher>> cipher =
+      CreateCipher(encryption_scheme, encryption_key);
+  if (!cipher.ok()) {
+    return cipher.status();
+  }
+  auto plaintext = (*cipher)->Decrypt(encrypted_value);
+  if (!plaintext.ok()) {
+    return plaintext.status();
+  }
+  // Skip unpadding for unauthenticated encryption because the for failed
+  // decryption, the output will not be in the correct format.
+  if (encryption_scheme == Cipher::Scheme::kAesCtr256NoAuth) {
+    return plaintext;
+  }
+  return Unpad(*std::move(plaintext));
+}
+
+absl::StatusOr<std::string> Truncate(std::string_view in, int bit_length) {
+  if (bit_length < 0 || bit_length > in.size() * 8) {
+    return absl::InvalidArgumentError("Truncation bit length out of bounds.");
+  }
+  if (bit_length == 0) {
+    return std::string();
+  }
+  int ceiled_byte_length = (bit_length - 1) / 8 + 1;
+  std::string res(in.begin(), in.begin() + ceiled_byte_length);
+  if (int remainder_bit_count = bit_length % 8; remainder_bit_count > 0) {
+    int mask = (1 << remainder_bit_count) - 1;
+    res[res.size() - 1] &= (mask << (8 - remainder_bit_count));
+  }
+  return res;
+}
 }  // namespace private_membership

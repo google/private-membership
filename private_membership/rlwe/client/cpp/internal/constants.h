@@ -26,7 +26,7 @@ namespace private_membership {
 namespace rlwe {
 
 // Identifier of the elliptic curve.
-constexpr int kCurveId = NID_X9_62_prime256v1;
+constexpr int kPrime256v1CurveId = NID_X9_62_prime256v1;
 
 // Byte length of the encrypted id stored inside buckets.
 constexpr int kStoredEncryptedIdByteLength = 13;

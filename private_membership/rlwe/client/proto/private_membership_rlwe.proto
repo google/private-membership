@@ -12,15 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-syntax = "proto3";
+edition = "2023";
+
+option optimize_for = LITE_RUNTIME;
 
 package private_membership.rlwe;
 
-option go_package = "github.com/google/private-membership";
-option optimize_for = LITE_RUNTIME;
-
 import "private_membership/rlwe/client/proto/private_membership.proto";
 import "shell_encryption/serialization.proto";
+
+option features.field_presence = IMPLICIT;
+option go_package = "github.com/google/private-membership";
 
 // Request and Response protos
 //
@@ -96,7 +98,7 @@ message RlwePlaintextId {
 
 // Different use cases of the RLWE-based PSM protocol.
 //
-// NEXT ID: 25
+// NEXT ID: 27
 enum RlweUseCase {
   RLWE_USE_CASE_UNDEFINED = 0;
   TEST_USE_CASE = 1;
@@ -105,6 +107,9 @@ enum RlweUseCase {
 
   // Use case with empty database.
   EMPTY_USE_CASE = 22;
+
+  // Use case for Prober only.
+  PROBER = 25;
 
   // The device state of ChromeOS device, used for Zero Touch, License
   // Packaging. This is zero-disclosure database, i.e. client does not reveal
@@ -118,6 +123,7 @@ enum RlweUseCase {
 
   // The device state of ChromeOS device.
   CROS_DEVICE_SECONDARY_STATE = 12 [deprecated = true];
+
   CROS_DEVICE_STATE_BACKUP = 21 [deprecated = true];
 
   // Use-cases for ChromeOS Device Active Reporting to Fresnel.
@@ -179,6 +185,16 @@ message RlweParameters {
   int32 levels_of_recursion = 5;
 }
 
+// Specifies the OPRF curve and hash type.
+enum OprfParams {
+  OPRF_CONFIG_UNSPECIFIED = 0;
+
+  OPRF_CONFIG_NID_X9_62_PRIME256V1_WITH_SHA256 = 1;
+
+  // All new use cases should use SSWU_RO.
+  OPRF_CONFIG_NID_X9_62_PRIME256V1_WITH_SSWU_RO = 2;
+}
+
 // Represents a unsigned 128-bit integer.
 message Uint128 {
   // The lower 64 bits of the modulus.
@@ -212,6 +228,7 @@ message PrivateMembershipRlweQuery {
     // ((hashed_bucket_id.size() - 1) * 8, hashed_bucket_id.size() * 8] range.
     int32 bit_length = 2;
   }
+
   // Hashed bucket id.
   //
   // The hashed bucket id is computed by taking the prefix of the hashed
@@ -222,6 +239,14 @@ message PrivateMembershipRlweQuery {
   // Should be unset if the server doesn't support non-sensitive identifier
   // bucketing for the requested use case.
   HashedBucketId hashed_bucket_id = 3;
+
+  // Shard ID corresponding to queried buckets.
+  message ShardId {
+    int32 hashed_bucket_shard_id = 1;
+    int32 encrypted_bucket_shard_id = 2;
+  }
+
+  ShardId shard_id = 4;
 }
 
 // Response consisting of a unique query id and the associated PIR response.
@@ -253,7 +278,43 @@ message PirRequest {
   //
   // The ciphertexts are uploaded in a compressed format as NTT Polynomials
   // using a PRNG seed to expand them into ciphertexts.
+  // If this field is set, none of the sharded_request_type should be set.
   repeated .rlwe.SerializedNttPolynomial request = 1;
+
+  // ExpandedRequest can be useful if the querier would like to manipulate the
+  // PirRequest after it's been created by the client library. To modify it, the
+  // ciphertext must be expanded first; hence the name ExpandedRequest.
+  message ExpandedRequest {
+    // Wrapper around .rlwe.SerializedSymmetricRlweCiphertext so we can
+    // represent "empty" ciphertext without ambiguity. If `ciphertext` is not
+    // set, it is consiered "not requested" and the corresponding index will be
+    // ignored and excluded from the response. When used multiple levels of
+    // recursion, it is the querier's responsibility to leave the correct
+    // positions unset so the final query is valid.
+    message SerializedSymmetricRlweCiphertext {
+      .rlwe.SerializedSymmetricRlweCiphertext ciphertext = 1;
+    }
+
+    repeated SerializedSymmetricRlweCiphertext ciphertexts = 1;
+  }
+
+  // CompactRequest should be the same as the request field above, except it
+  // indicates sharding.
+  message CompactRequest {
+    repeated .rlwe.SerializedNttPolynomial ciphertexts = 1;
+  }
+
+  // If one of the sharded_request_type is set, the above `request` field should
+  // be set.
+  oneof sharded_request_type {
+    // Will be used by hashed bucket sharded request because we don't need to
+    // modify the ciphertext.
+    CompactRequest compact_request = 3;
+
+    // Will be used by encrypted bucket sharded request because we need to
+    // modify the ciphertext.
+    ExpandedRequest expanded_request = 4;
+  }
 
   // The PRNG seed used to expand the compressed RLWE ciphertexts.
   bytes prng_seed = 2;
@@ -283,6 +344,10 @@ message EncryptedBucket {
     // Value that is encrypted using AES where the key is a serialization
     // of the identifier encrypted using the Elliptic curve commutative cipher.
     bytes encrypted_value = 2;
+
+    // Proto containing the sensitive and non-sensitive portion of the
+    // identifier in plaintext.
+    RlwePlaintextId id = 3;
   }
 }
 
@@ -296,5 +361,6 @@ message RlweMembershipResponses {
     // Membership response of the queried plaintext id.
     MembershipResponse membership_response = 2;
   }
+
   repeated MembershipResponseEntry membership_responses = 1;
 }

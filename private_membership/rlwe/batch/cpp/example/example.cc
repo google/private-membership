@@ -16,7 +16,6 @@
 #include <string>
 #include <vector>
 
-#include <google/protobuf/repeated_field.h>
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
@@ -27,6 +26,7 @@
 #include "private_membership/rlwe/batch/proto/client.pb.h"
 #include "private_membership/rlwe/batch/proto/server.pb.h"
 #include "private_membership/rlwe/batch/proto/shared.pb.h"
+#include <google/protobuf/repeated_field.h>
 
 namespace private_membership {
 namespace batch {

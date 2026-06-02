@@ -15,9 +15,15 @@
 #ifndef PRIVATE_MEMBERSHIP_RLWE_CLIENT_CPP_INTERNAL_ENCRYPTED_BUCKET_ID_H_
 #define PRIVATE_MEMBERSHIP_RLWE_CLIENT_CPP_INTERNAL_ENCRYPTED_BUCKET_ID_H_
 
+#include <cstdint>
+#include <string>
+
+#include "private_join_and_compute/crypto/context.h"
 #include "private_join_and_compute/crypto/ec_commutative_cipher.h"
+#include "private_membership/rlwe/client/cpp/open_source/chromium/private_membership_export.h"
 #include "private_membership/rlwe/client/proto/private_membership_rlwe.pb.h"
 #include "absl/hash/hash.h"
+#include "absl/strings/escaping.h"
 #include "absl/strings/string_view.h"
 #include "shell_encryption/statusor.h"
 
@@ -25,8 +31,14 @@ namespace private_membership {
 namespace rlwe {
 
 // Concrete data type representing the encrypted bucket id.
-class EncryptedBucketId {
+class PRIVATE_MEMBERSHIP_EXPORT EncryptedBucketId {
  public:
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, const EncryptedBucketId& id) {
+    absl::Format(&sink, "%s (%d)", absl::CEscape(id.encrypted_bucket_id_bytes_),
+                 id.bit_length_);
+  }
+
   // Creates the object from raw data.
   //
   // Returns an invalid argument error if the data and length do not match the
@@ -34,7 +46,7 @@ class EncryptedBucketId {
   // floor(bit_length/8) bytes, at most ceil(bit_length/8) bytes, and all bits
   // after the bit_length'th must be set to 0.
   static ::rlwe::StatusOr<EncryptedBucketId> Create(
-      const std::string& encrypted_bucket_id, int bit_length);
+      absl::string_view encrypted_bucket_id, int bit_length);
 
   // Creates encrypted bucket ID from plaintext ID and parameters.
   //
@@ -47,8 +59,13 @@ class EncryptedBucketId {
   //
   // Returns an error if parameters are invalid.
   static ::rlwe::StatusOr<EncryptedBucketId> Create(
-      const std::string& encrypted_id, const EncryptedBucketsParameters& params,
+      absl::string_view encrypted_id, const EncryptedBucketsParameters& params,
       ::private_join_and_compute::Context* ctx);
+
+  // Creates encrypted bucket ID from the integer.
+  //
+  // Returns an error if the integer is invalid.
+  static ::rlwe::StatusOr<EncryptedBucketId> Create(int id, int bit_length);
 
   // Converts the bucket id to an unsigned 32 bit integer representation.
   //

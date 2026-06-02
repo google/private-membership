@@ -14,15 +14,29 @@
 
 #include "private_membership/rlwe/client/cpp/internal/hashed_bucket_id.h"
 
+#include <cstdint>
+#include <string>
+#include <utility>
+
+
+#include "private_join_and_compute/crypto/context.h"
+#include "private_membership/rlwe/client/cpp/internal/crypto_utils.h"
 #include "private_membership/rlwe/client/proto/private_membership.pb.h"
+#include "private_membership/rlwe/client/proto/private_membership_rlwe.pb.h"
 #include "private_membership/rlwe/client/cpp/internal/rlwe_id_utils.h"
 #include "private_membership/rlwe/client/cpp/internal/utils.h"
+
+#include "absl/status/status.h"
+#include "absl/strings/string_view.h"
 #include "shell_encryption/status_macros.h"
+#include "shell_encryption/statusor.h"
 
 namespace private_membership {
 namespace rlwe {
 
 namespace {
+
+
 
 bool IsEmpty(absl::string_view hashed_bucket_id, int bit_length) {
   return hashed_bucket_id.empty() && bit_length == 0;
@@ -31,7 +45,7 @@ bool IsEmpty(absl::string_view hashed_bucket_id, int bit_length) {
 }  // namespace
 
 ::rlwe::StatusOr<HashedBucketId> HashedBucketId::Create(
-    const std::string& hashed_bucket_id, int bit_length) {
+    absl::string_view hashed_bucket_id, int bit_length) {
   // Allow "empty" hashed bucket id to be created. This case can occur if the
   // use case doesn't support bucketing by hashed bucket id. Otherwise, the
   // hashed bucket id/bit length pair must be valid.
@@ -54,13 +68,18 @@ bool IsEmpty(absl::string_view hashed_bucket_id, int bit_length) {
       std::string hashed_non_sensitive_id,
       rlwe::HashNonsensitiveIdWithSalt(
           id.non_sensitive_id(), params.non_sensitive_id_hash_type(), ctx));
-  auto status_or_hashed_bucket_id =
-      rlwe::Truncate(hashed_non_sensitive_id, params.hashed_bucket_id_length());
-  if (!status_or_hashed_bucket_id.ok()) {
-    return status_or_hashed_bucket_id.status();
+  auto hashed_bucket_id =
+      Truncate(hashed_non_sensitive_id, params.hashed_bucket_id_length());
+  if (!hashed_bucket_id.ok()) {
+    return hashed_bucket_id.status();
   }
-  return Create(*std::move(status_or_hashed_bucket_id),
+  return Create(std::move(hashed_bucket_id).value(),
                 params.hashed_bucket_id_length());
+}
+
+::rlwe::StatusOr<HashedBucketId> HashedBucketId::Create(const int id,
+                                                        const int bit_length) {
+  return HashedBucketId::Create(BucketIdToByte(id, bit_length), bit_length);
 }
 
 ::rlwe::StatusOr<HashedBucketId> HashedBucketId::CreateFromApiProto(
@@ -86,6 +105,25 @@ HashedBucketId::ToApiProto() const {
   api_proto.set_hashed_bucket_id(hashed_bucket_id_bytes_);
   api_proto.set_bit_length(bit_length_);
   return api_proto;
+}
+//
+::rlwe::StatusOr<uint32_t> HashedBucketId::ToUint32() const {
+  if (bit_length_ > 32) {
+    return absl::InternalError("Bit length exceeds 32 bits.");
+  }
+  if (bit_length_ < 0 || bit_length_ > hashed_bucket_id_bytes_.size() * 8) {
+    return absl::InvalidArgumentError("Truncation bit length out of bounds.");
+  }
+  if (bit_length_ == 0) {
+    return 0;
+  }
+  std::string bytes = std::string(hashed_bucket_id_bytes_);
+  bytes.resize(4);
+  uint32_t res = (static_cast<unsigned char>(bytes[0]) << 24) |
+                 (static_cast<unsigned char>(bytes[1]) << 16) |
+                 (static_cast<unsigned char>(bytes[2]) << 8) |
+                 static_cast<unsigned char>(bytes[3]);
+  return res >> (32 - bit_length_);
 }
 
 std::string HashedBucketId::DebugString() const {

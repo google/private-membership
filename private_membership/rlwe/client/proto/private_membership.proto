@@ -1,3 +1,4 @@
+// LINT: LEGACY_NAMES
 // Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,13 +12,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
+// LINT: LEGACY_NAMES
+edition = "2023";
 
-syntax = "proto3";
+option optimize_for = LITE_RUNTIME;
 
 package private_membership;
 
+option features.field_presence = IMPLICIT;
 option go_package = "github.com/google/private-membership";
-option optimize_for = LITE_RUNTIME;
 
 // An enum describing different types of available hash functions.
 enum HashType {
@@ -30,10 +34,32 @@ enum HashType {
   // Add more hash types if necessary.
 }
 
+
+// An enum describing different types of available encryption schemes.
+// **IMPORTANT**: Keep the integer value in sync with the enums in
+// google3/privacy/private_membership/common/cipher.h and
+// google3/privacy/private_membership/common/typescript/cipher.ts.
+enum EncryptionScheme {
+  ENCRYPTION_SCHEME_UNDEFINED = 0;
+
+  // Use this one for the most part. One exception is when the server holds
+  // multiset database.
+  AES_CTR_256_WITH_FIXED_IV = 1;
+
+  // DO NOT USE this mode without the approval from mdb/private-membership-eng.
+  AES_CTR_256_NO_AUTH = 2;
+
+  // Use this mode for multiset database.
+  AES_GCM_256 = 3;
+
+  // Default encryption scheme in OPRF service.
+  AES_SIV = 4;
+}
+
+
 // An enum describing how to hash IDs to encrypted buckets.
 enum EncryptedBucketHashType {
   ENCRYPTED_BUCKET_HASH_TYPE_UNDEFINED = 0;
-
   ENCRYPTED_BUCKET_TEST_HASH_TYPE = 3;
 
   // Use SHA256 of injective concatenation of non-sensitive and sensitive IDs.
@@ -63,13 +89,20 @@ message DoublyEncryptedId {
   bytes doubly_encrypted_id = 2;
 }
 
+
 // A proto message used to store the plaintext response of a membership query of
 // a single identifier.
 message MembershipResponse {
   // True if and only if the queried identifier was a member.
   bool is_member = 1;
 
-  // The associated value if the queried identifier was a member. If the
-  // queried identifier is not a member, the value will be an empty string.
+  // The associated value if the queried identifier was a member. If the queried
+  // identifier is not a member, the value will be an empty string. If there are
+  // more than one values for a single ID, one of them will be stored here, but
+  // there is no guarantee on which one will be.
   string value = 2;
+
+  // When more than one value is associated with a single identifier, this field
+  // will contain all the values.
+  repeated string values = 3;
 }

@@ -22,11 +22,11 @@ namespace batch {
 namespace {
 // Arbitrary, realistic maximum values to avoid integer overflows.
 constexpr int kMaxLevelsOfRecursion = 16;
-constexpr int kMaxLogCompressionFactor = 32;
-constexpr int kMaxLogDegree = 32;
+constexpr int kMaxLogCompressionFactor = 16;
+constexpr int kMaxLogDegree = 30;
 constexpr int kMaxLogDecompositionModulus = 32;
 constexpr int kMaxLogT = 8;
-constexpr int kMaxNumBucketsPerShard = (1 << 30);
+constexpr int kMaxNumBucketsPerShard = (1 << 20);
 constexpr int kMaxNumShards = (1 << 30);
 constexpr int kMaxRequestModulusSize = 8;
 constexpr int kMaxRequiredFakeQueries = (1 << 30);
@@ -42,7 +42,7 @@ absl::Status ValidateCryptoParameters(
         "levels_of_recursion is out of the valid range");
   }
   if (parameters.log_compression_factor() <= 0 ||
-      parameters.log_compression_factor() >= kMaxLogCompressionFactor) {
+      parameters.log_compression_factor() > kMaxLogCompressionFactor) {
     return absl::InvalidArgumentError(
         "log_compression_factor is out of the valid range");
   }
@@ -83,7 +83,7 @@ absl::Status ValidateShardParameters(
   if (parameters.number_of_buckets_per_shard() <= 0 ||
       parameters.number_of_buckets_per_shard() > kMaxNumBucketsPerShard) {
     return absl::InvalidArgumentError(
-        "number_of_shards is out of the valid range");
+        "number_of_buckets_per_shard is out of the valid range");
   }
   if (parameters.required_fake_queries() < 0 ||
       parameters.required_fake_queries() > kMaxRequiredFakeQueries) {
@@ -119,7 +119,6 @@ absl::Status ValidateParameters(const Parameters& parameters) {
       !status.ok()) {
     return status;
   }
-
   return absl::OkStatus();
 }
 

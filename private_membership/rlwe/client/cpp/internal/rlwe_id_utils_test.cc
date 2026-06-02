@@ -14,11 +14,16 @@
 
 #include "private_membership/rlwe/client/cpp/internal/rlwe_id_utils.h"
 
-#include "private_membership/rlwe/client/proto/private_membership.pb.h"
+#include <string>
+#include <vector>
+
+#include "private_membership/rlwe/client/proto/private_membership_rlwe.pb.h"
 #include "private_membership/rlwe/client/cpp/internal/constants.h"
-#include "private_membership/rlwe/client/cpp/internal/testing/constants.h"
+#include "private_membership/rlwe/client/cpp/internal/oprf_utils.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include "shell_encryption/testing/status_matchers.h"
+#include "shell_encryption/testing/status_testing.h"
 #include "absl/status/status.h"
 #include "shell_encryption/testing/protobuf_matchers.h"
 #include "shell_encryption/testing/status_matchers.h"
@@ -34,6 +39,7 @@ using ::testing::HasSubstr;
 TEST(RlweIdUtils, ComputeBucketStoredEncryptedIdSuccess) {
   EncryptedBucketsParameters params;
   params.set_encrypted_bucket_id_length(14);
+  params.set_sensitive_id_hash_type(ENCRYPTED_BUCKET_TEST_HASH_TYPE);
 
   RlwePlaintextId plaintext_id;
   plaintext_id.set_non_sensitive_id("nsid");
@@ -42,8 +48,7 @@ TEST(RlweIdUtils, ComputeBucketStoredEncryptedIdSuccess) {
   ::private_join_and_compute::Context ctx;
   ASSERT_OK_AND_ASSIGN(
       auto ec_cipher,
-      ::private_join_and_compute::ECCommutativeCipher::CreateWithNewKey(
-          kTestCurveId, ::private_join_and_compute::ECCommutativeCipher::HashType::SHA256));
+      CreateOprfCipher(OprfCurveAndHashType::kPrime256v1CurveIdWithSha256));
 
   std::string full_id = HashRlwePlaintextId(plaintext_id);
   ASSERT_OK_AND_ASSIGN(std::string encrypted_id, ec_cipher->Encrypt(full_id));
@@ -62,6 +67,7 @@ TEST(RlweIdUtils, ComputeBucketStoredEncryptedIdEmpty) {
   EncryptedBucketsParameters empty_id_params;
   empty_id_params.set_encrypted_bucket_id_length(kStoredEncryptedIdByteLength *
                                                  8);
+  empty_id_params.set_sensitive_id_hash_type(ENCRYPTED_BUCKET_TEST_HASH_TYPE);
 
   RlwePlaintextId plaintext_id;
   plaintext_id.set_non_sensitive_id("empty-nsid");
@@ -70,8 +76,7 @@ TEST(RlweIdUtils, ComputeBucketStoredEncryptedIdEmpty) {
   ::private_join_and_compute::Context ctx;
   ASSERT_OK_AND_ASSIGN(
       auto ec_cipher,
-      ::private_join_and_compute::ECCommutativeCipher::CreateWithNewKey(
-          kTestCurveId, ::private_join_and_compute::ECCommutativeCipher::HashType::SHA256));
+      CreateOprfCipher(OprfCurveAndHashType::kPrime256v1CurveIdWithSswuRo));
 
   ASSERT_OK_AND_ASSIGN(std::string id, ComputeBucketStoredEncryptedId(
                                            plaintext_id, empty_id_params,
@@ -82,6 +87,7 @@ TEST(RlweIdUtils, ComputeBucketStoredEncryptedIdEmpty) {
 TEST(RlweIdUtils, ComputeBucketStoredEncryptedIdError) {
   EncryptedBucketsParameters params;
   params.set_encrypted_bucket_id_length(14);
+  params.set_sensitive_id_hash_type(ENCRYPTED_BUCKET_TEST_HASH_TYPE);
 
   RlwePlaintextId plaintext_id;
   plaintext_id.set_non_sensitive_id("nsid-test");
@@ -90,8 +96,7 @@ TEST(RlweIdUtils, ComputeBucketStoredEncryptedIdError) {
   ::private_join_and_compute::Context ctx;
   ASSERT_OK_AND_ASSIGN(
       auto ec_cipher,
-      ::private_join_and_compute::ECCommutativeCipher::CreateWithNewKey(
-          kTestCurveId, ::private_join_and_compute::ECCommutativeCipher::HashType::SHA256));
+      CreateOprfCipher(OprfCurveAndHashType::kPrime256v1CurveIdWithSswuRo));
 
   EXPECT_THAT(
       ComputeBucketStoredEncryptedId(plaintext_id, params, nullptr, &ctx),
@@ -175,6 +180,40 @@ TEST(RlweIdUtils, HashNonsensitiveIdWithSaltRegression) {
       0x4b, 0x51, 0xfe, 0x6d, 0x67, 0x68, 0xf0, 0xa6, 0xe7, 0x0};
   EXPECT_EQ(hash, std::string(reinterpret_cast<const char*>(expected_hash),
                               hash.length()));
+}
+
+TEST(RlweIdUtils, AllSensitiveIdHashTypesCovered) {
+  RlwePlaintextId plaintext_id;
+  plaintext_id.set_non_sensitive_id("nsid");
+  plaintext_id.set_sensitive_id("sid");
+
+  ::private_join_and_compute::Context ctx;
+  ASSERT_OK_AND_ASSIGN(
+      auto ec_cipher,
+      CreateOprfCipher(OprfCurveAndHashType::kPrime256v1CurveIdWithSswuRo));
+
+  // The EnumerateEnumValues method is unavailable in Chromium.
+  // Test uses a hardcoded vector of the enums in order to allow clean
+  // compilation and have this test coverage in Chromium.
+  std::vector<EncryptedBucketHashType> encrypted_bucket_hash_types = {
+      ENCRYPTED_BUCKET_HASH_TYPE_UNDEFINED, ENCRYPTED_BUCKET_TEST_HASH_TYPE,
+      SHA256_NON_SENSITIVE_AND_SENSITIVE_ID,
+  };
+
+  for (const auto& hash_type : encrypted_bucket_hash_types) {
+    EncryptedBucketsParameters params;
+    params.set_encrypted_bucket_id_length(14);
+    params.set_sensitive_id_hash_type(hash_type);
+    if (hash_type == ENCRYPTED_BUCKET_HASH_TYPE_UNDEFINED) {
+      EXPECT_THAT(ComputeBucketStoredEncryptedId(plaintext_id, params,
+                                                 ec_cipher.get(), &ctx),
+                  StatusIs(absl::StatusCode::kInvalidArgument,
+                           HasSubstr("must be defined.")));
+    } else {
+      EXPECT_OK(ComputeBucketStoredEncryptedId(plaintext_id, params,
+                                               ec_cipher.get(), &ctx));
+    }
+  }
 }
 
 }  // namespace

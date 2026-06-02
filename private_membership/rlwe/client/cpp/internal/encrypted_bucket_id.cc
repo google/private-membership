@@ -14,16 +14,26 @@
 
 #include "private_membership/rlwe/client/cpp/internal/encrypted_bucket_id.h"
 
+#include <cstdint>
+#include <string>
+#include <utility>
+
+#include "private_join_and_compute/crypto/context.h"
+#include "private_join_and_compute/crypto/ec_commutative_cipher.h"
 #include "private_membership/rlwe/client/cpp/internal/crypto_utils.h"
+#include "private_membership/rlwe/client/proto/private_membership_rlwe.pb.h"
 #include "private_membership/rlwe/client/cpp/internal/rlwe_id_utils.h"
 #include "private_membership/rlwe/client/cpp/internal/utils.h"
+
+#include "absl/status/status.h"
+#include "absl/strings/string_view.h"
 #include "shell_encryption/status_macros.h"
 
 namespace private_membership {
 namespace rlwe {
 
 ::rlwe::StatusOr<EncryptedBucketId> EncryptedBucketId::Create(
-    const std::string& encrypted_bucket_id, int bit_length) {
+    absl::string_view encrypted_bucket_id, int bit_length) {
   if (!IsValid(encrypted_bucket_id, bit_length)) {
     return absl::InvalidArgumentError("Invalid bit_length.");
   }
@@ -38,12 +48,17 @@ namespace rlwe {
         "ECCipher and Context must both be non-null.");
   }
   std::string full_id = HashRlwePlaintextId(id);
-  RLWE_ASSIGN_OR_RETURN(std::string encrypted_id, ec_cipher->Encrypt(full_id));
-  return EncryptedBucketId::Create(encrypted_id, params, ctx);
+  auto encrypted_id = ec_cipher->Encrypt(full_id);
+  if (!encrypted_id.ok()) {
+    return absl::InvalidArgumentError(encrypted_id.status().message());
+  }
+
+  return EncryptedBucketId::Create(std::move(encrypted_id).value(), params,
+                                   ctx);
 }
 
 ::rlwe::StatusOr<EncryptedBucketId> EncryptedBucketId::Create(
-    const std::string& encrypted_id, const EncryptedBucketsParameters& params,
+    absl::string_view encrypted_id, const EncryptedBucketsParameters& params,
     ::private_join_and_compute::Context* ctx) {
   if (ctx == nullptr) {
     return absl::InvalidArgumentError("Context must be non-null.");
@@ -54,6 +69,10 @@ namespace rlwe {
       Truncate(hashed_encrypted_id, params.encrypted_bucket_id_length()));
   return EncryptedBucketId::Create(encrypted_bucket_id_data,
                                    params.encrypted_bucket_id_length());
+}
+::rlwe::StatusOr<EncryptedBucketId> EncryptedBucketId::Create(
+    const int id, const int bit_length) {
+  return EncryptedBucketId::Create(BucketIdToByte(id, bit_length), bit_length);
 }
 
 ::rlwe::StatusOr<uint32_t> EncryptedBucketId::ToUint32() const {

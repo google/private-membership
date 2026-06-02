@@ -17,6 +17,8 @@
 #include <string>
 
 #include <gtest/gtest.h>
+#include "shell_encryption/testing/status_matchers.h"
+#include "shell_encryption/testing/status_testing.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 

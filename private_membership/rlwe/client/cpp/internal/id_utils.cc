@@ -14,10 +14,14 @@
 
 #include "private_membership/rlwe/client/cpp/internal/id_utils.h"
 
+#include <string>
+
+#include "absl/strings/string_view.h"
+
 namespace private_membership {
 
 std::string PadOrTruncate(absl::string_view in, int len) {
-  if (len <= static_cast<int>(in.size())) {
+  if (len <= in.size()) {
     return std::string(in.substr(0, len));
   }
   std::string ret(in);

@@ -15,9 +15,14 @@
 #ifndef PRIVATE_MEMBERSHIP_RLWE_CLIENT_CPP_INTERNAL_HASHED_BUCKET_ID_H_
 #define PRIVATE_MEMBERSHIP_RLWE_CLIENT_CPP_INTERNAL_HASHED_BUCKET_ID_H_
 
+#include <cstdint>
+#include <string>
+
+#include "private_join_and_compute/crypto/context.h"
 #include "private_join_and_compute/crypto/ec_commutative_cipher.h"
 #include "private_membership/rlwe/client/proto/private_membership_rlwe.pb.h"
 #include "absl/hash/hash.h"
+#include "absl/strings/escaping.h"
 #include "absl/strings/string_view.h"
 #include "shell_encryption/statusor.h"
 
@@ -27,6 +32,12 @@ namespace rlwe {
 // Concrete data type representing the hashed bucket id.
 class HashedBucketId {
  public:
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, const HashedBucketId& id) {
+    absl::Format(&sink, "%s (%d)", absl::CEscape(id.hashed_bucket_id_bytes_),
+                 id.bit_length_);
+  }
+
   // Creates the object from raw data.
   //
   // Returns an invalid argument error if the data and length do not match the
@@ -34,12 +45,15 @@ class HashedBucketId {
   // bytes, at most ceil(bit_length/8) bytes, and all bits after the
   // bit_length'th must be set to 0.
   static ::rlwe::StatusOr<HashedBucketId> Create(
-      const std::string& hashed_bucket_id, int bit_length);
+      absl::string_view hashed_bucket_id, int bit_length);
 
   // Creates the object from the plaintet ID and parameters.
   static ::rlwe::StatusOr<HashedBucketId> Create(
       const RlwePlaintextId& id, const HashedBucketsParameters& params,
       ::private_join_and_compute::Context* ctx);
+
+  // Creates the object from the integer ID and parameters.
+  static ::rlwe::StatusOr<HashedBucketId> Create(int id, int bit_length);
 
   // Creates the object from the API proto.
   //
@@ -53,6 +67,12 @@ class HashedBucketId {
   // Creates and returns an API proto representing the object.
   private_membership::rlwe::PrivateMembershipRlweQuery::HashedBucketId
   ToApiProto() const;
+  //
+
+  // Converts the bucket id to an unsigned 32 bit integer representation.
+  //
+  // If the bit length > 32, returns an internal error.
+  ::rlwe::StatusOr<uint32_t> ToUint32() const;
 
   // Creates a debug string for logging.
   std::string DebugString() const;

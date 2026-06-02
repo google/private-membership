@@ -1,0 +1,8 @@
+build --copt=-fno-asynchronous-unwind-tables
+build --linkopt=-fno-asynchronous-unwind-tables
+build --copt=-Wa,--gsframe=no
+build --copt=-fno-lto
+build --cxxopt=-fno-lto
+build --linkopt=-fno-lto
+build --features=-lto
+build --features=-ipo
