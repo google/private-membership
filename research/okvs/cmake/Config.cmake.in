@@ -1,0 +1,13 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/okvsTargets.cmake")
+
+include("${CMAKE_CURRENT_LIST_DIR}/findDependancies.cmake")
+
+
+get_target_property(okvs_INCLUDE_DIRS research::okvs INTERFACE_INCLUDE_DIRECTORIES)
+
+get_target_property(okvs_LIBRARIES research::okvs LOCATION)
+
+message("okvs_INCLUDE_DIRS=${okvs_INCLUDE_DIRS}")
+message("okvs_LIBRARIES=${okvs_LIBRARIES}")
