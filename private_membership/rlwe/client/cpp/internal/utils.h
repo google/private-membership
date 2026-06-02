@@ -15,24 +15,14 @@
 #ifndef PRIVATE_MEMBERSHIP_RLWE_CLIENT_CPP_INTERNAL_UTILS_H_
 #define PRIVATE_MEMBERSHIP_RLWE_CLIENT_CPP_INTERNAL_UTILS_H_
 
+#include <cstdint>
+
+#include "private_membership/rlwe/client/cpp/open_source/chromium/private_membership_export.h"
+#include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "shell_encryption/statusor.h"
 
 namespace private_membership {
 namespace rlwe {
-
-// Truncates the given bytes by returning the first `bit_length` leftmost bits.
-//
-// The input bytes `in` is assumed to be in big endian representation. The size
-// of the result will be rounded up to the nearest byte. Thus, the last byte of
-// the result may contain some extra bits, which will all be set to 0.
-//
-// For example, given 10111011 11111011 in big endian with `bit_length` == 12,
-// the result will be 10111011 11110000.
-//
-// Returns InvalidArgumentError if the truncation bit length is larger than the
-// bit length of the input string.
-::rlwe::StatusOr<std::string> Truncate(absl::string_view in, int bit_length);
 
 // Returns the first `bit_length` leftmost bits of `in` as an unsigned 32 bit
 // integer.
@@ -44,8 +34,8 @@ namespace rlwe {
 //
 // Returns InvalidArgumentError if `bit_length` is larger than the bit length of
 // the input string or larger than 32.
-::rlwe::StatusOr<uint32_t> TruncateAsUint32(absl::string_view in,
-                                            int bit_length);
+PRIVATE_MEMBERSHIP_EXPORT absl::StatusOr<uint32_t> TruncateAsUint32(
+    absl::string_view in, int bit_length);
 
 // Returns true if `in` is a valid byte representation of a value truncated to
 // `bit_length`.
@@ -53,7 +43,7 @@ namespace rlwe {
 // That is, it returns true if and only if all bits after `bit_length`th bit is
 // set to 0 and `bit_length` is in the range
 // ((in.size() - 1) * 8, in.size() * 8].
-bool IsValid(absl::string_view in, int bit_length);
+PRIVATE_MEMBERSHIP_EXPORT bool IsValid(absl::string_view in, int bit_length);
 
 }  // namespace rlwe
 }  // namespace private_membership

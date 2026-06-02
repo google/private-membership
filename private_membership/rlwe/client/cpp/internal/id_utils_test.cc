@@ -14,8 +14,11 @@
 
 #include "private_membership/rlwe/client/cpp/internal/id_utils.h"
 
-#include <gmock/gmock.h>
+#include <string>
+
 #include <gtest/gtest.h>
+#include "shell_encryption/testing/status_matchers.h"
+#include "shell_encryption/testing/status_testing.h"
 
 namespace private_membership {
 namespace {

@@ -15,13 +15,17 @@
 #ifndef PRIVATE_MEMBERSHIP_RLWE_CLIENT_CPP_INTERNAL_ID_UTILS_H_
 #define PRIVATE_MEMBERSHIP_RLWE_CLIENT_CPP_INTERNAL_ID_UTILS_H_
 
+#include <string>
+
+#include "private_membership/rlwe/client/cpp/open_source/chromium/private_membership_export.h"
 #include "absl/strings/string_view.h"
 
 namespace private_membership {
 
 // Pad the input string with '0' until reaching len. If input string is larger
 // than len, then return the string truncated to len characters.
-std::string PadOrTruncate(absl::string_view in, int len);
+PRIVATE_MEMBERSHIP_EXPORT std::string PadOrTruncate(absl::string_view in,
+                                                    int len);
 
 }  // namespace private_membership
 

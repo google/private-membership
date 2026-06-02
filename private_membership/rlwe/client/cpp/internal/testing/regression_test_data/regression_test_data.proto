@@ -1,13 +1,20 @@
-syntax = "proto3";
+edition = "2024";
+
+option optimize_for = LITE_RUNTIME;
 
 package private_membership.rlwe;
 
 import "private_membership/rlwe/client/proto/private_membership_rlwe.proto";
 
-option optimize_for = LITE_RUNTIME;
+
+
+option java_outer_classname = "RegressionTestData";
+option features.field_presence = IMPLICIT;
 
 // The regression test data consists of multiple test cases.
 message PrivateMembershipRlweClientRegressionTestData {
+  
+
   message TestCase {
     // Use case to check for the membership.
     RlweUseCase use_case = 1;
@@ -36,5 +43,6 @@ message PrivateMembershipRlweClientRegressionTestData {
     // Whether the plaintext id is expected to be a member.
     bool is_positive_membership_expected = 9;
   }
+
   repeated TestCase test_cases = 1;
 }

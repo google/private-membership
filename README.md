@@ -37,6 +37,9 @@ The Private Set Membership library requires the following dependencies:
 *   [Protocol Buffers](https://github.com/google/protobuf) for data
     serialization.
 
+*   [Private Join and Compute](https://github.com/google/private-join-and-compute)
+    for cryptographic operations and commutative ciphers.
+
 *   [Shell](https://github.com/google/shell-encryption) for fully homomorphic encryption.
 
 *   [Tink](https://github.com/google/tink) for cryptographic PRNGs.
@@ -45,9 +48,7 @@ The Private Set Membership library requires the following dependencies:
 
 In order to run this library, you need to install Bazel, if you don't have
 it already.
-[Follow the instructions for your platform on the Bazel website. Make sure you
- are installing version 4.2.1 or above.]
-(https://docs.bazel.build/versions/master/install.html)
+[Follow the instructions for your platform on the Bazel website. Make sure you are installing version 9.1.0 or above.](https://docs.bazel.build/versions/master/install.html)
 
 You also need to install Git, if you don't have it already.
 [Follow the instructions for your platform on the Git website.](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -66,6 +67,18 @@ You may also run all tests (recursively) using the following command:
 
 ```bash
 bazel test ... --cxxopt='-std=c++17'
+```
+
+### Building with Bazelisk
+
+Alternatively, you can build and test this repository using
+[Bazelisk](https://github.com/bazelbuild/bazelisk) to automatically download and
+use the version of Bazel against which this code was tested and verified.
+
+```bash
+cd private-membership
+bazelisk build ... --cxxopt='-std=c++17'
+bazelisk test ... --cxxopt='-std=c++17'
 ```
 
 ## Disclaimers

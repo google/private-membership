@@ -14,11 +14,17 @@
 
 #include "private_membership/rlwe/client/cpp/internal/aes_ctr_256_with_fixed_iv.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <string>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include "absl/memory/memory.h"
+#include "shell_encryption/testing/status_matchers.h"
+#include "shell_encryption/testing/status_testing.h"
+#include "absl/status/status.h"
+
 #include <openssl/rand.h>
 #include "shell_encryption/testing/status_matchers.h"
 #include "shell_encryption/testing/status_testing.h"
@@ -30,12 +36,9 @@ using ::rlwe::testing::StatusIs;
 using ::testing::HasSubstr;
 
 std::string GetRandomBytes(size_t length) {
-  std::unique_ptr<uint8_t[]> buf(new uint8_t[length]);
-  // BoringSSL documentation says that it always returns 1; while
-  // OpenSSL documentation says that it returns 1 on success, 0 otherwise. We
-  // use BoringSSL, so we don't check the return value.
-  RAND_bytes(buf.get(), length);
-  return std::string(reinterpret_cast<const char*>(buf.get()), length);
+  std::string str(length, '\0');
+  RAND_bytes(reinterpret_cast<uint8_t*>(&str[0]), length);
+  return str;
 }
 
 TEST(AesCtr256WithFixedIVTest, TestEncryptDecrypt) {

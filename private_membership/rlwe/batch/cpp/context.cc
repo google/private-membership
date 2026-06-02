@@ -20,16 +20,15 @@
 #include <memory>
 #include <utility>
 
-#include <google/protobuf/repeated_field.h>
 #include "absl/numeric/int128.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "private_membership/rlwe/batch/cpp/constants.h"
 #include "private_membership/rlwe/batch/proto/shared.pb.h"
+#include <google/protobuf/repeated_field.h>
 #include "shell_encryption/context.h"
 #include "shell_encryption/integral_types.h"
 #include "shell_encryption/montgomery.h"
-
 
 namespace private_membership {
 namespace batch {

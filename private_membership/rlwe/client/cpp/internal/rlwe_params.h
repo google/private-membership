@@ -15,6 +15,9 @@
 #ifndef PRIVATE_MEMBERSHIP_RLWE_CLIENT_CPP_INTERNAL_RLWE_PARAMS_H_
 #define PRIVATE_MEMBERSHIP_RLWE_CLIENT_CPP_INTERNAL_RLWE_PARAMS_H_
 
+#include <memory>
+#include <vector>
+
 #include "private_membership/rlwe/client/proto/private_membership_rlwe.pb.h"
 #include "shell_encryption/context.h"
 #include "shell_encryption/error_params.h"

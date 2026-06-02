@@ -1,11 +1,18 @@
 #include <fstream>
 #include <sstream>
+#include <string>
 
 #include "private_membership/rlwe/client/cpp/private_membership_rlwe_client.h"
 #include "private_membership/rlwe/client/cpp/internal/testing/regression_test_data/regression_test_data.pb.h"
+#include "private_membership/rlwe/client/cpp/internal/oprf_utils.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include "shell_encryption/testing/status_matchers.h"
+#include "shell_encryption/testing/status_testing.h"
 #include "absl/status/status.h"
+#include "absl/status/statusor.h"
+#include "absl/strings/str_cat.h"
+#include "absl/strings/string_view.h"
 #include "shell_encryption/testing/status_testing.h"
 
 namespace private_membership {
@@ -15,7 +22,7 @@ namespace {
 using ::testing::Eq;
 
 constexpr char kTestDataPath[] =
-    "private_membership/rlwe/client/cpp/internal/testing/regression_test_data/";
+  "private_membership/rlwe/client/cpp/internal/testing/regression_test_data/";
 
 absl::StatusOr<std::string> ReadFileToString(absl::string_view path) {
   std::ifstream file((std::string(path)));
@@ -46,7 +53,8 @@ void VerifyClient(
   ASSERT_OK_AND_ASSIGN(auto client,
                        PrivateMembershipRlweClient::CreateForTesting(
                            test_case.use_case(), {test_case.plaintext_id()},
-                           test_case.ec_cipher_key(), test_case.seed()));
+                           test_case.ec_cipher_key(), test_case.seed(),
+                           OprfCurveAndHashType::kPrime256v1CurveIdWithSha256));
 
   ASSERT_OK_AND_ASSIGN(auto oprf_request, client->CreateOprfRequest());
   EXPECT_EQ(oprf_request.SerializeAsString(),

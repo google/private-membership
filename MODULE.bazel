@@ -1,0 +1,49 @@
+module(
+    name = "private_membership",
+    version = "1.0",
+)
+
+bazel_dep(name = "rules_cc", version = "0.2.17")
+bazel_dep(name = "rules_proto", version = "7.1.0")
+bazel_dep(name = "abseil-cpp", version = "20240722.0", repo_name = "com_google_absl")
+bazel_dep(name = "googletest", version = "1.17.0.bcr.2", repo_name = "com_github_google_googletest")
+bazel_dep(name = "glog", version = "0.7.1.bcr.1", repo_name = "com_github_google_glog")
+bazel_dep(name = "gflags", version = "2.2.2", repo_name = "com_github_gflags_gflags")
+bazel_dep(name = "boringssl", version = "0.20260508.0")
+bazel_dep(name = "protobuf", version = "33.4", repo_name = "com_google_protobuf")
+bazel_dep(name = "grpc", version = "1.80.0", repo_name = "com_github_grpc_grpc")
+bazel_dep(name = "bazel_skylib", version = "1.9.0")
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "com_github_google_shell",
+    patches = ["//patches:com_github_google_shell.patch"],
+    patch_args = ["-p1"],
+    strip_prefix = "shell-encryption-507781e129a03f8178c9716d79163fae23d34b6a",
+    url = "https://github.com/google/shell-encryption/archive/507781e129a03f8178c9716d79163fae23d34b6a.tar.gz",
+)
+
+http_archive(
+    name = "com_github_google_private_join_and_compute",
+    patches = ["//patches:com_github_google_private_join_and_compute.patch"],
+    patch_args = ["-p1"],
+    strip_prefix = "private-join-and-compute-950c5e4c88d7effe85147beb7856152f7c53394b",
+    url = "https://github.com/google/private-join-and-compute/archive/950c5e4c88d7effe85147beb7856152f7c53394b.tar.gz",
+)
+
+http_archive(
+    name = "tink_base",
+    patches = ["//patches:tink_base.patch"],
+    patch_args = ["-p1"],
+    strip_prefix = "tink-1.6.1",
+    url = "https://github.com/google/tink/archive/v1.6.1.zip",
+)
+
+http_archive(
+    name = "tink_cc",
+    patches = ["//patches:tink_cc.patch"],
+    patch_args = ["-p1"],
+    strip_prefix = "tink-1.6.1/cc",
+    url = "https://github.com/google/tink/archive/v1.6.1.zip",
+)

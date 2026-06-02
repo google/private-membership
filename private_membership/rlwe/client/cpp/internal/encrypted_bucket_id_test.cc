@@ -15,12 +15,18 @@
 #include "private_membership/rlwe/client/cpp/internal/encrypted_bucket_id.h"
 
 #include <cstdint>
+#include <string>
 
+#include "private_join_and_compute/crypto/context.h"
 #include "private_membership/rlwe/client/proto/private_membership_rlwe.pb.h"
+#include "private_membership/rlwe/client/cpp/internal/oprf_utils.h"
 #include "private_membership/rlwe/client/cpp/internal/rlwe_id_utils.h"
-#include "private_membership/rlwe/client/cpp/internal/testing/constants.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include "shell_encryption/testing/status_matchers.h"
+#include "shell_encryption/testing/status_testing.h"
+#include "absl/status/status.h"
+#include "absl/strings/string_view.h"
 #include "shell_encryption/testing/protobuf_matchers.h"
 #include "shell_encryption/testing/status_matchers.h"
 #include "shell_encryption/testing/status_testing.h"
@@ -56,8 +62,7 @@ TEST(EncryptedBucketIdTest, CreateWithHashingSuccess) {
   ::private_join_and_compute::Context ctx;
   ASSERT_OK_AND_ASSIGN(
       auto ec_cipher,
-      ::private_join_and_compute::ECCommutativeCipher::CreateWithNewKey(
-          kTestCurveId, ::private_join_and_compute::ECCommutativeCipher::HashType::SHA256));
+      CreateOprfCipher(OprfCurveAndHashType::kPrime256v1CurveIdWithSha256));
 
   std::string full_id = HashRlwePlaintextId(plaintext_id);
   ASSERT_OK_AND_ASSIGN(std::string encrypted_id, ec_cipher->Encrypt(full_id));
@@ -84,8 +89,7 @@ TEST(EncryptedBucketIdTest, CreateWithHashingError) {
   ::private_join_and_compute::Context ctx;
   ASSERT_OK_AND_ASSIGN(
       auto ec_cipher,
-      ::private_join_and_compute::ECCommutativeCipher::CreateWithNewKey(
-          kTestCurveId, ::private_join_and_compute::ECCommutativeCipher::HashType::SHA256));
+      CreateOprfCipher(OprfCurveAndHashType::kPrime256v1CurveIdWithSha256));
 
   EXPECT_THAT(
       EncryptedBucketId::Create(plaintext_id, params, nullptr, &ctx),

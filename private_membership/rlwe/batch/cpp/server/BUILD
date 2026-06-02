@@ -1,3 +1,6 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_test")
+
 licenses(["notice"])
 
 package(default_visibility = ["//:__subpackages__"])
@@ -15,6 +18,7 @@ cc_library(
         "//private_membership/rlwe/batch/cpp:prng",
         "//private_membership/rlwe/batch/proto:server_cc_proto",
         "//private_membership/rlwe/batch/proto:shared_cc_proto",
+        "@com_google_protobuf//:protobuf_lite",
         "@com_github_google_shell//shell_encryption:galois_key",
         "@com_github_google_shell//shell_encryption:int256",
         "@com_github_google_shell//shell_encryption:montgomery",
@@ -49,11 +53,14 @@ cc_test(
         "//private_membership/rlwe/batch/proto:client_cc_proto",
         "//private_membership/rlwe/batch/proto:server_cc_proto",
         "//private_membership/rlwe/batch/proto:shared_cc_proto",
+        "@com_google_protobuf//:protobuf_lite",
         "@com_github_google_googletest//:gtest_main",
         "@com_github_google_shell//shell_encryption:context",
         "@com_github_google_shell//shell_encryption:polynomial",
         "@com_github_google_shell//shell_encryption:serialization_cc_proto",
         "@com_github_google_shell//shell_encryption:symmetric_encryption",
+        "@com_github_google_shell//shell_encryption/testing:status_is_fork",
+        "@com_github_google_shell//shell_encryption/testing:status_testing",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
         "@com_google_absl//absl/memory",

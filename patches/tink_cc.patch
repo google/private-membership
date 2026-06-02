@@ -1,0 +1,387 @@
+diff -urN tink_cc_orig/aead/BUILD.bazel tink_cc_mod/aead/BUILD.bazel
+--- tink_cc_orig/aead/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/aead/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/aead/internal/BUILD.bazel tink_cc_mod/aead/internal/BUILD.bazel
+--- tink_cc_orig/aead/internal/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/aead/internal/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/aead/subtle/BUILD.bazel tink_cc_mod/aead/subtle/BUILD.bazel
+--- tink_cc_orig/aead/subtle/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/aead/subtle/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_cc_orig/BUILD.bazel tink_cc_mod/BUILD.bazel
+--- tink_cc_orig/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,7 +1,10 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@tink_base//:tink_version.bzl", "TINK_VERSION_LABEL")
+ load("@tink_base//tools:common.bzl", "template_rule")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/config/BUILD.bazel tink_cc_mod/config/BUILD.bazel
+--- tink_cc_orig/config/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/config/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,6 +1,9 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ load("@bazel_skylib//rules:common_settings.bzl", "bool_flag")
+ 
+-package(default_visibility = ["//:__subpackages__"])
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/daead/BUILD.bazel tink_cc_mod/daead/BUILD.bazel
+--- tink_cc_orig/daead/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/daead/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/daead/internal/BUILD.bazel tink_cc_mod/daead/internal/BUILD.bazel
+--- tink_cc_orig/daead/internal/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/daead/internal/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_cc_orig/daead/subtle/BUILD.bazel tink_cc_mod/daead/subtle/BUILD.bazel
+--- tink_cc_orig/daead/subtle/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/daead/subtle/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/hybrid/BUILD.bazel tink_cc_mod/hybrid/BUILD.bazel
+--- tink_cc_orig/hybrid/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/hybrid/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/hybrid/internal/BUILD.bazel tink_cc_mod/hybrid/internal/BUILD.bazel
+--- tink_cc_orig/hybrid/internal/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/hybrid/internal/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_cc_orig/hybrid/subtle/BUILD.bazel tink_cc_mod/hybrid/subtle/BUILD.bazel
+--- tink_cc_orig/hybrid/subtle/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/hybrid/subtle/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_cc_orig/integration/awskms/BUILD.bazel tink_cc_mod/integration/awskms/BUILD.bazel
+--- tink_cc_orig/integration/awskms/BUILD.bazel	2026-05-29 16:16:43.000000000 +0000
++++ tink_cc_mod/integration/awskms/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/integration/gcpkms/BUILD.bazel tink_cc_mod/integration/gcpkms/BUILD.bazel
+--- tink_cc_orig/integration/gcpkms/BUILD.bazel	2026-05-29 16:16:43.000000000 +0000
++++ tink_cc_mod/integration/gcpkms/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/internal/BUILD.bazel tink_cc_mod/internal/BUILD.bazel
+--- tink_cc_orig/internal/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/internal/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/jwt/BUILD.bazel tink_cc_mod/jwt/BUILD.bazel
+--- tink_cc_orig/jwt/BUILD.bazel	2026-05-29 16:16:45.000000000 +0000
++++ tink_cc_mod/jwt/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/jwt/internal/BUILD.bazel tink_cc_mod/jwt/internal/BUILD.bazel
+--- tink_cc_orig/jwt/internal/BUILD.bazel	2026-05-29 16:16:45.000000000 +0000
++++ tink_cc_mod/jwt/internal/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/mac/BUILD.bazel tink_cc_mod/mac/BUILD.bazel
+--- tink_cc_orig/mac/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/mac/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/mac/internal/BUILD.bazel tink_cc_mod/mac/internal/BUILD.bazel
+--- tink_cc_orig/mac/internal/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/mac/internal/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_cc_orig/mac/subtle/BUILD.bazel tink_cc_mod/mac/subtle/BUILD.bazel
+--- tink_cc_orig/mac/subtle/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/mac/subtle/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_cc_orig/prf/BUILD.bazel tink_cc_mod/prf/BUILD.bazel
+--- tink_cc_orig/prf/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/prf/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(
+     default_visibility = ["//:__subpackages__"],
+ )
+diff -urN tink_cc_orig/prf/internal/BUILD.bazel tink_cc_mod/prf/internal/BUILD.bazel
+--- tink_cc_orig/prf/internal/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/prf/internal/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_cc_orig/prf/subtle/BUILD.bazel tink_cc_mod/prf/subtle/BUILD.bazel
+--- tink_cc_orig/prf/subtle/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/prf/subtle/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_cc_orig/proto/BUILD.bazel tink_cc_mod/proto/BUILD.bazel
+--- tink_cc_orig/proto/BUILD.bazel	2026-05-29 16:16:43.000000000 +0000
++++ tink_cc_mod/proto/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/signature/BUILD.bazel tink_cc_mod/signature/BUILD.bazel
+--- tink_cc_orig/signature/BUILD.bazel	2026-05-29 16:16:45.000000000 +0000
++++ tink_cc_mod/signature/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/signature/internal/BUILD.bazel tink_cc_mod/signature/internal/BUILD.bazel
+--- tink_cc_orig/signature/internal/BUILD.bazel	2026-05-29 16:16:45.000000000 +0000
++++ tink_cc_mod/signature/internal/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_cc_orig/signature/subtle/BUILD.bazel tink_cc_mod/signature/subtle/BUILD.bazel
+--- tink_cc_orig/signature/subtle/BUILD.bazel	2026-05-29 16:16:45.000000000 +0000
++++ tink_cc_mod/signature/subtle/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_cc_orig/streamingaead/BUILD.bazel tink_cc_mod/streamingaead/BUILD.bazel
+--- tink_cc_orig/streamingaead/BUILD.bazel	2026-05-29 16:16:43.000000000 +0000
++++ tink_cc_mod/streamingaead/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/streamingaead/internal/BUILD.bazel tink_cc_mod/streamingaead/internal/BUILD.bazel
+--- tink_cc_orig/streamingaead/internal/BUILD.bazel	2026-05-29 16:16:43.000000000 +0000
++++ tink_cc_mod/streamingaead/internal/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_cc_orig/streamingaead/subtle/BUILD.bazel tink_cc_mod/streamingaead/subtle/BUILD.bazel
+--- tink_cc_orig/streamingaead/subtle/BUILD.bazel	2026-05-29 16:16:43.000000000 +0000
++++ tink_cc_mod/streamingaead/subtle/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1 +1,4 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+diff -urN tink_cc_orig/subtle/BUILD.bazel tink_cc_mod/subtle/BUILD.bazel
+--- tink_cc_orig/subtle/BUILD.bazel	2026-05-29 16:16:43.000000000 +0000
++++ tink_cc_mod/subtle/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/subtle/mac/BUILD.bazel tink_cc_mod/subtle/mac/BUILD.bazel
+--- tink_cc_orig/subtle/mac/BUILD.bazel	2026-05-29 16:16:43.000000000 +0000
++++ tink_cc_mod/subtle/mac/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/subtle/prf/BUILD.bazel tink_cc_mod/subtle/prf/BUILD.bazel
+--- tink_cc_orig/subtle/prf/BUILD.bazel	2026-05-29 16:16:43.000000000 +0000
++++ tink_cc_mod/subtle/prf/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/subtle/random.h tink_cc_mod/subtle/random.h
+--- tink_cc_orig/subtle/random.h	2026-05-29 16:16:43.000000000 +0000
++++ tink_cc_mod/subtle/random.h	2026-05-29 16:16:48.000000000 +0000
+@@ -1,3 +1,4 @@
++#include <cstdint>
+ // Copyright 2017 Google Inc.
+ //
+ // Licensed under the Apache License, Version 2.0 (the "License");
+diff -urN tink_cc_orig/third_party/boringssl_fips/BUILD.bazel tink_cc_mod/third_party/boringssl_fips/BUILD.bazel
+--- tink_cc_orig/third_party/boringssl_fips/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/third_party/boringssl_fips/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ licenses(["notice"])
+ 
+ boringssl_headers = [
+diff -urN tink_cc_orig/third_party/BUILD.bazel tink_cc_mod/third_party/BUILD.bazel
+--- tink_cc_orig/third_party/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/third_party/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,3 +1,6 @@
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
+ package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+diff -urN tink_cc_orig/util/BUILD.bazel tink_cc_mod/util/BUILD.bazel
+--- tink_cc_orig/util/BUILD.bazel	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/util/BUILD.bazel	2026-05-29 16:16:48.000000000 +0000
+@@ -1,4 +1,7 @@
+-package(default_visibility = ["//:__subpackages__"])
++load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test", "cc_binary")
++load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
++load("@rules_proto//proto:defs.bzl", "proto_library")
++package(default_visibility = ["//visibility:public"])
+ 
+ licenses(["notice"])
+ 
+diff -urN tink_cc_orig/util/secret_data.h tink_cc_mod/util/secret_data.h
+--- tink_cc_orig/util/secret_data.h	2026-05-29 16:16:44.000000000 +0000
++++ tink_cc_mod/util/secret_data.h	2026-05-29 16:16:48.000000000 +0000
+@@ -1,3 +1,4 @@
++#include <cstdint>
+ // Copyright 2020 Google LLC
+ //
+ // Licensed under the Apache License, Version 2.0 (the "License");

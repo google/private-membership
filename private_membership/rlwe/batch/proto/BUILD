@@ -1,4 +1,4 @@
-load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
 package(default_visibility = ["//:__subpackages__"])
@@ -16,14 +16,6 @@ proto_library(
 
 cc_proto_library(
     name = "shared_cc_proto",
-    visibility = ["//visibility:public"],
-    deps = [
-        ":shared_proto",
-    ],
-)
-
-java_proto_library(
-    name = "shared_java_proto",
     visibility = ["//visibility:public"],
     deps = [
         ":shared_proto",
@@ -48,14 +40,6 @@ cc_proto_library(
     ],
 )
 
-java_proto_library(
-    name = "client_java_proto",
-    visibility = ["//visibility:public"],
-    deps = [
-        ":client_proto",
-    ],
-)
-
 proto_library(
     name = "server_proto",
     srcs = ["server.proto"],
@@ -68,14 +52,6 @@ proto_library(
 
 cc_proto_library(
     name = "server_cc_proto",
-    visibility = ["//visibility:public"],
-    deps = [
-        ":server_proto",
-    ],
-)
-
-java_proto_library(
-    name = "server_java_proto",
     visibility = ["//visibility:public"],
     deps = [
         ":server_proto",

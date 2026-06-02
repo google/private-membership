@@ -14,30 +14,20 @@
 
 #include "private_membership/rlwe/client/cpp/internal/utils.h"
 
-#include "shell_encryption/status_macros.h"
+#include <cstdint>
+#include <string>
+
+#include "private_membership/rlwe/client/cpp/internal/crypto_utils.h"
+#include "absl/status/status.h"
+#include "absl/status/statusor.h"
+#include "absl/strings/string_view.h"
 
 namespace private_membership {
 namespace rlwe {
 
-::rlwe::StatusOr<std::string> Truncate(absl::string_view in, int bit_length) {
-  if (bit_length < 0 || bit_length > static_cast<int>(in.size() * 8)) {
-    return absl::InvalidArgumentError("Truncation bit length out of bounds.");
-  }
-  if (bit_length == 0) {
-    return std::string();
-  }
-  int ceiled_byte_length = (bit_length - 1) / 8 + 1;
-  std::string res(in.begin(), in.begin() + ceiled_byte_length);
-  if (int remainder_bit_count = bit_length % 8; remainder_bit_count > 0) {
-    int mask = (1 << remainder_bit_count) - 1;
-    res[res.size() - 1] &= (mask << (8 - remainder_bit_count));
-  }
-  return res;
-}
-
-::rlwe::StatusOr<uint32_t> TruncateAsUint32(absl::string_view in,
-                                            int bit_length) {
-  if (bit_length <= 0 || bit_length > static_cast<int>(in.size() * 8)) {
+absl::StatusOr<uint32_t> TruncateAsUint32(absl::string_view in,
+                                          int bit_length) {
+  if (bit_length <= 0 || bit_length > in.size() * 8) {
     return absl::InvalidArgumentError("Truncation bit length out of bounds.");
   }
   if (bit_length > 32) {
@@ -57,7 +47,7 @@ bool IsValid(absl::string_view in, int bit_length) {
   if (!status_or_truncated_bytes.ok()) {
     return false;
   }
-  return (*status_or_truncated_bytes == in);
+  return (status_or_truncated_bytes.value() == in);
 }
 
 }  // namespace rlwe

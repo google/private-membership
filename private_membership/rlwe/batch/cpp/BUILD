@@ -1,3 +1,6 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_test")
+
 package(default_visibility = ["//:__subpackages__"])
 
 licenses(["notice"])
@@ -25,6 +28,7 @@ cc_library(
     deps = [
         ":constants",
         "//private_membership/rlwe/batch/proto:shared_cc_proto",
+        "@com_google_protobuf//:protobuf_lite",
         "@com_github_google_shell//shell_encryption:context",
         "@com_github_google_shell//shell_encryption:integral_types",
         "@com_github_google_shell//shell_encryption:montgomery",
@@ -46,6 +50,7 @@ cc_library(
         ":constants",
         ":padding",
         "//private_membership/rlwe/batch/proto:shared_cc_proto",
+        "@com_google_protobuf//:protobuf_lite",
         "@com_github_google_shell//shell_encryption:context",
         "@com_github_google_shell//shell_encryption:galois_key",
         "@com_github_google_shell//shell_encryption:integral_types",
@@ -71,6 +76,7 @@ cc_library(
     ],
     deps = [
         "//private_membership/rlwe/batch/proto:shared_cc_proto",
+        "@com_google_protobuf//:protobuf_lite",
         "@com_github_google_shell//shell_encryption:context",
         "@com_github_google_shell//shell_encryption:integral_types",
         "@com_github_google_shell//shell_encryption:montgomery",
@@ -103,6 +109,7 @@ cc_library(
     ],
     deps = [
         "//private_membership/rlwe/batch/proto:shared_cc_proto",
+        "@com_google_protobuf//:protobuf_lite",
         "@com_github_google_shell//shell_encryption:context",
         "@com_github_google_shell//shell_encryption:integral_types",
         "@com_github_google_shell//shell_encryption:montgomery",
@@ -130,6 +137,8 @@ cc_test(
         "@com_github_google_shell//shell_encryption:galois_key",
         "@com_github_google_shell//shell_encryption:polynomial",
         "@com_github_google_shell//shell_encryption:serialization_cc_proto",
+        "@com_github_google_shell//shell_encryption/testing:status_is_fork",
+        "@com_github_google_shell//shell_encryption/testing:status_testing",
         "@com_google_absl//absl/status:statusor",
     ],
 )
@@ -140,6 +149,8 @@ cc_test(
     deps = [
         ":padding",
         "@com_github_google_googletest//:gtest_main",
+        "@com_github_google_shell//shell_encryption/testing:status_is_fork",
+        "@com_github_google_shell//shell_encryption/testing:status_testing",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
     ],
@@ -152,6 +163,8 @@ cc_test(
         ":prng",
         "@com_github_google_googletest//:gtest_main",
         "@com_github_google_shell//shell_encryption/prng",
+        "@com_github_google_shell//shell_encryption/testing:status_is_fork",
+        "@com_github_google_shell//shell_encryption/testing:status_testing",
         "@com_google_absl//absl/status:statusor",
     ],
 )
@@ -164,6 +177,8 @@ cc_test(
         ":test_helper",
         "//private_membership/rlwe/batch/proto:shared_cc_proto",
         "@com_github_google_googletest//:gtest_main",
+        "@com_github_google_shell//shell_encryption/testing:status_is_fork",
+        "@com_github_google_shell//shell_encryption/testing:status_testing",
         "@com_google_absl//absl/status:statusor",
     ],
 )
@@ -179,6 +194,7 @@ cc_library(
         "//private_membership/rlwe/batch/cpp/client",
         "//private_membership/rlwe/batch/proto:client_cc_proto",
         "//private_membership/rlwe/batch/proto:shared_cc_proto",
+        "@com_google_protobuf//:protobuf_lite",
         "@com_github_google_shell//shell_encryption:montgomery",
         "@com_github_google_shell//shell_encryption:polynomial",
         "@com_github_google_shell//shell_encryption:serialization_cc_proto",

@@ -1,3 +1,6 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_test")
+
 licenses(["notice"])
 
 package(default_visibility = ["//:__subpackages__"])
@@ -62,6 +65,7 @@ cc_test(
         "//private_membership/rlwe/batch/cpp:test_helper",
         "//private_membership/rlwe/batch/proto:client_cc_proto",
         "//private_membership/rlwe/batch/proto:shared_cc_proto",
+        "@com_google_protobuf//:protobuf_lite",
         "@com_github_google_googletest//:gtest_main",
         "@com_github_google_shell//shell_encryption:context",
         "@com_github_google_shell//shell_encryption:galois_key",
@@ -73,6 +77,8 @@ cc_test(
         "@com_github_google_shell//shell_encryption:symmetric_encryption",
         "@com_github_google_shell//shell_encryption:symmetric_encryption_with_prng",
         "@com_github_google_shell//shell_encryption:transcription",
+        "@com_github_google_shell//shell_encryption/testing:status_is_fork",
+        "@com_github_google_shell//shell_encryption/testing:status_testing",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",

@@ -1,35 +1,56 @@
-// Copyright 2020 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 #include "private_membership/rlwe/client/cpp/internal/oprf_utils.h"
 
-#include "shell_encryption/status_macros.h"
+#include <memory>
+#include <optional>
+#include <string>
+
+#include "private_join_and_compute/crypto/ec_commutative_cipher.h"
+#include "private_membership/rlwe/client/proto/private_membership_rlwe.pb.h"
+#include "private_membership/rlwe/client/cpp/internal/constants.h"
+#include "absl/status/status.h"
+#include "absl/status/statusor.h"
 
 namespace private_membership {
+namespace rlwe {
 
-::rlwe::StatusOr<DoublyEncryptedId> ReEncryptId(
-    absl::string_view encrypted_id,
-    ::private_join_and_compute::ECCommutativeCipher* ec_cipher) {
-  DoublyEncryptedId doubly_encrypted_id;
-
-  doubly_encrypted_id.set_queried_encrypted_id(std::string(encrypted_id));
-
-  RLWE_ASSIGN_OR_RETURN(auto reencrypted_id,
-                        ec_cipher->ReEncrypt(encrypted_id));
-  doubly_encrypted_id.set_doubly_encrypted_id(reencrypted_id);
-
-  return doubly_encrypted_id;
+absl::StatusOr<OprfCurveAndHashType> ToInternalEnum(OprfParams oprf_params) {
+  switch (oprf_params) {
+    case OprfParams::OPRF_CONFIG_NID_X9_62_PRIME256V1_WITH_SHA256:
+      return OprfCurveAndHashType::kPrime256v1CurveIdWithSha256;
+    case OprfParams::OPRF_CONFIG_NID_X9_62_PRIME256V1_WITH_SSWU_RO:
+      return OprfCurveAndHashType::kPrime256v1CurveIdWithSswuRo;
+    case OprfParams::OPRF_CONFIG_UNSPECIFIED:
+      return OprfCurveAndHashType::kUndefinedOprfCurveAndHashType;
+    default:
+      return absl::InvalidArgumentError("Invalid OPRF params.");
+  }
 }
 
+absl::StatusOr<std::unique_ptr<::private_join_and_compute::ECCommutativeCipher>>
+CreateOprfCipher(OprfCurveAndHashType oprf_curve_and_hash_type,
+                 std::optional<std::string> ec_cipher_key) {
+  int curve_id;
+  ::private_join_and_compute::ECCommutativeCipher::HashType hash_type;
+  switch (oprf_curve_and_hash_type) {
+    case OprfCurveAndHashType::kPrime256v1CurveIdWithSha256:
+      curve_id = kPrime256v1CurveId;
+      hash_type = ::private_join_and_compute::ECCommutativeCipher::HashType::SHA256;
+      break;
+    case OprfCurveAndHashType::kPrime256v1CurveIdWithSswuRo:
+      curve_id = kPrime256v1CurveId;
+      hash_type = ::private_join_and_compute::ECCommutativeCipher::HashType::SSWU_RO;
+      break;
+    case OprfCurveAndHashType::kUndefinedOprfCurveAndHashType:
+    default:
+      return absl::InvalidArgumentError(
+          "Unsupported OprfCurveAndHashType specified.");
+  }
+  return ec_cipher_key.has_value()
+             ? ::private_join_and_compute::ECCommutativeCipher::CreateFromKey(
+                   curve_id, ec_cipher_key.value(), hash_type)
+             : ::private_join_and_compute::ECCommutativeCipher::CreateWithNewKey(curve_id,
+                                                                 hash_type);
+}
+
+}  // namespace rlwe
 }  // namespace private_membership

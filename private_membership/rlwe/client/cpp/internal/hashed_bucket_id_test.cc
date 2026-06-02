@@ -14,10 +14,17 @@
 
 #include "private_membership/rlwe/client/cpp/internal/hashed_bucket_id.h"
 
+#include <string>
+
+#include "private_join_and_compute/crypto/context.h"
 #include "private_membership/rlwe/client/proto/private_membership.pb.h"
 #include "private_membership/rlwe/client/proto/private_membership_rlwe.pb.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include "shell_encryption/testing/status_matchers.h"
+#include "shell_encryption/testing/status_testing.h"
+#include "absl/status/status.h"
+#include "absl/strings/string_view.h"
 #include "shell_encryption/testing/protobuf_matchers.h"
 #include "shell_encryption/testing/status_matchers.h"
 #include "shell_encryption/testing/status_testing.h"
@@ -123,14 +130,6 @@ TEST(HashedBucketId, CreateEmptyBucketId) {
   EXPECT_THAT(id1, Eq(id2));
 }
 
-TEST(HashedBucketId, ToApiProto) {
-  private_membership::rlwe::PrivateMembershipRlweQuery::HashedBucketId
-      api_proto = ApiHashedBucketId("abcd", 32);
-  ASSERT_OK_AND_ASSIGN(HashedBucketId id,
-                       HashedBucketId::CreateFromApiProto(api_proto));
-  EXPECT_THAT(id.ToApiProto(), EqualsProto(api_proto));
-}
-
 TEST(HashedBucketIdTest, EqualsFalse) {
   ASSERT_OK_AND_ASSIGN(
       auto hashed_bucket_id1,
@@ -147,6 +146,20 @@ TEST(HashedBucketIdTest, EqualsTrue) {
   ASSERT_OK_AND_ASSIGN(auto hashed_bucket_id2,
                        HashedBucketId::Create("abcd", 32));
   EXPECT_THAT(hashed_bucket_id1, Eq(hashed_bucket_id2));
+}
+
+TEST(HashedBucketIdTest, ToUint32) {
+  ASSERT_OK_AND_ASSIGN(auto hashed_bucket_id,
+                       HashedBucketId::Create("abcd", 32));
+  ASSERT_OK_AND_ASSIGN(auto uint32, hashed_bucket_id.ToUint32());
+  EXPECT_THAT(uint32, Eq(0x61626364));
+}
+
+TEST(HashedBucketIdTest, ToUint32Zero) {
+  ASSERT_OK_AND_ASSIGN(auto hashed_bucket_id,
+                       HashedBucketId::Create("", 0));
+  ASSERT_OK_AND_ASSIGN(auto uint32, hashed_bucket_id.ToUint32());
+  EXPECT_THAT(uint32, Eq(0));
 }
 
 }  // namespace

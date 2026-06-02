@@ -18,6 +18,9 @@
 #include <gtest/gtest.h>
 #include "shell_encryption/testing/status_matchers.h"
 #include "shell_encryption/testing/status_testing.h"
+#include "absl/status/status.h"
+#include "shell_encryption/testing/status_matchers.h"
+#include "shell_encryption/testing/status_testing.h"
 
 using ::rlwe::testing::StatusIs;
 using ::testing::HasSubstr;
@@ -25,32 +28,6 @@ using ::testing::HasSubstr;
 namespace private_membership {
 namespace rlwe {
 namespace {
-
-TEST(UtilsTest, TruncateBitLengthZero) {
-  ASSERT_OK_AND_ASSIGN(auto x, Truncate("\x01\x01\x01\x01", 0));
-  EXPECT_EQ(x, "");
-}
-
-TEST(UtilsTest, TruncateBitLengthExceed) {
-  EXPECT_THAT(Truncate("\x01\x01\x01\x01", 33),
-              StatusIs(absl::StatusCode::kInvalidArgument,
-                       HasSubstr("Truncation bit length out of bounds.")));
-}
-
-TEST(UtilsTest, TruncateBitLengthExact) {
-  ASSERT_OK_AND_ASSIGN(auto x, Truncate("\x01\x01\x01\xFF", 32));
-  EXPECT_EQ(x, "\x01\x01\x01\xFF");
-}
-
-TEST(UtilsTest, TruncateBitLengthDivisibleBy8) {
-  ASSERT_OK_AND_ASSIGN(auto x, Truncate("\x01\x01\xFF\xFF", 24));
-  EXPECT_EQ(x, "\x01\x01\xFF");
-}
-
-TEST(UtilsTest, TruncateBitLengthNotDivisibleBy8) {
-  ASSERT_OK_AND_ASSIGN(auto x, Truncate("\x01\x01\xFF\xFE", 30));
-  EXPECT_EQ(x, "\x01\x01\xFF\xFC");
-}
 
 TEST(UtilsTest, TruncateAsUint32BitLengthExceedInput) {
   EXPECT_THAT(TruncateAsUint32("\x01\x01\x01", 25),

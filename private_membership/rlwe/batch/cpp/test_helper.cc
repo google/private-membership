@@ -18,7 +18,6 @@
 #include <utility>
 #include <vector>
 
-#include <google/protobuf/repeated_field.h>
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "private_membership/rlwe/batch/cpp/client/client.h"
@@ -26,6 +25,7 @@
 #include "private_membership/rlwe/batch/cpp/prng.h"
 #include "private_membership/rlwe/batch/proto/client.pb.h"
 #include "private_membership/rlwe/batch/proto/shared.pb.h"
+#include <google/protobuf/repeated_field.h>
 #include "shell_encryption/montgomery.h"
 #include "shell_encryption/polynomial.h"
 #include "shell_encryption/prng/prng.h"

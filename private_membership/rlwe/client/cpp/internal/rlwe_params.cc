@@ -14,8 +14,15 @@
 
 #include "private_membership/rlwe/client/cpp/internal/rlwe_params.h"
 
+#include <cstddef>
+#include <memory>
+#include <utility>
+#include <vector>
+
 #include "private_membership/rlwe/client/proto/private_membership_rlwe.pb.h"
 #include "private_membership/rlwe/client/cpp/internal/constants.h"
+#include "absl/numeric/int128.h"
+#include "absl/status/status.h"
 #include "shell_encryption/montgomery.h"
 #include "shell_encryption/status_macros.h"
 
@@ -92,7 +99,7 @@ CreateNttParams(const RlweParameters& rlwe_params,
   RLWE_ASSIGN_OR_RETURN(::rlwe::NttParameters<ModularInt> ntt_params,
                         ::rlwe::InitializeNttParameters<ModularInt>(
                             rlwe_params.log_degree(), modulus_params));
-  return absl::make_unique<const ::rlwe::NttParameters<ModularInt>>(
+  return std::make_unique<const ::rlwe::NttParameters<ModularInt>>(
       std::move(ntt_params));
 }
 
@@ -114,7 +121,7 @@ CreateErrorParams(const RlweParameters& rlwe_params,
                         ::rlwe::ErrorParams<ModularInt>::Create(
                             rlwe_params.log_t(), rlwe_params.variance(),
                             modulus_params, ntt_params));
-  return absl::make_unique<const ::rlwe::ErrorParams<ModularInt>>(error_params);
+  return std::make_unique<const ::rlwe::ErrorParams<ModularInt>>(error_params);
 }
 
 template ::rlwe::StatusOr<
