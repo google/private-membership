@@ -1,0 +1,35 @@
+edition = "2024";
+
+package private_membership.rlwe.v2.proto;
+
+option java_package = "com.google.privatemembership.rlwe.v2.proto";
+option java_outer_classname = "Rlwe";
+
+// Parameters for Ring Learning with Errors problem (RLWE).
+message RlweParams {
+  int32 log_degree = 1;
+  int32 log_modulus = 2;
+  int32 log_modulus1_after_switch = 3;
+  int32 log_modulus2_after_switch = 4;
+  int32 variance = 5;
+}
+
+// Parameters for the Gadget decomposition.
+message GadgetParams {
+  // Base 2 logarithm of the digit base B.
+  int32 log_digit = 1;
+
+  // Number of digits in the decomposition.
+  int32 num_digits = 2;
+}
+
+// Proto representation of a Polynomial.
+message Polynomial {
+  bytes encoded_coeffs = 1;
+}
+
+// Proto representation of an RLWE Ciphertext.
+message RlweCiphertext {
+  Polynomial a = 1;
+  Polynomial b = 2;
+}

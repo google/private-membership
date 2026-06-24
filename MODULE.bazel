@@ -13,37 +13,47 @@ bazel_dep(name = "boringssl", version = "0.20260508.0")
 bazel_dep(name = "protobuf", version = "33.4", repo_name = "com_google_protobuf")
 bazel_dep(name = "grpc", version = "1.80.0", repo_name = "com_github_grpc_grpc")
 bazel_dep(name = "bazel_skylib", version = "1.9.0")
+bazel_dep(name = "rules_license", version = "1.0.0")
+bazel_dep(name = "highway", version = "1.3.0", repo_name = "com_github_google_highway")
+archive_override(
+    module_name = "highway",
+    integrity = "sha256-bnAX6HJwqH6hoDZufepeSXd7skWnJJh76qGnjRnF9Y0=",
+    strip_prefix = "highway-224b014b1e6ebd1b9c1e134ebb5fbce899844c79",
+    urls = [
+        "https://github.com/google/highway/archive/224b014b1e6ebd1b9c1e134ebb5fbce899844c79.zip",
+    ],
+)
 
 http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "com_github_google_shell",
-    patches = ["//patches:com_github_google_shell.patch"],
     patch_args = ["-p1"],
-    strip_prefix = "shell-encryption-507781e129a03f8178c9716d79163fae23d34b6a",
-    url = "https://github.com/google/shell-encryption/archive/507781e129a03f8178c9716d79163fae23d34b6a.tar.gz",
+    patches = ["//patches:com_github_google_shell.patch"],
+    strip_prefix = "shell-encryption-61c9af6da23c08358c3c595e810f7f4d9a919345",
+    url = "https://github.com/google/shell-encryption/archive/61c9af6da23c08358c3c595e810f7f4d9a919345.tar.gz",
 )
 
 http_archive(
     name = "com_github_google_private_join_and_compute",
-    patches = ["//patches:com_github_google_private_join_and_compute.patch"],
     patch_args = ["-p1"],
+    patches = ["//patches:com_github_google_private_join_and_compute.patch"],
     strip_prefix = "private-join-and-compute-950c5e4c88d7effe85147beb7856152f7c53394b",
     url = "https://github.com/google/private-join-and-compute/archive/950c5e4c88d7effe85147beb7856152f7c53394b.tar.gz",
 )
 
 http_archive(
     name = "tink_base",
-    patches = ["//patches:tink_base.patch"],
     patch_args = ["-p1"],
+    patches = ["//patches:tink_base.patch"],
     strip_prefix = "tink-1.6.1",
     url = "https://github.com/google/tink/archive/v1.6.1.zip",
 )
 
 http_archive(
     name = "tink_cc",
-    patches = ["//patches:tink_cc.patch"],
     patch_args = ["-p1"],
+    patches = ["//patches:tink_cc.patch"],
     strip_prefix = "tink-1.6.1/cc",
     url = "https://github.com/google/tink/archive/v1.6.1.zip",
 )
