@@ -1,0 +1,56 @@
+edition = "2024";
+
+package private_membership.rlwe.v2.proto;
+
+import "private_membership/rlwe/v2/proto/private_membership_rlwe_v2.proto";
+import "private_membership/rlwe/v2/proto/rlwe.proto";
+
+option java_package = "com.google.privatemembership.rlwe.v2.proto";
+option java_outer_classname = "Pir";
+
+// Parameters for PIR.
+message PirParams {
+  // RLWE parameters.
+  RlweParams rlwe_params = 1;
+
+  // Modulus of the plaintext entries.
+  int64 plaintext_modulus = 2;
+
+  // Gadget parameters for packing.
+  GadgetParams pack_gadget_params = 3;
+
+  // Gadget parameters for polynomial evaluation.
+  GadgetParams poly_eval_gadget_params = 4;
+
+  // Number of entries (rows) in the database.
+  int32 num_entries = 5;
+
+  // Interpolation degree used for polynomial interpolation.
+  int32 interpolation_degree = 6;
+
+  // The specific multiple of Degree representing the entry size.
+  int32 entry_size_multiple = 7;
+
+  // Type parameters added for storage and runtime dispatching.
+  enum DbValueType {
+    DB_VALUE_TYPE_UNSPECIFIED = 0;
+    DB_VALUE_TYPE_UINT8 = 1;
+    DB_VALUE_TYPE_UINT16 = 2;
+  }
+  enum CoeffType {
+    COEFF_TYPE_UNSPECIFIED = 0;
+    COEFF_TYPE_UINT32 = 1;
+    COEFF_TYPE_UINT64 = 2;
+  }
+  enum MatCoeffType {
+    MAT_COEFF_TYPE_UNSPECIFIED = 0;
+    MAT_COEFF_TYPE_UINT32 = 1;
+    MAT_COEFF_TYPE_UINT64 = 2;
+    MAT_COEFF_TYPE_INT16 = 3;
+    MAT_COEFF_TYPE_INT32 = 4;
+  }
+
+  DbValueType db_value_type = 8;
+  CoeffType coeff_type = 9;
+  MatCoeffType mat_coeff_type = 10;
+}

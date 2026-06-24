@@ -94,7 +94,7 @@ class HashedBucketId {
                       hashed_bucket_id.bit_length_);
   }
 
-  inline int bit_length() const { return bit_length_; }
+  int bit_length() const { return bit_length_; }
 
  private:
   HashedBucketId(absl::string_view hashed_bucket_id_bytes, int bit_length);

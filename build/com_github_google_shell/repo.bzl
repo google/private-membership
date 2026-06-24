@@ -22,7 +22,7 @@ def com_github_google_shell_repo():
     if "com_github_google_shell" not in native.existing_rules():
         http_archive(
             name = "com_github_google_shell",
-            sha256 = "807d42caed3056cea63b9048a2fd69122c071740d43c9de546cc0fabded87a5c",
-            strip_prefix = "shell-encryption-507781e129a03f8178c9716d79163fae23d34b6a",
-            url = "https://github.com/google/shell-encryption/archive/507781e129a03f8178c9716d79163fae23d34b6a.tar.gz",
+            sha256 = "615dfa62f515b770b95c119dc34e18ba8dd5808ef8c5bdd1378032e4a81b7db1",
+            strip_prefix = "shell-encryption-61c9af6da23c08358c3c595e810f7f4d9a919345",
+            url = "https://github.com/google/shell-encryption/archive/61c9af6da23c08358c3c595e810f7f4d9a919345.tar.gz",
         )

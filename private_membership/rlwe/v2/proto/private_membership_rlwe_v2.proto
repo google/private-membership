@@ -1,0 +1,14 @@
+edition = "2024";
+
+package private_membership.rlwe.v2;
+
+
+option java_package = "com.google.privatemembership.rlwe.v2";
+
+// Use cases for the RLWE-based PSM protocol, version 2. All data and requests
+// must be associated with a particular use case.
+enum RlweV2UseCase {
+  RLWE_V2_USE_CASE_UNDEFINED = 0;
+  TEST_USE_CASE = 1;
+  TEST_USE_CASE2 = 2;
+}

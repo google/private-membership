@@ -90,7 +90,7 @@ class PRIVATE_MEMBERSHIP_EXPORT EncryptedBucketId {
                       encrypted_bucket_id.bit_length_);
   }
 
-  inline int bit_length() const { return bit_length_; }
+  int bit_length() const { return bit_length_; }
 
  private:
   EncryptedBucketId(absl::string_view encrypted_bucket_id_bytes,
