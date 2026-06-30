@@ -588,8 +588,10 @@ pub fn run_simple_ypir_rgsw_on_params(
             target_row,
         );
 
-        assert_eq!(query_row.len(), (params.poly_len + 1) * db_rows);
-        let query_row_last_row: &[u64] = &query_row[params.poly_len * db_rows..];
+        // assert_eq!(query_row.len(), (params.poly_len + 1) * db_rows);
+        // let query_row_last_row: &[u64] = &query_row[params.poly_len * db_rows..];
+        assert_eq!(query_row.len(), db_rows);
+        let query_row_last_row = &query_row;
         
         assert_eq!(query_row_last_row.len(), db_rows);
         let packed_query_row = pack_query(&params, query_row_last_row);
