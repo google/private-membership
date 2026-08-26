@@ -4,7 +4,9 @@
 #include <memory>
 #include <string>
 
+#include "private_join_and_compute/crypto/big_num.h"
 #include "private_join_and_compute/crypto/context.h"
+#include "private_join_and_compute/crypto/ec_group.h"
 #include "private_join_and_compute/crypto/ec_commutative_cipher.h"
 #include "private_membership/rlwe/client/cpp/internal/cipher.h"
 #include "private_membership/oprf/proto/oprf.pb.h"
@@ -22,14 +24,15 @@ enum OprfEncryptionInternal {
 
 // Parameters for the OPRF protocol.
 struct OprfParameters {
-  int curve_id;
-  ::private_join_and_compute::ECCommutativeCipher::HashType hash_type;
-  OprfEncryptionInternal encryption_type;
+  int curve_id = 0;
+  ::private_join_and_compute::ECCommutativeCipher::HashType hash_type =
+      ::private_join_and_compute::ECCommutativeCipher::SHA256;
+  OprfEncryptionInternal encryption_type = OPRF_ENCRYPTION_AES_SIV;
   std::string hashed_id_salt;
   std::string hkdf_salt;
   std::string hkdf_info;
-  int encryption_key_length;
-  int encrypted_value_byte_length;
+  int encryption_key_length = 0;
+  int encrypted_value_byte_length = 0;
 };
 
 // Converts OprfEncryptionInternal to Cipher::Scheme.

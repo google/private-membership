@@ -47,11 +47,61 @@ absl::StatusOr<PirRequest<CoeffType>> PirClient<CoeffType>::CreateRequest(
   PirRequest<CoeffType> request;
   RLWE_ASSIGN_OR_RETURN(request.first_dimension_query,
                    CreateFirstDimensionQuery(index));
-  RLWE_ASSIGN_OR_RETURN(request.second_dimension_query,
-                   CreateSecondDimensionQuery(index));
+  if (params_.InterpolationDegree() > 1) {
+    RLWE_ASSIGN_OR_RETURN(request.second_dimension_query,
+                     CreateSecondDimensionQuery(index));
+  } else {
+    request.second_dimension_query = {};
+  }
   RLWE_ASSIGN_OR_RETURN(request.packing_key, CreatePackingKey());
 
   return request;
+}
+
+template <typename CoeffType>
+absl::StatusOr<PirRequest<CoeffType>>
+PirClient<CoeffType>::CreateRequestForVector(
+    const std::vector<CoeffType>& vec) {
+  if (params_.InterpolationDegree() != 1) {
+    return absl::InvalidArgumentError(
+        "CreateRequestForVector is only supported for interpolation degree 1.");
+  }
+  PirRequest<CoeffType> request;
+  RLWE_ASSIGN_OR_RETURN(request.first_dimension_query,
+                   CreateFirstDimensionQueryForVector(vec));
+  request.second_dimension_query = {};
+  RLWE_ASSIGN_OR_RETURN(request.packing_key, CreatePackingKey());
+  return request;
+}
+
+template <typename CoeffType>
+absl::StatusOr<std::vector<Polynomial<CoeffType>>>
+PirClient<CoeffType>::CreateFirstDimensionQueryForVector(
+    const std::vector<CoeffType>& vec) const {
+  const auto& rlwe_params = params_.RlweParameters();
+  const int d = rlwe_params.Degree();
+  if (vec.empty() || vec.size() % d != 0) {
+    return absl::InvalidArgumentError(
+        "Vector size must be a non-zero multiple of ring degree d.");
+  }
+  const int num_samples = vec.size() / d;
+  RLWE_ASSIGN_OR_RETURN(auto a_first, SampleAComponents(rlwe_params, num_samples,
+                                                   *a_component_prng_));
+  RLWE_ASSIGN_OR_RETURN(
+      auto rlwe_samples,
+      GenerateRlweSamples(rlwe_params, secret_key_, a_first, *prng_));
+
+  std::vector<Polynomial<CoeffType>> query;
+  query.reserve(num_samples);
+  for (int idx = 0; idx < num_samples; ++idx) {
+    std::vector<CoeffType> chunk(vec.begin() + idx * d,
+                                 vec.begin() + (idx + 1) * d);
+    RLWE_ASSIGN_OR_RETURN(
+        auto ct, EncryptFromRlweSample(rlwe_params, params_.PlaintextModulus(),
+                                       rlwe_samples[idx], chunk));
+    query.push_back(std::move(ct.b));
+  }
+  return query;
 }
 
 template <typename CoeffType>

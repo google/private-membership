@@ -29,6 +29,12 @@ class PirClient {
   // Generates a PIR request for the given database index.
   absl::StatusOr<PirRequest<CoeffType>> CreateRequest(int index);
 
+  // Generates a PIR request encrypting an arbitrary vector of length a multiple
+  // of ring degree d.
+  // Note that this does not support second dimension PIR query.
+  absl::StatusOr<PirRequest<CoeffType>> CreateRequestForVector(
+      const std::vector<CoeffType>& vec);
+
   // Returns the internally generated secret key.
   // Exposed primarily for testing and debugging purposes.
   const Polynomial<CoeffType>& GetSecretKey() const { return secret_key_; }
@@ -64,6 +70,9 @@ class PirClient {
   // database items.
   absl::StatusOr<std::vector<Polynomial<CoeffType>>> CreateFirstDimensionQuery(
       int index) const;
+
+  absl::StatusOr<std::vector<Polynomial<CoeffType>>>
+  CreateFirstDimensionQueryForVector(const std::vector<CoeffType>& vec) const;
 
   PirClient(const PirParams<CoeffType>& params,
             std::unique_ptr<::rlwe::SecurePrng> a_component_prng,

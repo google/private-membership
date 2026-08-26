@@ -18,16 +18,19 @@ option features.field_presence = IMPLICIT;
 option java_package = "com.google.privatemembership.oprf";
 
 // Different use cases for the OPRF service.
-// Next ID: 6
+// Next ID: 8
 enum OprfUseCase {
   option features.(pb.cpp).enum_name_uses_string_view = false;
 
   OPRF_USE_CASE_UNDEFINED = 0;
   TEST_USE_CASE = 1;
   TEST_USE_CASE_2 = 2 [features.enforce_naming_style = STYLE_LEGACY];
+  TEST_USE_CASE_3 = 7 [features.enforce_naming_style = STYLE_LEGACY];
 
   reserved 3, 4, 5;
   // Add more here...
+
+  CROISSANT_PANDA = 6;
 }
 
 message UseCase {

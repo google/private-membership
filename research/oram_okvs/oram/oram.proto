@@ -1,0 +1,276 @@
+// Copyright 2026 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package oram_okvs;
+
+import "research/oram_okvs/pir/pir.proto";
+
+// Labeled ciphertext block pair for storage and transmission.
+message LabeledBlockProto {
+  bytes label = 1;
+  bytes ciphertext = 2;
+}
+
+// ============================================================================
+// 1. Oblivious Block Retrieval Protos
+// ============================================================================
+
+enum RetrievalModeProto {
+  RETRIEVAL_MODE_DIRECT =
+      0;  // Multi-block candidate download (Trivial PIR / Direct)
+  RETRIEVAL_MODE_XOR = 1;  // XOR-trick dummy cancellation
+  RETRIEVAL_MODE_PIR = 2;  // Single-query OnionPIR homomorphic retrieval
+}
+
+message ObliviousRetrievalQueryProto {
+  RetrievalModeProto mode = 1;
+  pir.SerializedPirQuery pir_query = 2;
+}
+
+message ObliviousRetrievalResponseProto {
+  RetrievalModeProto mode = 1;
+  repeated bytes candidate_blocks = 2;         // For RETRIEVAL_MODE_DIRECT
+  bytes xor_block = 3;                         // For RETRIEVAL_MODE_XOR
+  pir.SerializedPirResponse pir_response = 4;  // For RETRIEVAL_MODE_PIR
+}
+
+// ============================================================================
+// 2. LatORAM Initialization and Access Protos
+// ============================================================================
+
+// Request to initialize the Main storage container on the server.
+message LatOramInitMainRequest {
+  repeated LabeledBlockProto blocks = 1;
+  // Optional evaluation keys for OnionPIR protocol retrieval.
+  pir.SerializedEvaluationKeys pir_eval_keys = 2;
+}
+
+// Response for Main container initialization.
+message LatOramInitMainResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+// Request to add a new lateral stash container on the server.
+message LatOramAddLateralStashRequest {
+  uint32 phase = 1;
+  repeated LabeledBlockProto blocks = 2;
+  bytes okvs_table = 3;     // Encoded OKVS table bytes (for OKLat)
+  uint64 okvs_seed = 4;     // PRNG seed for OKVS decoding
+  uint32 num_real = 5;      // Number of real blocks encoded
+  uint32 okvs_backend = 6;  // 0 = Polynomial, 1 = RandomBand
+}
+
+// Response for adding a lateral stash.
+message LatOramAddLateralStashResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+// Request for an online ORAM access across active containers.
+message LatOramQueryRequest {
+  // Ordered list of labels: labels[0] -> Main, labels[1] -> LatStash 1, etc.
+  repeated bytes labels = 1;
+  // Unified oblivious block retrieval query.
+  ObliviousRetrievalQueryProto retrieval_query = 2;
+}
+
+// Response containing the retrieved block (via Direct, XOR, or OnionPIR).
+message LatOramQueryResponse {
+  bool success = 1;
+  string error_message = 2;
+  // Unified oblivious block retrieval response.
+  ObliviousRetrievalResponseProto retrieval_response = 3;
+}
+
+// ============================================================================
+// 2. CacheShuffle Protos (Client-Server Multi-Round Protocol)
+// ============================================================================
+
+// Initializes a CacheShuffle session on the server for container
+// `source_container`.
+message CacheShuffleInitRequest {
+  string source_container = 1;  // "lateral_stashes", "main", etc.
+  uint32 num_rows = 2;          // r
+  uint32 num_cols = 3;          // c
+}
+
+message CacheShuffleInitResponse {
+  uint32 total_blocks = 1;
+  bool success = 2;
+  string error_message = 3;
+}
+
+// Spray step: Client downloads batch from source container and uploads
+// sprayed column for matrix T on server.
+message CacheShuffleSprayStepRequest {
+  uint32 col_idx = 1;
+  repeated LabeledBlockProto uploaded_column = 2;
+  uint32 download_count = 3;
+}
+
+message CacheShuffleSprayStepResponse {
+  repeated LabeledBlockProto downloaded_blocks = 1;
+  bool success = 2;
+  string error_message = 3;
+}
+
+// Recalibrate step: Client downloads row of matrix T, shuffles locally with
+// queue, and uploads recalibrated blocks to server's output container.
+message CacheShuffleRecalibrateStepRequest {
+  uint32 row_idx = 1;
+  repeated LabeledBlockProto recalibrated_blocks = 2;
+}
+
+message CacheShuffleRecalibrateStepResponse {
+  repeated LabeledBlockProto row_blocks = 1;
+  bool success = 2;
+  string error_message = 3;
+}
+
+// ============================================================================
+// 3. TwoMerge Protos (Client-Server Multi-Round Protocol)
+// ============================================================================
+
+message TwoMergeInitRequest {
+  string container1 = 1;  // "main"
+  string container2 = 2;  // "cache_shuffle_output" (Tmp)
+  uint32 chunk_size = 3;  // M (Client memory capacity)
+}
+
+message TwoMergeInitResponse {
+  uint32 size1 = 1;
+  uint32 size2 = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+message TwoMergeStepRequest {
+  uint32 fetch_c1_count = 1;
+  uint32 fetch_c2_count = 2;
+  repeated LabeledBlockProto merged_batch = 3;
+}
+
+message TwoMergeStepResponse {
+  repeated LabeledBlockProto c1_blocks = 1;
+  repeated LabeledBlockProto c2_blocks = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+// Finalize step: Upload the last merged batch and commit as the new Main
+// container.
+message TwoMergeFinalizeRequest {
+  repeated LabeledBlockProto final_batch = 1;
+}
+
+message TwoMergeFinalizeResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+// ============================================================================
+// 4. Ring ORAM Protos
+// ============================================================================
+
+// Serialized representation of a single bucket in the Ring ORAM binary tree.
+message RingOramBucketProto {
+  uint32 bucket_id = 1;
+  uint32 access_count = 2;
+  bytes metadata = 3;         // Encrypted slot metadata blob
+  repeated bytes blocks = 4;  // Encrypted block ciphertexts
+  bytes okvs_table = 5;  // Encoded OKVS table bytes (for Ring ORAM with OKVS)
+  uint64 okvs_seed = 6;  // PRNG seed for OKVS decoding
+  uint32 okvs_backend = 7;  // 0 = Polynomial (Interpolation-OC), 1 = RandomBand
+  uint32 num_real = 8;      // Number of real blocks
+}
+
+// Request to initialize the entire Ring ORAM tree on the server.
+message RingOramInitTreeRequest {
+  uint32 tree_depth = 1;   // L
+  uint32 bucket_size = 2;  // B = Z + S
+  repeated RingOramBucketProto initial_buckets = 3;
+  // Optional evaluation keys for OnionPIR protocol retrieval.
+  pir.SerializedEvaluationKeys pir_eval_keys = 4;
+}
+
+message RingOramInitTreeResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+// Request to read metadata along a path from root to leaf.
+message RingOramReadPathMetadataRequest {
+  uint32 leaf_id = 1;
+}
+
+message RingOramReadPathMetadataResponse {
+  repeated uint32 bucket_ids = 1;
+  repeated uint32 access_counts = 2;
+  repeated bytes bucket_metadata = 3;
+  bool success = 4;
+  string error_message = 5;
+}
+
+// Request to read selected slots (or OKVS queries) from each bucket along a
+// path.
+message RingOramReadPathBlocksRequest {
+  uint32 leaf_id = 1;
+  repeated uint32 slot_indices = 2;  // One slot index per bucket along path
+  repeated bytes okvs_queries = 3;   // For Ring ORAM with OKVS
+  // Unified oblivious block retrieval query.
+  ObliviousRetrievalQueryProto retrieval_query = 4;
+}
+
+message RingOramReadPathBlocksResponse {
+  bool success = 1;
+  string error_message = 2;
+  // Unified oblivious block retrieval response.
+  ObliviousRetrievalResponseProto retrieval_response = 3;
+}
+
+// Request to download full paths during eviction.
+message RingOramReadPathFullRequest {
+  uint32 leaf_id = 1;
+}
+
+message RingOramReadPathFullResponse {
+  repeated RingOramBucketProto buckets = 1;
+  bool success = 2;
+  string error_message = 3;
+}
+
+// Request to upload rebuilt buckets along an eviction path.
+message RingOramWritePathFullRequest {
+  uint32 leaf_id = 1;
+  repeated RingOramBucketProto buckets = 2;
+}
+
+message RingOramWritePathFullResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+// Early reshuffle of a specific bucket if access_count reaches S.
+message RingOramReshuffleBucketRequest {
+  uint32 bucket_id = 1;
+  RingOramBucketProto bucket = 2;
+}
+
+message RingOramReshuffleBucketResponse {
+  bool success = 1;
+  string error_message = 2;
+}
