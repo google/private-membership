@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "private_membership/rlwe/v2/crypto/encryption.h"
+#include "private_membership/rlwe/v2/crypto/polynomial.h"
 #include "private_membership/rlwe/v2/proto/pir.pb.h"
 #include "absl/numeric/bits.h"
 #include "shell_encryption/status_macros.h"

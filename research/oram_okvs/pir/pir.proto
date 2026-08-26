@@ -1,0 +1,80 @@
+// Copyright 2026 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package oram_okvs.pir;
+
+import "shell_encryption/rns/rns_serialization.proto";
+
+// Serialized representation of an RGSW ciphertext (matrix of 2*ell BFV
+// ciphertexts).
+message SerializedRgswCiphertext {
+  repeated rlwe.SerializedRnsRlweCiphertext rows = 1;
+}
+
+// Serialized OnionPIR query with coefficient compression and PRG seed
+// expansion.
+message SerializedPirQuery {
+  // PRG seed used to reconstruct the uniform random component (a)
+  bytes prng_seed = 1;
+  // Bit-packed non-random component (c0) coefficients across all RNS moduli
+  // limbs.
+  bytes compressed_coeffs = 2;
+  // Number of coefficients sent per limb (w_sent).
+  uint64 num_coeffs = 3;
+}
+
+// Serialized parameters for OnionPIR configuration.
+message SerializedPirParams {
+  uint64 num_entries = 1;
+  uint64 entry_size_bytes = 2;
+  uint64 poly_degree = 3;
+  uint64 n0 = 4;
+  repeated uint64 ciphertext_moduli = 5;
+  uint64 log_t = 6;
+  uint64 variance = 7;
+  reserved 8, 9, 12, 14;
+  reserved "gadget_log_base", "gadget_ell", "trace_gadget_ell",
+      "conversion_gadget_ell";
+  uint64 response_modulus = 10;
+  uint64 trace_gadget_log_base = 11;
+  uint64 conversion_gadget_log_base = 13;
+  repeated uint64 conversion_gadget_log_bs = 15;
+  repeated uint64 trace_gadget_log_bs = 16;
+  uint64 num_query_coeffs = 17;
+  uint64 expansion_gadget_log_base = 18;
+  repeated uint64 expansion_gadget_log_bs = 19;
+}
+
+// Serialized evaluation keys sent once from client to server during setup.
+message SerializedEvaluationKeys {
+  repeated rlwe.SerializedRnsGaloisKey galois_keys = 1;
+  SerializedRgswCiphertext rgsw_secret_key = 2;
+  SerializedPirParams params = 3;
+}
+
+// Scaled ciphertext with coefficients modulo an arbitrary response modulus p
+// (e.g. p = 2^18).
+message SerializedScaledCiphertext {
+  bytes c0 = 1;
+  bytes c1 = 2;
+  uint64 modulus = 3;
+}
+
+// Serialized OnionPIR response (one or more scaled ciphertexts for the
+// retrieved entry).
+message SerializedPirResponse {
+  repeated SerializedScaledCiphertext scaled_ct = 1;
+}

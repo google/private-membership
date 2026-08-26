@@ -213,7 +213,8 @@ absl::StatusOr<RlweCiphertext<CoeffType>> EncryptFromRlweSample(
     return absl::InvalidArgumentError("message length must match degree.");
   }
 
-  const CoeffType delta = ((q - 1) / plaintext_modulus) + 1;
+  absl::uint128 q_128 = absl::uint128{1} << params.LogModulus();
+  absl::uint128 p_128 = plaintext_modulus;
 
   std::vector<CoeffType> b_coeffs = rlwe_sample.b.Coeffs();
   for (int i = 0; i < d; ++i) {
@@ -221,7 +222,10 @@ absl::StatusOr<RlweCiphertext<CoeffType>> EncryptFromRlweSample(
       return absl::InvalidArgumentError(
           "Message components must be less than plaintext_modulus.");
     }
-    b_coeffs[i] = (b_coeffs[i] + message[i] * delta) & (q - 1);
+    absl::uint128 m_128 = message[i];
+    CoeffType scaled_m =
+        static_cast<CoeffType>((m_128 * q_128 + p_128 / 2) / p_128);
+    b_coeffs[i] = (b_coeffs[i] + scaled_m) & (q - 1);
   }
 
   RLWE_ASSIGN_OR_RETURN(auto b_prime,
@@ -271,17 +275,16 @@ absl::StatusOr<std::vector<CoeffType>> Decrypt(
   RLWE_ASSIGN_OR_RETURN(auto noisy_m, ciphertext.b.Add(as));
   RLWE_ASSIGN_OR_RETURN(noisy_m, noisy_m.LowBits(log_q));
 
-  const CoeffType delta = ((q - 1) / plaintext_modulus) + 1;
-  const CoeffType half_delta = delta >> 1;
-
   std::vector<CoeffType> m_coeffs(d);
+  absl::uint128 q_128 = absl::uint128{1} << log_q;
+  absl::uint128 p_128 = plaintext_modulus;
+
   for (int i = 0; i < d; ++i) {
     CoeffType val = noisy_m.Coeffs()[i] & (q - 1);
-    // Rounding to nearest integer multiple of delta mod q.
-    // Using 128-bit integers to avoid overflow.
-    m_coeffs[i] =
-        static_cast<CoeffType>((static_cast<absl::uint128>(val) + half_delta) /
-                               delta % plaintext_modulus);
+    // Decode with exact fraction round(c * P / Q)
+    absl::uint128 v_128 = val;
+    m_coeffs[i] = static_cast<CoeffType>((v_128 * p_128 + q_128 / 2) / q_128 %
+                                         plaintext_modulus);
   }
 
   return m_coeffs;
@@ -323,18 +326,16 @@ absl::StatusOr<std::vector<CoeffType>> DecryptAfterModulusSwitch(
   } else {
     modulus2 = 0;
   }
-  CoeffType modulus_for_delta = modulus2;
-  const CoeffType delta = ((modulus_for_delta - 1) / plaintext_modulus) + 1;
-  const CoeffType half_delta = delta >> 1;
 
   std::vector<CoeffType> m_coeffs(d);
+  absl::uint128 q_128 = absl::uint128{1} << params.LogModulus2AfterSwitch();
+  absl::uint128 p_128 = plaintext_modulus;
+
   for (int i = 0; i < d; ++i) {
-    CoeffType val = noisy_m.Coeffs()[i];
-    // Rounding to nearest integer multiple of delta mod q.
-    // Using 128-bit integers to avoid overflow.
-    m_coeffs[i] =
-        static_cast<CoeffType>((static_cast<absl::uint128>(val) + half_delta) /
-                               delta % plaintext_modulus);
+    CoeffType val = noisy_m.Coeffs()[i] & (modulus2 - 1);
+    absl::uint128 v_128 = val;
+    m_coeffs[i] = static_cast<CoeffType>((v_128 * p_128 + q_128 / 2) / q_128 %
+                                         plaintext_modulus);
   }
 
   return m_coeffs;
@@ -425,7 +426,6 @@ absl::StatusOr<RgswCiphertext<CoeffType>> EncryptRgswCiphertextFromRlweSamples(
   return RgswCiphertext<CoeffType>{std::move(u), std::move(v)};
 }
 
-
 template absl::StatusOr<RlweParams<uint32_t>> RlweParams<uint32_t>::Create(
     int, uint32_t, int);
 template absl::StatusOr<RlweParams<uint64_t>> RlweParams<uint64_t>::Create(
@@ -512,7 +512,6 @@ EncryptRgswCiphertextFromRlweSamples<uint64_t>(
     const std::vector<RlweSample<uint64_t>>&,
     const std::vector<RlweSample<uint64_t>>&, const Polynomial<uint64_t>&,
     const std::vector<uint64_t>&);
-
 
 }  // namespace v2
 }  // namespace rlwe

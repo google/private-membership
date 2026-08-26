@@ -140,6 +140,12 @@ class Polynomial {
                                                     int log_digit,
                                                     int num_digits) const;
 
+  // Performs signed gadget decomposition of the polynomial. Returns a vector of
+  // `num_digits` polynomials, each representing a signed digit of length
+  // `log_digit`, bounded in [-2^(log_digit-1), 2^(log_digit-1)-1].
+  absl::StatusOr<std::vector<Polynomial<CoeffType>>> SignedGadgetInv(
+      int log_modulus, int log_digit, int num_digits) const;
+
   // Automorphism: Given a polynomial representing p(x), returns a
   // polynomial representing p(x^power). Power must be an odd non-negative
   // integer.
@@ -166,10 +172,9 @@ class Polynomial {
   // set of inverse FFTs at the end.
   static absl::StatusOr<Polynomial> InnerProductFft(
       const std::vector<Polynomial>& u, const std::vector<Polynomial>& v,
-      FftContext& ctx,
-      int u_bits = 8 * sizeof(CoeffType),
-      int v_bits = 8 * sizeof(CoeffType),
-      int chunk_bits = 20);
+      FftContext& ctx, int u_bits = 8 * sizeof(CoeffType),
+      int v_bits = 8 * sizeof(CoeffType), int chunk_bits = 20,
+      bool u_is_signed = false);
 
   // Converts the polynomial to NTT form.
   absl::StatusOr<NttPolynomial> ToNtt(const Context& ctx) const;

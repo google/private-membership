@@ -63,9 +63,9 @@ class PirClientTest : public Test {
     return GadgetParams{/*log_digit=*/kLogDigit1, /*num_digits=*/kNumDigits1};
   }
 
-  absl::StatusOr<PirParams<CoeffType>> CreateValidPirParams() const {
+  absl::StatusOr<PirParams<CoeffType>> CreateValidPirParams(
+      int interpolation_degree = 2) const {
     int num_entries = 4096;
-    int interpolation_degree = 2;
     return PirParams<CoeffType>::Create(*rlwe_params_, GetPlaintextModulus(),
                                         GetGadgetParams0(), GetGadgetParams1(),
                                         num_entries, interpolation_degree);
@@ -167,6 +167,84 @@ TYPED_TEST(PirClientTest, CreateRequestGeneratesValidCiphertexts) {
         expected_message[expected_j] = 1;
       }
       EXPECT_EQ(plaintext, expected_message);
+    }
+  }
+}
+
+TYPED_TEST(PirClientTest,
+           CreateRequestForVectorFailsForInvalidInterpolationDegree) {
+  ASSERT_OK_AND_ASSIGN(auto params,
+                       this->CreateValidPirParams(/*interpolation_degree=*/2));
+  ASSERT_OK_AND_ASSIGN(
+      auto client,
+      PirClient<TypeParam>::Create(params, std::move(this->a_component_prng_),
+                                   std::move(this->prng_)));
+  std::vector<TypeParam> vec(kDegree, 1);
+  EXPECT_THAT(client->CreateRequestForVector(vec),
+              StatusIs(absl::StatusCode::kInvalidArgument,
+                       HasSubstr("interpolation degree 1")));
+}
+
+TYPED_TEST(PirClientTest, CreateRequestForVectorFailsForInvalidVectorSize) {
+  ASSERT_OK_AND_ASSIGN(auto params,
+                       this->CreateValidPirParams(/*interpolation_degree=*/1));
+  ASSERT_OK_AND_ASSIGN(
+      auto client,
+      PirClient<TypeParam>::Create(params, std::move(this->a_component_prng_),
+                                   std::move(this->prng_)));
+
+  EXPECT_THAT(client->CreateRequestForVector({}),
+              StatusIs(absl::StatusCode::kInvalidArgument,
+                       HasSubstr("non-zero multiple of ring degree d")));
+
+  std::vector<TypeParam> vec_invalid_size(kDegree - 1, 1);
+  EXPECT_THAT(client->CreateRequestForVector(vec_invalid_size),
+              StatusIs(absl::StatusCode::kInvalidArgument,
+                       HasSubstr("non-zero multiple of ring degree d")));
+}
+
+TYPED_TEST(PirClientTest, CreateRequestForVectorSucceedsForMultiplesOfDegree) {
+  ASSERT_OK_AND_ASSIGN(auto params,
+                       this->CreateValidPirParams(/*interpolation_degree=*/1));
+
+  for (int num_blocks : {1, 2, 3}) {
+    ASSERT_OK_AND_ASSIGN(auto prng_seed, ::rlwe::ChaChaPrng::GenerateSeed());
+    ASSERT_OK_AND_ASSIGN(auto a_component_prng,
+                         ::rlwe::ChaChaPrng::Create(prng_seed));
+    ASSERT_OK_AND_ASSIGN(auto a_component_prng_clone,
+                         ::rlwe::ChaChaPrng::Create(prng_seed));
+    ASSERT_OK_AND_ASSIGN(auto prng, this->CreatePrng());
+
+    ASSERT_OK_AND_ASSIGN(
+        auto client, PirClient<TypeParam>::Create(
+                         params, std::move(a_component_prng), std::move(prng)));
+
+    std::vector<TypeParam> vec(num_blocks * kDegree);
+    for (size_t i = 0; i < vec.size(); ++i) {
+      vec[i] = (i + 1) % params.PlaintextModulus();
+    }
+
+    ASSERT_OK_AND_ASSIGN(auto request, client->CreateRequestForVector(vec));
+
+    const auto& rlwe_params = params.RlweParameters();
+    EXPECT_EQ(request.first_dimension_query.size(), num_blocks);
+    EXPECT_TRUE(request.second_dimension_query.empty());
+
+    ASSERT_OK_AND_ASSIGN(
+        auto a_first,
+        SampleAComponents(rlwe_params, num_blocks, *a_component_prng_clone));
+
+    for (int idx = 0; idx < num_blocks; ++idx) {
+      RlweCiphertext<TypeParam> ciphertext{
+          std::move(a_first[idx]),
+          std::move(request.first_dimension_query[idx])};
+      ASSERT_OK_AND_ASSIGN(auto plaintext,
+                           Decrypt(rlwe_params, params.PlaintextModulus(),
+                                   ciphertext, client->GetSecretKey()));
+
+      std::vector<TypeParam> expected_chunk(vec.begin() + idx * kDegree,
+                                            vec.begin() + (idx + 1) * kDegree);
+      EXPECT_EQ(plaintext, expected_chunk);
     }
   }
 }

@@ -8,6 +8,7 @@ import "private_membership/rlwe/client/proto/private_membership_rlwe.proto";
 
 
 
+option features.default_symbol_visibility = STRICT;
 option java_outer_classname = "RegressionTestData";
 option features.field_presence = IMPLICIT;
 

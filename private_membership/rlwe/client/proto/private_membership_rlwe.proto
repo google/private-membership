@@ -364,3 +364,25 @@ message RlweMembershipResponses {
 
   repeated MembershipResponseEntry membership_responses = 1;
 }
+
+// Request sent to the server for checking membership of plaintext IDs directly
+// in the database (without any privacy guarantees).
+message PrivateMembershipRlwePlaintextQueryRequest {
+  // Plaintext IDs to check membership for.
+  repeated RlwePlaintextId plaintext_ids = 1;
+
+  // The name of the use case of this query.
+  RlweUseCase use_case = 2;
+
+  // Version of key that encrypted the identifier-value pair.
+  int64 key_version = 3;
+}
+
+// Response sent by the server for checking membership of plaintext IDs directly
+// in the database (without any privacy guarantees).
+message PrivateMembershipRlwePlaintextQueryResponse {
+  // Collection of queried plaintext IDs and their associated membership
+  // responses.
+  repeated RlweMembershipResponses.MembershipResponseEntry
+      membership_responses = 1;
+}

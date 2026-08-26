@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 
 #include "private_join_and_compute/crypto/big_num.h"
 #include "private_join_and_compute/crypto/context.h"
@@ -38,12 +39,6 @@ GenerateAesSivCipher(absl::string_view encryption_key) {
   absl::StatusOr<std::unique_ptr<crypto::tink::DeterministicAead>> aes_cipher =
       crypto::tink::subtle::AesSivBoringSsl::New(aes_key);
   return aes_cipher;
-}
-
-absl::StatusOr<std::unique_ptr<::private_join_and_compute::ECCommutativeCipher>> CreateCipher(
-    absl::string_view key, const OprfParameters& params) {
-  return ::private_join_and_compute::ECCommutativeCipher::CreateFromKey(params.curve_id, key,
-                                                        params.hash_type);
 }
 
 }  // namespace

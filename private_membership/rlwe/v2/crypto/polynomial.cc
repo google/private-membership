@@ -4,14 +4,15 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
 #include "private_membership/rlwe/v2/proto/rlwe.pb.h"
 #include "absl/numeric/int128.h"
 #include "absl/status/status.h"
-#include "absl/status/statusor.h"
 #include "shell_encryption/status_macros.h"
+#include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "shell_encryption/constants.h"
 #include "shell_encryption/dft_transformations.h"
@@ -342,6 +343,59 @@ Polynomial<CoeffType>::GadgetInv(int log_modulus, int log_digit,
     RLWE_ASSIGN_OR_RETURN(auto lower, current.LowBits(log_digit));
     result.push_back(std::move(lower));
     RLWE_ASSIGN_OR_RETURN(current, current.RightShift(log_digit));
+  }
+  return result;
+}
+
+template <typename CoeffType>
+absl::StatusOr<std::vector<Polynomial<CoeffType>>>
+Polynomial<CoeffType>::SignedGadgetInv(int log_modulus, int log_digit,
+                                       int num_digits) const {
+  if (log_digit <= 0 || num_digits <= 0) {
+    return absl::InvalidArgumentError(
+        "log_digit and num_digits must be positive.");
+  }
+
+  if (log_modulus == 0) {
+    log_modulus = 8 * sizeof(CoeffType);
+  }
+
+  using SignedCoeffType = std::make_signed_t<CoeffType>;
+
+  int to_shift = log_modulus - (num_digits * log_digit);
+  std::vector<CoeffType> current_coeffs = coeffs_;
+  if (to_shift > 0) {
+    CoeffType round_val = CoeffType{1} << (to_shift - 1);
+    for (int i = 0; i < Len(); ++i) {
+      current_coeffs[i] = static_cast<CoeffType>(
+          (static_cast<absl::uint128>(current_coeffs[i]) + round_val) >>
+          to_shift);
+    }
+  }
+
+  std::vector<Polynomial<CoeffType>> result;
+  result.reserve(num_digits);
+
+  CoeffType mask = (CoeffType{1} << log_digit) - 1;
+  CoeffType half_mask = CoeffType{1} << (log_digit - 1);
+
+  for (int i = 0; i < num_digits; ++i) {
+    std::vector<CoeffType> digit_coeffs(Len());
+    for (int j = 0; j < Len(); ++j) {
+      CoeffType lower = current_coeffs[j] & mask;
+      if (lower >= half_mask) {
+        digit_coeffs[j] = static_cast<CoeffType>(
+            static_cast<SignedCoeffType>(lower) -
+            static_cast<SignedCoeffType>(CoeffType{1} << log_digit));
+        current_coeffs[j] = (current_coeffs[j] >> log_digit) + 1;
+      } else {
+        digit_coeffs[j] = lower;
+        current_coeffs[j] = (current_coeffs[j] >> log_digit);
+      }
+    }
+    RLWE_ASSIGN_OR_RETURN(auto lower_poly,
+                     Polynomial<CoeffType>::Create(std::move(digit_coeffs)));
+    result.push_back(std::move(lower_poly));
   }
   return result;
 }
